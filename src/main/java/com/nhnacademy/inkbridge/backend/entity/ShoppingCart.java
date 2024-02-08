@@ -1,40 +1,42 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import java.math.BigDecimal;
+import java.awt.print.Book;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 /**
- * class: UserGrade.
+ * class: ShoppingCart.
  *
  * @author minseo
  * @version 2/8/24
  */
 @Entity
-@Table(name = "user_grade")
+@Table(name = "shopping_cart")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserGrade {
+public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "grade_id")
-    private Integer gradeId;
+    @Column(name = "cart_id")
+    private Long cartId;
 
-    @Column(name = "grade")
-    private String grade;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "point_rate")
-    private BigDecimal pointRate;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-    @Column(name = "standard_amount")
-    private Long standardAmount;
-
+    @Column(name = "amount")
+    private Integer amount;
 }
