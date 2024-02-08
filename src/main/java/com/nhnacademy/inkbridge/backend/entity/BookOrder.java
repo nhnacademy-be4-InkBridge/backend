@@ -69,9 +69,9 @@ public class BookOrder {
     @Column(name = "order_price")
     private Long orderPrice;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User userId;
 
     @OneToOne
     @JoinColumn(name = "user_coupon_id")

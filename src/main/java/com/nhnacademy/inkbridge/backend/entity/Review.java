@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import java.awt.print.Book;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
- * class: review.
+ * class: Review.
  *
  * @author minseo
  * @version 2/8/24
@@ -30,13 +29,13 @@ public class Review {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "book_id")
-//    private Book book;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-//    @OneToOne
-//    @JoinColumn(name = "file_id")
-//    private File file;
+    @OneToOne
+    @JoinColumn(name = "file_id")
+    private File file;
 
     @Column(name = "review_title")
     private String reviewTitle;
