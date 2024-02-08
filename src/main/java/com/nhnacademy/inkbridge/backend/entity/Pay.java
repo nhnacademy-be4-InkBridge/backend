@@ -1,0 +1,56 @@
+package com.nhnacademy.inkbridge.backend.entity;
+
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * class: Pay.
+ *
+ * @author nhn
+ * @version 2024/02/08
+ */
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Entity
+@Table(name = "pay")
+public class Pay {
+    @Id
+    @Column(name = "pay_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long payId;
+
+    @Column(name = "payment_key")
+    private String paymentKey;
+
+    @Column(name = "method")
+    private String method;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "request_at")
+    private LocalDateTime requestedAt;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @Column(name = "totalAmount")
+    private Long totalAmount;
+
+    @Column(name = "balanceAmount")
+    private Long balanceAmount;
+
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private BookOrder order;
+}
