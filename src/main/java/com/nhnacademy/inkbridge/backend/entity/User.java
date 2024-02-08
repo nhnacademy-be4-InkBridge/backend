@@ -1,5 +1,7 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.entity.enums.Auth;
+import com.nhnacademy.inkbridge.backend.entity.enums.Status;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -16,6 +18,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * class: User.
+ *
+ * @author minseo
+ * @version 2/8/24
+ */
 @Entity
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
