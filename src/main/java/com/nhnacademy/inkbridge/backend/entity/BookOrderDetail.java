@@ -32,16 +32,26 @@ public class BookOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailId;
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "book_price")
+    private Long bookPrice;
+
+    @Column(name = "wrapping_price")
+    private Long wrappingPrice;
 
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Column(name = "amount")
+    private Long amount;
+
     @ManyToOne
     @JoinColumn(name = "wrapping_id")
     private Wrapping wrapping;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private BookOrder bookOrder;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
