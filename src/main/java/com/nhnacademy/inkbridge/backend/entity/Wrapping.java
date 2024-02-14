@@ -1,6 +1,11 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "wrapping")
 public class Wrapping {
+
     @Id
     @Column(name = "wrapping_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,8 +2,16 @@ package com.nhnacademy.inkbridge.backend.entity;
 
 
 import java.io.Serializable;
-import javax.persistence.*;
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * class: BookTag.
@@ -16,6 +24,7 @@ import lombok.*;
 @Entity
 @Table(name = "book_tag")
 public class BookTag {
+
     @EmbeddedId
     private Pk pk;
 
@@ -24,6 +33,7 @@ public class BookTag {
     @EqualsAndHashCode
     @Embeddable
     public static class Pk implements Serializable {
+
         @Column(name = "book_id")
         private Long bookId;
         @Column(name = "tag_id")
