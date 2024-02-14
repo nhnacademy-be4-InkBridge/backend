@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "book_category")
 public class BookCategory {
+
     @EmbeddedId
     private Pk pk;
 
@@ -44,6 +45,7 @@ public class BookCategory {
     @EqualsAndHashCode
     @Embeddable
     public static class Pk implements Serializable {
+
         @Column(name = "category_id")
         private Long categoryId;
 

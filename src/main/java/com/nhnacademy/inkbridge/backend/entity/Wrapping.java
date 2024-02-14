@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "wrapping")
 public class Wrapping {
+
     @Id
     @Column(name = "wrapping_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

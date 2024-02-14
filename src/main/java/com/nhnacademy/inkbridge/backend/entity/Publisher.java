@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "publisher")
 public class Publisher {
+
     @Id
     @Column(name = "publisher_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

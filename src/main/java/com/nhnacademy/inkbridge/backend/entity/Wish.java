@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wish {
+
     @EmbeddedId
     private Pk pk;
 
@@ -45,8 +46,10 @@ public class Wish {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Pk implements Serializable {
+
         @Column(name = "member_id")
         private Long memberId;
+
 
         @Column(name = "book_id")
         private Long bookId;
