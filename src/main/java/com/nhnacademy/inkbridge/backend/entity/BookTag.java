@@ -28,6 +28,12 @@ public class BookTag {
     @EmbeddedId
     private Pk pk;
 
+    /**
+     * class: BookTag.Pk.
+     *
+     * @author nhn
+     * @version 2024/02/08
+     */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
     @EqualsAndHashCode

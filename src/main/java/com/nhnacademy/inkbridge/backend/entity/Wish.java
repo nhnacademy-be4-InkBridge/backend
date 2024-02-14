@@ -41,6 +41,12 @@ public class Wish {
     private Book book;
 
 
+    /**
+     * class: Wish.Pk.
+     *
+     * @author minseo
+     * @version 2/8/24
+     */
     @Embeddable
     @EqualsAndHashCode
     @Getter

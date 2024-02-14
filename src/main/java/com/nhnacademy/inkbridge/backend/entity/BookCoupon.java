@@ -40,7 +40,12 @@ public class BookCoupon {
     @JoinColumn(name = "book_id")
     private Book book;
 
-
+    /**
+     * class: BookCoupon.Pk.
+     *
+     * @author minseo
+     * @version 2/8/24
+     */
     @Embeddable
     @EqualsAndHashCode
     @Getter
