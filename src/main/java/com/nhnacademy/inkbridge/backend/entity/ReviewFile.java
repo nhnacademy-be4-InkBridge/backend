@@ -5,6 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * class: ReviewFile.
+ *
+ * @author brihgtclo
+ * @version 2024/02/14
+ */
+
 @Entity
 @Table(name = "review_file")
 @Getter

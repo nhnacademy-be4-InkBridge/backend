@@ -1,10 +1,9 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 /**
  * class: BookFile.

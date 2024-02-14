@@ -1,9 +1,8 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.entity.enums.PolicyType;
 import java.time.LocalDate;
 import javax.persistence.*;
-
-import com.nhnacademy.inkbridge.backend.entity.enums.PolicyType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
