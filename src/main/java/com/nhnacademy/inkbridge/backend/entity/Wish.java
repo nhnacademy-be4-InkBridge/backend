@@ -30,7 +30,7 @@ public class Wish {
     @EmbeddedId
     private Pk pk;
 
-    @MapsId("userId")
+    @MapsId("memberId")
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -47,15 +47,16 @@ public class Wish {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Pk implements Serializable {
 
-        @Column(name = "user_id")
-        private Long userId;
+        @Column(name = "member_id")
+        private Long memberId;
+
 
         @Column(name = "book_id")
         private Long bookId;
 
         @Builder
-        public Pk(Long userId, Long bookId) {
-            this.userId = userId;
+        public Pk(Long memberId, Long bookId) {
+            this.memberId = memberId;
             this.bookId = bookId;
         }
     }

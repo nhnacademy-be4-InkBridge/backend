@@ -59,6 +59,6 @@ public class BookOrderDetail {
     private Book book;
 
     @OneToOne
-    @JoinColumn(name = "user_coupon_id")
-    private MemberCoupon userCoupon;
+    @JoinColumn(name = "member_coupon_id")
+    private MemberCoupon memberCoupon;
 }
