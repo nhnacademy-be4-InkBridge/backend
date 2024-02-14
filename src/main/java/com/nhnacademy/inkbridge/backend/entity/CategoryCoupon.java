@@ -40,7 +40,12 @@ public class CategoryCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-
+    /**
+     * class: CategoryCoupon.Pk.
+     *
+     * @author minseo
+     * @version 2/8/24
+     */
     @Embeddable
     @EqualsAndHashCode
     @Getter

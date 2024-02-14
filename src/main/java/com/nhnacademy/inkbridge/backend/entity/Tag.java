@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: Tag
+ * class: Tag.
  *
  * @author nhn
  * @version 2024/02/08

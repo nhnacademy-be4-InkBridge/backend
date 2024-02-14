@@ -41,6 +41,12 @@ public class BookAuthor {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    /**
+     * class: BookAuthor.Pk.
+     *
+     * @author nhn
+     * @version 2024/02/08
+     */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
     @Getter
