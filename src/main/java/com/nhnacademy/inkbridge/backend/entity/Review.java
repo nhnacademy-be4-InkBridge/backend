@@ -32,7 +32,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member user;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

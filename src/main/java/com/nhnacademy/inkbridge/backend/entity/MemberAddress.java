@@ -13,16 +13,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: UserAddress.
+ * class: memberAddress.
  *
  * @author minseo
  * @version 2024/02/08
  */
 @Entity
-@Table(name = "user_address")
+@Table(name = "member_address")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserAddress {
+public class MemberAddress {
     @Id
     @Column(name = "address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,7 @@ public class UserAddress {
     private String addressDetail;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 }

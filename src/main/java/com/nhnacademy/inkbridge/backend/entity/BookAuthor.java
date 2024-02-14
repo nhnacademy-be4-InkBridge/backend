@@ -47,6 +47,7 @@ public class BookAuthor {
     @Getter
     @Embeddable
     public static class Pk implements Serializable {
+
         @Column(name = "author_id")
         private Long authorId;
         @Column(name = "book_id")

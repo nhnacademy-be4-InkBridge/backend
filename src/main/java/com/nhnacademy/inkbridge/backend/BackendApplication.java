@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.entity;
+package com.nhnacademy.inkbridge.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

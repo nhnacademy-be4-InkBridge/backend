@@ -32,7 +32,7 @@ public class Wish {
     @MapsId("userId")
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member user;
 
     @MapsId("bookId")
     @ManyToOne
