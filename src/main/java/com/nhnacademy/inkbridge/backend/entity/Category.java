@@ -31,9 +31,6 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "depth")
-    private Integer depth;
-
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category categoryParent;

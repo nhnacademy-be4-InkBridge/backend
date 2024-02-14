@@ -73,8 +73,4 @@ public class Book {
     @OneToOne
     @JoinColumn(name = "thumbnail_id")
     private File thumbnailFile;
-
-    @OneToOne
-    @JoinColumn(name = "description_id")
-    private File descriptionFile;
 }

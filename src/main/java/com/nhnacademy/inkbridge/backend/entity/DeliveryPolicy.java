@@ -1,0 +1,34 @@
+package com.nhnacademy.inkbridge.backend.entity;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDate;
+
+/**
+ * class: DeliveryPolicy.
+ *
+ * @author jangjaehun
+ * @version 2024/02/14
+ */
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Entity
+@Table(name = "delivery_policy")
+public class DeliveryPolicy {
+
+    @Id
+    @Column(name = "delivery_policy_id")
+    private Long deliveryPolicyId;
+
+    @Column(name = "delivery_price")
+    private Long deliveryPrice;
+
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+}

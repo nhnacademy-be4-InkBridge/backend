@@ -42,8 +42,8 @@ public class BookOrder {
     @Column(name = "receiver")
     private String receiver;
 
-    @Column(name = "receiver_name")
-    private String receiverName;
+    @Column(name = "receiver_number")
+    private String receiverNumber;
 
     @Column(name = "zip_code")
     private String zipCode;
@@ -57,6 +57,9 @@ public class BookOrder {
     @Column(name = "orderer")
     private String orderer;
 
+    @Column(name = "orderer_number")
+    private String ordererNumber;
+
     @Column(name = "orderer_email")
     private String ordererEmail;
 
@@ -66,14 +69,15 @@ public class BookOrder {
     @Column(name = "total_price")
     private Long totalPrice;
 
-    @Column(name = "order_price")
-    private Long orderPrice;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
 
-    @OneToOne
-    @JoinColumn(name = "user_coupon_id")
-    private UserCoupon userCoupon;
+    @ManyToOne
+    @JoinColumn(name = "delivery_policy_id")
+    private DeliveryPolicy deliveryPolicy;
+
+    @ManyToOne
+    @JoinColumn(name = "accumulation_rate_policy_id")
+    private AccumulationRatePolicy accumulationRatePolicy;
 }

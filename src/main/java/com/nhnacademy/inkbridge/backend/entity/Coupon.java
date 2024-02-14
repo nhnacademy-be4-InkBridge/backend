@@ -47,6 +47,9 @@ public class Coupon {
     @Column(name = "basic_expired_at")
     private LocalDate basicExpiredAt;
 
+    @Column(name = "validity")
+    private Integer validity;
+
     @OneToOne
     @JoinColumn(name = "coupon_type_id")
     private CouponType couponType;
