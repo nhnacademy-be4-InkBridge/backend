@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: UserCoupon.
+ * class: memberCoupon.
  *
  * @author nhn
  * @version 2024/02/08
@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "user_coupon")
-public class UserCoupon {
+@Table(name = "member_coupon")
+public class MemberCoupon {
     @Id
-    @Column(name = "user_coupon_id")
+    @Column(name = "member_coupon_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userCouponId;
+    private Long memberCouponId;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
@@ -39,8 +39,8 @@ public class UserCoupon {
     private LocalDateTime usedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "coupon_id")

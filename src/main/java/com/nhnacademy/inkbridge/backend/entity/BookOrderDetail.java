@@ -59,5 +59,5 @@ public class BookOrderDetail {
 
     @OneToOne
     @JoinColumn(name = "user_coupon_id")
-    private UserCoupon userCoupon;
+    private MemberCoupon userCoupon;
 }

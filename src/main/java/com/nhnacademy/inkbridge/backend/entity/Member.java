@@ -10,23 +10,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: User.
+ * class: member.
  *
  * @author minseo
  * @version 2/8/24
  */
 @Entity
-@Table(name = "user")
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class User {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "member_id")
+    private Long memberId;
 
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "member_name")
+    private String memberName;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -46,8 +46,8 @@ public class User {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @Column(name = "user_point")
-    private Long userPoint;
+    @Column(name = "member_point")
+    private Long memberPoint;
 
     @Column(name = "auth")
     @Enumerated(EnumType.STRING)
@@ -59,7 +59,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
-    private UserGrade userGrade;
+    private MemberGrade memberGrade;
 
     @Column(name = "withdraw_at")
     private LocalDateTime withdrawAt;

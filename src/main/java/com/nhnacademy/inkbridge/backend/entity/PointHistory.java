@@ -40,5 +40,5 @@ public class PointHistory {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member user;
 }

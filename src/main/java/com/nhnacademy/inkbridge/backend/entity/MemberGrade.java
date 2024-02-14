@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 
 
 /**
- * class: UserGrade.
+ * class: memberGrade.
  *
  * @author minseo
  * @version 2/8/24
  */
 @Entity
-@Table(name = "user_grade")
+@Table(name = "member_grade")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserGrade {
+public class MemberGrade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grade_id")
