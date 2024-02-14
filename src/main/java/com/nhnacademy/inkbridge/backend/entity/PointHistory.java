@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointHistory {
+
     @Id
     @Column(name = "point_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

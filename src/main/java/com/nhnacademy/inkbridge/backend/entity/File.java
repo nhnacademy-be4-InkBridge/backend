@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "file")
 public class File {
+
     @Id
     @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "book_tag")
 public class BookTag {
+
     @EmbeddedId
     private Pk pk;
 
@@ -32,6 +33,7 @@ public class BookTag {
     @EqualsAndHashCode
     @Embeddable
     public static class Pk implements Serializable {
+
         @Column(name = "book_id")
         private Long bookId;
         @Column(name = "tag_id")
