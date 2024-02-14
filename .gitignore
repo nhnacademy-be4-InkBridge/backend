@@ -196,3 +196,4 @@ buildNumber.properties
 
 .idea
 *.iml
+application-prod.properties

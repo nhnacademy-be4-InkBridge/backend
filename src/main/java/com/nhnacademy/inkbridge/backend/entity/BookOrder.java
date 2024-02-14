@@ -69,8 +69,8 @@ public class BookOrder {
     private Long totalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Member userId;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "delivery_policy_id")

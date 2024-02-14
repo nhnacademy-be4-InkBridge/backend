@@ -19,6 +19,10 @@ import javax.persistence.*;
 public class BookFile {
 
     @Id
+    @Column(name = "file_id")
+    private Long fileId;
+
+    @MapsId("fileId")
     @OneToOne
     @JoinColumn(name = "file_id")
     private File file;
