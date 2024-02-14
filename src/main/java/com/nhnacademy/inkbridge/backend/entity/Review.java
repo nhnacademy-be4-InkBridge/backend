@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * class: Review.
@@ -19,6 +22,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "review")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +39,8 @@ public class Review {
     private Book book;
 
     @OneToOne
-    @JoinColumn(name = "file_id")
-    private File file;
+    @JoinColumn(name = "order_detail_id")
+    private BookOrderDetail bookOrderDetail;
 
     @Column(name = "review_title")
     private String reviewTitle;

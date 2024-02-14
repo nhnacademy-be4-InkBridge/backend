@@ -38,16 +38,16 @@ public class Pay {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "request_at")
+    @Column(name = "requested_at")
     private LocalDateTime requestedAt;
 
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
-    @Column(name = "totalAmount")
+    @Column(name = "total_Amount")
     private Long totalAmount;
 
-    @Column(name = "balanceAmount")
+    @Column(name = "balance_Amount")
     private Long balanceAmount;
 
     @OneToOne

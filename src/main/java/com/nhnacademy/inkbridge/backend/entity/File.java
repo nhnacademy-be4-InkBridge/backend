@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,4 +30,7 @@ public class File {
 
     @Column(name = "file_url")
     private String fileUrl;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

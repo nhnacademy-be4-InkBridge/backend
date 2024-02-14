@@ -31,4 +31,7 @@ public class Wrapping {
 
     @Column(name = "price")
     private Long price;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
