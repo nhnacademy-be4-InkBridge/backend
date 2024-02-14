@@ -26,13 +26,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wish {
+
     @EmbeddedId
     private Pk pk;
 
     @MapsId("userId")
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @MapsId("bookId")
     @ManyToOne
@@ -45,6 +46,7 @@ public class Wish {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Pk implements Serializable {
+
         @Column(name = "user_id")
         private Long userId;
 

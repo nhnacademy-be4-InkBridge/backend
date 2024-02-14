@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookCoupon {
+
     @EmbeddedId
     private Pk pk;
 
@@ -45,6 +46,7 @@ public class BookCoupon {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Pk implements Serializable {
+
         @Column(name = "coupon_id")
         private Long couponId;
 

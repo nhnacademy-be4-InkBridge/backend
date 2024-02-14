@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "book_order_detail")
 public class BookOrderDetail {
+
     @Id
     @Column(name = "order_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

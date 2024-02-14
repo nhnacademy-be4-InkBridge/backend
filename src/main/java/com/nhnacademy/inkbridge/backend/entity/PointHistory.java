@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointHistory {
+
     @Id
     @Column(name = "point_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +40,6 @@ public class PointHistory {
     private LocalDateTime accruedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

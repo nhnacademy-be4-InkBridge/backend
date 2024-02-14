@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "book_order")
 public class BookOrder {
+
     @Id
     @Column(name = "order_id")
     private String orderId;
