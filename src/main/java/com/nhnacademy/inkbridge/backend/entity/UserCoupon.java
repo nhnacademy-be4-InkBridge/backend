@@ -46,7 +46,4 @@ public class UserCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private CouponStatus couponStatus;
 }
