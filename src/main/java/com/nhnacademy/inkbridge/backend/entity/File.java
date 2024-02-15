@@ -32,6 +32,9 @@ public class File {
     @Column(name = "file_url")
     private String fileUrl;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "file_extension")
+    private String fileExtension;
 }

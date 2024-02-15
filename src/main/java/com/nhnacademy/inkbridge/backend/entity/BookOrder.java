@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,10 +32,10 @@ public class BookOrder {
     private String orderName;
 
     @Column(name = "ship_date")
-    private LocalDateTime shipDate;
+    private LocalDate shipDate;
 
-    @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    @Column(name = "order_at")
+    private LocalDateTime orderAt;
 
     @Column(name = "delivery_date")
     private LocalDateTime deliveryDate;

@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
  * @author nhn
  * @version 2024/02/08
  */
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity

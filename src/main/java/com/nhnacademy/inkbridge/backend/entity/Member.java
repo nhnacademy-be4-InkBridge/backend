@@ -1,19 +1,16 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import com.nhnacademy.inkbridge.backend.entity.enums.Auth;
-import com.nhnacademy.inkbridge.backend.entity.enums.Status;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -60,19 +57,18 @@ public class Member {
     @Column(name = "member_point")
     private Long memberPoint;
 
-    @Column(name = "auth")
-    @Enumerated(EnumType.STRING)
-    private Auth auth;
+    @Column(name = "withdraw_at")
+    private LocalDateTime withdrawAt;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @ManyToOne
+    @JoinColumn(name = "member_auth_id")
+    private MemberAuth memberAuth;
+
+    @OneToOne
+    @JoinColumn(name = "member_status_id")
+    private MemberStatus memberStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private MemberGrade memberGrade;
-
-    @Column(name = "withdraw_at")
-    private LocalDateTime withdrawAt;
-
 }

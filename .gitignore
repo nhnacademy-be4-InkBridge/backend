@@ -196,4 +196,5 @@ buildNumber.properties
 
 .idea
 *.iml
-application-prod.properties
+src/main/resources/application-dev.properties
+application-dev.properties

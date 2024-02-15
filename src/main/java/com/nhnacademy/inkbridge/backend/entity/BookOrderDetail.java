@@ -1,10 +1,7 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import com.nhnacademy.inkbridge.backend.entity.enums.OrderStatus;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,12 +36,12 @@ public class BookOrderDetail {
     @Column(name = "wrapping_price")
     private Long wrappingPrice;
 
-    @Column(name = "order_status")
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
-
     @Column(name = "amount")
     private Long amount;
+
+    @ManyToOne
+    @JoinColumn(name = "order_status_id")
+    private BookOrderStatus bookOrderStatus;
 
     @ManyToOne
     @JoinColumn(name = "wrapping_id")

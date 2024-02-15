@@ -27,7 +27,6 @@ public class Coupon {
 
     @Id
     @Column(name = "coupon_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long couponId;
 
     @Column(name = "coupon_name")
@@ -42,11 +41,11 @@ public class Coupon {
     @Column(name = "discount_price")
     private Long discountPrice;
 
-    @Column(name = "basic_issued_at")
-    private LocalDate basicIssuedAt;
+    @Column(name = "basic_issued_date")
+    private LocalDate basicIssuedDate;
 
-    @Column(name = "basic_expired_at")
-    private LocalDate basicExpiredAt;
+    @Column(name = "basic_expired_date")
+    private LocalDate basicExpiredDate;
 
     @Column(name = "validity")
     private Integer validity;
