@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 public class MemberGrade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grade_id")
     private Integer gradeId;
 
