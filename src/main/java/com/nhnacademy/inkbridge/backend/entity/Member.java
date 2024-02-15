@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,7 +53,7 @@ public class Member {
     private String password;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "member_point")
     private Long memberPoint;
@@ -71,4 +72,20 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private MemberGrade memberGrade;
+
+    @Builder(builderMethodName = "create")
+    public Member(String memberName, String phoneNumber, String email, LocalDate birthday, String password,
+                  LocalDateTime createdAt, Long memberPoint, MemberAuth memberAuth,
+                  MemberStatus memberStatus, MemberGrade memberGrade) {
+        this.memberName = memberName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.birthday = birthday;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.memberPoint = memberPoint;
+        this.memberAuth = memberAuth;
+        this.memberStatus = memberStatus;
+        this.memberGrade = memberGrade;
+    }
 }
