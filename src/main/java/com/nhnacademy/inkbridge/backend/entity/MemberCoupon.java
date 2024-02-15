@@ -25,7 +25,7 @@ public class MemberCoupon {
 
     @Id
     @Column(name = "member_coupon_id")
-    private Long memberCouponId;
+    private String memberCouponId;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;

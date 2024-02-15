@@ -9,21 +9,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: CouponType.
+ * class: PointPolicyType.
  *
- * @author nhn
- * @version 2024/02/08
+ * @author jangjaehun
+ * @version 2024/02/15
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "coupon_type")
-public class CouponType {
-
+@Table(name = "point_policy_type")
+public class PointPolicyType {
     @Id
-    @Column(name = "coupon_type_id")
-    private Integer couponTypeId;
+    @Column(name = "point_policy_type_id")
+    private Integer pointPolicyTypeId;
 
-    @Column(name = "type_name")
-    private String typeName;
+    @Column(name = "policy_type")
+    private String policyType;
 }
