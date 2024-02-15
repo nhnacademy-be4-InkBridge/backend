@@ -56,10 +56,10 @@ public class CategoryCoupon {
         private Long categoryId;
 
         @Column(name = "coupon_id")
-        private Long couponId;
+        private String couponId;
 
         @Builder
-        public Pk(Long categoryId, Long couponId) {
+        public Pk(Long categoryId, String couponId) {
             this.categoryId = categoryId;
             this.couponId = couponId;
         }
