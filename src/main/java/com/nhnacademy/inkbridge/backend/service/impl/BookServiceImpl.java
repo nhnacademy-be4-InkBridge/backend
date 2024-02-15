@@ -2,15 +2,21 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
+import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookStatusRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
+import java.awt.print.Pageable;
+import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,13 +43,30 @@ public class BookServiceImpl implements BookService {
 
 
     /**
+     * @param pageable
+     * @return
+     */
+    @Override
+    public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public BookReadResponseDto readBook(Long bookId) {
+        return null;
+    }
+
+    /**
      * @param bookCreateRequestDto
      * @return
      */
     @Override
-    public BookCreateResponseDto createBook(BookCreateRequestDto bookCreateRequestDto) {
+    public void createBook(BookCreateRequestDto bookCreateRequestDto) {
         BookStatus bookStatus = bookStatusRepository.findById(bookCreateRequestDto.getStatusId())
-            .orElseThrow();
+            .orElseThrow(() -> new NotFoundException("Book not found"));
         File file = fileRepository.findById(bookCreateRequestDto.getThumbnailId()).orElseThrow();
         Publisher publisher = publisherRepository.findById(bookCreateRequestDto.getThumbnailId())
             .orElseThrow();
@@ -64,6 +87,5 @@ public class BookServiceImpl implements BookService {
             .thumbnailFile(file)
             .build();
         bookRepository.save(book);
-        return null;
     }
 }
