@@ -17,12 +17,12 @@ import lombok.NoArgsConstructor;
  * @version 2024/02/15
  */
 @Entity
-@Table(name = "address_detail")
+@Table(name = "general_address")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class AddressDetail {
+public class GeneralAddress {
     @Id
-    @Column(name = "address_id")
+    @Column(name = "general_address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
 
