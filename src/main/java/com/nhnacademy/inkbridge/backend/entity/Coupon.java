@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -54,4 +55,20 @@ public class Coupon {
     @OneToOne
     @JoinColumn(name = "coupon_type_id")
     private CouponType couponType;
+
+    @Builder
+    public Coupon(String couponId, String couponName, Long minPrice, Long maxDiscountPrice,
+        Long discountPrice, LocalDate basicIssuedDate, LocalDate basicExpiredDate, Integer validity,
+        Boolean isBirth, CouponType couponType) {
+        this.couponId = couponId;
+        this.couponName = couponName;
+        this.minPrice = minPrice;
+        this.maxDiscountPrice = maxDiscountPrice;
+        this.discountPrice = discountPrice;
+        this.basicIssuedDate = basicIssuedDate;
+        this.basicExpiredDate = basicExpiredDate;
+        this.validity = validity;
+        this.isBirth=isBirth;
+        this.couponType = couponType;
+    }
 }
