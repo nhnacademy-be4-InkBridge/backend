@@ -24,6 +24,6 @@ public class MemberStatus {
     @Column(name = "member_status_id")
     private Integer memberStatusId;
 
-    @Column(name = "member_status")
-    private String memberStatus;
+    @Column(name = "member_status_name")
+    private String memberStatusName;
 }

@@ -24,6 +24,6 @@ public class MemberAuth {
     @Column(name = "member_auth_id")
     private Integer memberAuthId;
 
-    @Column(name = "member_auth")
-    private String memberAuth;
+    @Column(name = "member_auth_name")
+    private String memberAuthName;
 }
