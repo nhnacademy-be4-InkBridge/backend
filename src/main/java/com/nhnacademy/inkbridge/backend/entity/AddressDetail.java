@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
-import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,25 +11,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: AccumulationRatePolicy.
+ * class: Address.
  *
- * @author jangjaehun
- * @version 2024/02/14
+ * @author minm063
+ * @version 2024/02/15
  */
+@Entity
+@Table(name = "address_detail")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Entity
-@Table(name = "accumulation_rate_policy")
-public class AccumulationRatePolicy {
-
+public class AddressDetail {
     @Id
-    @Column(name = "accumulation_rate_policy_id")
+    @Column(name = "address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accumulationRatePolicyId;
+    private Long addressId;
 
-    @Column(name = "accumulation_rate")
-    private Integer accumulationRate;
+    @Column(name = "zip_code")
+    private String zipCode;
 
-    @Column(name = "created_at")
-    private LocalDate createdAt;
+    @Column(name = "address")
+    private String address;
 }

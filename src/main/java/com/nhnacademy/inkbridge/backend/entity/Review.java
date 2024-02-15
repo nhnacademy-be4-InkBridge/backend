@@ -27,8 +27,8 @@ import lombok.NoArgsConstructor;
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
     @ManyToOne

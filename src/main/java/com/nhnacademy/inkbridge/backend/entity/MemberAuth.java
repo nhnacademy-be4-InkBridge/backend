@@ -2,8 +2,6 @@ package com.nhnacademy.inkbridge.backend.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -11,21 +9,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * class: CouponType.
+ * class: MemberAuth.
  *
- * @author nhn
- * @version 2024/02/08
+ * @author minm063
+ * @version 2024/02/15
  */
+@Entity
+@Table(name = "member_auth")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Entity
-@Table(name = "coupon_type")
-public class CouponType {
+public class MemberAuth {
 
     @Id
-    @Column(name = "coupon_type_id")
-    private Long couponTypeId;
+    @Column(name = "member_auth_id")
+    private Integer memberAuthId;
 
-    @Column(name = "type_name")
-    private String typeName;
+    @Column(name = "member_auth")
+    private String memberAuth;
 }
