@@ -45,4 +45,7 @@ public class MemberAddress {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "general_address_id")
+    private GeneralAddress generalAddress;
 }
