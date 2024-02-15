@@ -1,5 +1,7 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,6 +58,8 @@ public class Book {
     private Long price;
 
     @Column(name = "discount_ratio")
+    @JsonSerialize(as = BigDecimal.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal discountRatio;
 
     @Column(name = "stock")
@@ -74,4 +79,23 @@ public class Book {
     @OneToOne
     @JoinColumn(name = "thumbnail_id")
     private File thumbnailFile;
+
+    @Builder
+    public Book(String bookTitle, String bookIndex, String description, LocalDate publicatedAt,
+        String isbn, Long regularPrice, Long price, BigDecimal discountRatio, Integer stock,
+        Boolean isPackagable, BookStatus bookStatus, Publisher publisher, File thumbnailFile) {
+        this.bookTitle = bookTitle;
+        this.bookIndex = bookIndex;
+        this.description = description;
+        this.publicatedAt = publicatedAt;
+        this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.price = price;
+        this.discountRatio = discountRatio;
+        this.stock = stock;
+        this.isPackagable = isPackagable;
+        this.bookStatus = bookStatus;
+        this.publisher = publisher;
+        this.thumbnailFile = thumbnailFile;
+    }
 }
