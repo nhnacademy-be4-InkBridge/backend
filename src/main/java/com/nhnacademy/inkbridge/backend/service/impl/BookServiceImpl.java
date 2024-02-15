@@ -1,22 +1,23 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
+import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookStatusRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import java.awt.print.Pageable;
-import java.util.List;
+import javax.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -48,7 +49,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
-        return bookRepository.findAll(pageable);
+        return bookRepository.findAllBooks(pageable);
     }
 
     /**
@@ -56,7 +57,16 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public BookReadResponseDto readBook(Long bookId) {
-        return null;
+        return bookRepository.findByBookId(bookId);
+    }
+
+    /**
+     * @param pageable
+     * @return
+     */
+    @Override
+    public Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable) {
+        return bookRepository.findAllBooksByAdmin(pageable);
     }
 
     /**
@@ -64,12 +74,15 @@ public class BookServiceImpl implements BookService {
      * @return
      */
     @Override
+    @Transactional
     public void createBook(BookCreateRequestDto bookCreateRequestDto) {
         BookStatus bookStatus = bookStatusRepository.findById(bookCreateRequestDto.getStatusId())
-            .orElseThrow(() -> new NotFoundException("Book not found"));
-        File file = fileRepository.findById(bookCreateRequestDto.getThumbnailId()).orElseThrow();
+            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString()));
+        File file = fileRepository.findById(bookCreateRequestDto.getThumbnailId()).orElseThrow(
+            () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.toString()));
         Publisher publisher = publisherRepository.findById(bookCreateRequestDto.getThumbnailId())
-            .orElseThrow();
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.toString()));
 
         Book book = Book.builder()
             .bookTitle(bookCreateRequestDto.getBookTitle())
@@ -86,6 +99,7 @@ public class BookServiceImpl implements BookService {
             .publisher(publisher)
             .thumbnailFile(file)
             .build();
+
         bookRepository.save(book);
     }
 }
