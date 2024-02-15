@@ -32,12 +32,6 @@ public class MemberAddress {
     @Column(name = "alias")
     private String alias;
 
-    @Column(name = "zip_code")
-    private String zipCode;
-
-    @Column(name = "address")
-    private String address;
-
     @Column(name = "address_detail")
     private String addressDetail;
 
