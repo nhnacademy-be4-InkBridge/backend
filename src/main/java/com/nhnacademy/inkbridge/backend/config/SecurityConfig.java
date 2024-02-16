@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
     /**
      * bcrypt + salt
@@ -32,18 +31,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity security)throws Exception {
-        security.csrf().disable()
-            .headers().frameOptions().disable();
-
-        security.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+    protected SecurityFilterChain securityFilterChain(HttpSecurity security)throws Exception {
         security.authorizeRequests()
-            .antMatchers("/admin").hasRole("ADMIN")
-            .antMatchers("/**").permitAll();
-
-        security.formLogin().disable();
-        security.httpBasic().disable();
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .httpBasic();
 
         return security.build();
     }
