@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateResponseDto;
 
 /**
  * class: CategoryService.
@@ -13,6 +15,8 @@ import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
 public interface CategoryService {
 
     void createCategory(CategoryCreateRequestDto request);
+
+    CategoryUpdateResponseDto updateCategory(Long categoryId, CategoryUpdateRequestDto request);
 
     void deleteCategory(Long categoryId);
 }

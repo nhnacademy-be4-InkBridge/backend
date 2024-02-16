@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
@@ -35,6 +37,14 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(newCategory);
     }
 
+    @Override
+    public CategoryUpdateResponseDto updateCategory(Long categoryId, CategoryUpdateRequestDto request) {
+        Category currentCategory = categoryRepository.findById(categoryId).orElseThrow(
+            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString()));
+        currentCategory.updateCategory(request.getCategoryName());
+
+        return CategoryUpdateResponseDto.builder().categoryName(request.getCategoryName()).build();
+    }
     @Transactional
     @Override
     public void deleteCategory(Long categoryId) {

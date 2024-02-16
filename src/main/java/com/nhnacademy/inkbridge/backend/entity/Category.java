@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,5 +41,15 @@ public class Category {
     private Category categoryParent;
 
     @OneToMany(mappedBy = "categoryParent")
-    private List<Category> categoryChildren;
+    private List<Category> categoryChildren = new ArrayList<>();
+
+    @Builder(builderMethodName = "create")
+    public Category(String categoryName, Category categoryParent) {
+        this.categoryName = categoryName;
+        this.categoryParent = categoryParent;
+    }
+
+    public void updateCategory(String categoryName){
+        this.categoryName = categoryName;
+    }
 }
