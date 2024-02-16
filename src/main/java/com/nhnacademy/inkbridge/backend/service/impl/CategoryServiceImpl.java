@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Category;
@@ -26,8 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public void createCategory(CategoryCreateRequestDto request) {
         Category parentCategory = categoryRepository.findById(request.getParentId()).orElse(null);
         Category newCategory = Category.create()
@@ -38,15 +39,30 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryUpdateResponseDto updateCategory(Long categoryId, CategoryUpdateRequestDto request) {
+    @Transactional(readOnly = true)
+    public CategoryReadResponseDto readCategory(Long categoryId) {
+        Category currentCategory = categoryRepository.findById(categoryId).orElseThrow(
+            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString()));
+
+        return CategoryReadResponseDto.builder()
+            .categoryId(currentCategory.getCategoryId())
+            .categoryName(currentCategory.getCategoryName())
+            .build();
+    }
+
+    @Override
+    @Transactional
+    public CategoryUpdateResponseDto updateCategory(Long categoryId,
+        CategoryUpdateRequestDto request) {
         Category currentCategory = categoryRepository.findById(categoryId).orElseThrow(
             () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString()));
         currentCategory.updateCategory(request.getCategoryName());
 
         return CategoryUpdateResponseDto.builder().categoryName(request.getCategoryName()).build();
     }
-    @Transactional
+
     @Override
+    @Transactional
     public void deleteCategory(Long categoryId) {
         Category currentCategory = categoryRepository.findById(categoryId).orElse(null);
         if (currentCategory == null) {
