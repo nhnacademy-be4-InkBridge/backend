@@ -1,9 +1,9 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * class: BookAdminReadResponse.
@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
  * @version 2024/02/15
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class BooksAdminReadResponseDto {
 
     private String bookTitle;

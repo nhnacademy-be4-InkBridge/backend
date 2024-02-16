@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
-import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +11,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BookRepository extends JpaRepository<Book, Long>, BookRepositoryCustom {
 
-    BookReadResponseDto findByBookId(Long bookId);
 }

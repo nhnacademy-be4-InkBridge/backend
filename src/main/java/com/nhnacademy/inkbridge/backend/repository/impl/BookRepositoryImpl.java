@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -30,34 +31,55 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
+     * 메인 페이지용 도서 조회 메서드입니다.
+     *
      * @param pageable
      * @return
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
         QBook qBook = QBook.book;
-        QAuthor qAuthor = QAuthor.author;
-        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
         QPublisher qPublisher = QPublisher.publisher;
         QBookStatus qBookStatus = QBookStatus.bookStatus;
 
         List<BooksReadResponseDto> content = from(qBook)
             .innerJoin(qPublisher)
             .on(qBook.publisher.eq(qPublisher))
-            .innerJoin(qBookAuthor)
-            .on(qBook.eq(qBookAuthor.book))
-            .innerJoin(qAuthor)
-            .on(qBookAuthor.author.eq(qAuthor))
             .innerJoin(qBookStatus)
             .on(qBookStatus.eq(qBook.bookStatus))
             .where(qBookStatus.statusId.eq(1L)) // status가 판매
             .select(Projections.constructor(BooksReadResponseDto.class,
-                qBook.bookTitle, qBook.price, qPublisher.publisherName, qAuthor.authorName))
+                qBook.bookTitle, qBook.price, qPublisher.publisherName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
         return new PageImpl<>(content, pageable, content.size());
+    }
+
+    /**
+     * 도서 조회.
+     *
+     * @param bookId
+     * @return
+     */
+    @Override
+    public BookReadResponseDto findByBookId(Long bookId) {
+        QBook qBook = QBook.book;
+        QPublisher qPublisher = QPublisher.publisher;
+        QBookStatus qBookStatus = QBookStatus.bookStatus;
+
+        return from(qBook)
+            .innerJoin(qPublisher)
+            .on(qPublisher.eq(qBook.publisher))
+            .innerJoin(qBookStatus)
+            .on(qBookStatus.eq(qBook.bookStatus))
+            .where(qBookStatus.statusId.eq(1L).and(qBook.bookId.eq(bookId)))
+            .select(
+                Projections.constructor(BookReadResponseDto.class, qBook.bookTitle, qBook.bookIndex,
+                    qBook.description, qBook.publicatedAt, qBook.isbn, qBook.regularPrice,
+                    qBook.price, qBook.discountRatio, qBook.isPackagable, qPublisher.publisherName))
+            .fetchOne();
     }
 
     /**
@@ -98,24 +120,27 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     @Override
     public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
         QBook qBook = QBook.book;
-        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
         QAuthor qAuthor = QAuthor.author;
+        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
         QPublisher qPublisher = QPublisher.publisher;
         QBookStatus qBookStatus = QBookStatus.bookStatus;
 
         // Tag, category, file을 따로
         return from(qBook)
-            .innerJoin(qBookAuthor)
-            .on(qBookAuthor.book.eq(qBook))
-            .innerJoin(qAuthor)
-            .on(qAuthor.eq(qBookAuthor.author))
             .innerJoin(qPublisher)
             .on(qPublisher.eq(qBook.publisher))
             .where(qBook.bookId.eq(bookId))
+            .innerJoin(qBookAuthor)
+            .on(qBook.eq(qBookAuthor.book))
+            .innerJoin(qAuthor)
+            .on(qBookAuthor.author.eq(qAuthor))
+            .innerJoin(qBookStatus)
+            .on(qBook.bookStatus.eq(qBookStatus))
+            .where(qBook.bookId.eq(bookId))
             .select(Projections.constructor(BookAdminReadResponseDto.class, qBook.bookTitle,
                 qBook.bookIndex, qBook.description, qBook.publicatedAt, qBook.isbn,
-                qBook.regularPrice, qBook.price, qBook.discountRatio, qBook.stock, qBook.stock,
-                qBook.isPackagable, qAuthor.authorName, qBookStatus.statusName))
+                qBook.regularPrice, qBook.price, qBook.discountRatio, qBook.stock,
+                qBook.isPackagable, qPublisher.publisherName, qBookStatus.statusName))
             .fetchOne();
     }
 }

@@ -2,10 +2,10 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * class: BookAdminReadResponseDto.
@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
  * @version 2024/02/15
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class BookAdminReadResponseDto {
 
     private String bookTitle;
@@ -40,16 +41,14 @@ public class BookAdminReadResponseDto {
     // publisher
     private String publisherName;
 
-    // author
-    private String authorName;
-
     // status
     private String statusName;
 
     @Builder
     public BookAdminReadResponseDto(String bookTitle, String bookIndex, String description,
-        LocalDate publicatedAt, String isbn, Long regularPrice, Long price, BigDecimal discountRatio,
-        Integer stock, Boolean isPackagable, String publisherName, String authorName, String statusName) {
+        LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
+        BigDecimal discountRatio,
+        Integer stock, Boolean isPackagable, String publisherName, String statusName) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -61,7 +60,6 @@ public class BookAdminReadResponseDto {
         this.stock = stock;
         this.isPackagable = isPackagable;
         this.publisherName = publisherName;
-        this.authorName = authorName;
         this.statusName = statusName;
     }
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import org.springframework.data.domain.Page;
@@ -21,4 +22,7 @@ public interface BookRepositoryCustom {
     Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable);
 
     BookAdminReadResponseDto findBookByAdminByBookId(Long bookId);
+
+    BookReadResponseDto findByBookId(Long bookId);
+
 }
