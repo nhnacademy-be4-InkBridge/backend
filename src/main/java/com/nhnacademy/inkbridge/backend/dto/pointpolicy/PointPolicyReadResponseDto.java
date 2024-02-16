@@ -1,7 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.pointpolicy;
 
 import java.time.LocalDate;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +13,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PointPolicyReadResponseDto {
+
     private Long pointPolicyId;
     private String policyType;
     private Long accumulatePoint;

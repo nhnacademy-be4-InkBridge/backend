@@ -5,7 +5,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,14 +39,9 @@ public class PointPolicyType {
      * method: updatePointPolicyType.
      *
      * @param pointPolicyTypeUpdateRequestDto PointPolicyTypeUpdateRequestDto
-     * @return PointPolicyType
      */
-    @Transient
-    public static PointPolicyType updatePointPolicyType(
+    public void setPointPolicyType(
         PointPolicyTypeUpdateRequestDto pointPolicyTypeUpdateRequestDto) {
-        return PointPolicyType.builder()
-            .pointPolicyTypeId(pointPolicyTypeUpdateRequestDto.getPointPolicyTypeId())
-            .policyType(pointPolicyTypeUpdateRequestDto.getPolicyType())
-            .build();
+        this.policyType = pointPolicyTypeUpdateRequestDto.getPolicyType();
     }
 }

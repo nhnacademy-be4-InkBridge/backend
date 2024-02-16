@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 /**
  * class: ApiError.
@@ -8,6 +9,7 @@ import lombok.Builder;
  * @author minm063
  * @version 2024/02/15
  */
+@Getter
 public class ApiError {
     private final String message;
 

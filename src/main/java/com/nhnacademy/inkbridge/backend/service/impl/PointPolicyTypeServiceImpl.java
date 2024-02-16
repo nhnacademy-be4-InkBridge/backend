@@ -73,13 +73,14 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     public void updatePointPolicyType(
         PointPolicyTypeUpdateRequestDto pointPolicyTypeUpdateRequestDto) {
 
-        if (!pointPolicyTypeRepository.existsById(
-            pointPolicyTypeUpdateRequestDto.getPointPolicyTypeId())) {
-            throw new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name());
-        }
+        PointPolicyType pointPolicyType = pointPolicyTypeRepository.findById(
+                pointPolicyTypeUpdateRequestDto.getPointPolicyTypeId())
+            .orElseThrow(() -> new NotFoundException(
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()));
 
-        pointPolicyTypeRepository.save(
-            PointPolicyType.updatePointPolicyType(pointPolicyTypeUpdateRequestDto));
+        pointPolicyType.setPointPolicyType(pointPolicyTypeUpdateRequestDto);
+
+        pointPolicyTypeRepository.save(pointPolicyType);
     }
 
     /**

@@ -3,16 +3,17 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.PointPolicyService;
 import java.util.List;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,8 +48,8 @@ public class PointPolicyController {
      * @return void
      */
     @PostMapping
-    public ResponseEntity<Void> createPointPolicies(
-        @Valid PointPolicyCreateRequestDto pointPolicyCreateRequestDto,
+    public ResponseEntity<Void> createPointPolicy(
+        @RequestBody @Valid PointPolicyCreateRequestDto pointPolicyCreateRequestDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
