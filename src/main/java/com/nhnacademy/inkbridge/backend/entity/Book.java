@@ -98,4 +98,22 @@ public class Book {
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;
     }
+
+    public void updateBook(String bookTitle, String bookIndex, String description, LocalDate publicatedAt,
+        String isbn, Long regularPrice, Long price, BigDecimal discountRatio, Integer stock,
+        Boolean isPackagable, BookStatus bookStatus, Publisher publisher, File thumbnailFile) {
+        this.bookTitle = bookTitle;
+        this.bookIndex = bookIndex;
+        this.description = description;
+        this.publicatedAt = publicatedAt;
+        this.isbn = isbn;
+        this.regularPrice = regularPrice;
+        this.price = price;
+        this.discountRatio = discountRatio;
+        this.stock = stock;
+        this.isPackagable = isPackagable;
+        this.bookStatus = bookStatus;
+        this.publisher = publisher;
+        this.thumbnailFile = thumbnailFile;
+    }
 }

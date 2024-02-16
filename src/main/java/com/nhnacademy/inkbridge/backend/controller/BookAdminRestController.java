@@ -1,7 +1,9 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
@@ -15,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,13 +54,25 @@ public class BookAdminRestController {
 
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
-        @Valid @RequestBody BookCreateRequestDto bookCreateRequestDto,
+        @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(BookMessageEnum.BOOK_VALID_FAIL.toString());
         }
-        bookService.createBook(bookCreateRequestDto);
+        bookService.createBook(bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PutMapping("/{bookId}")
+    public ResponseEntity<BookAdminUpdateResponseDto> updateBook(@PathVariable Long bookId,
+        @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(BookMessageEnum.BOOK_VALID_FAIL.toString());
+        }
+
+        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(
+            bookId, bookAdminUpdateRequestDto);
+        return new ResponseEntity<>(bookAdminUpdateResponseDto, HttpStatus.OK);
+    }
 }
