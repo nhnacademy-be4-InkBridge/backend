@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,21 @@ public class PointPolicy {
     @ManyToOne
     @JoinColumn(name = "point_policy_type_id")
     private PointPolicyType pointPolicyType;
+
+    /**
+     * 포인트 정책 생성자입니다.
+     *
+     * @param pointPolicyId Long
+     * @param accumulatePoint Long
+     * @param createdAt LocalDate
+     * @param pointPolicyType PointPolicyType
+     */
+    @Builder
+    public PointPolicy(Long pointPolicyId, Long accumulatePoint, LocalDate createdAt,
+        PointPolicyType pointPolicyType) {
+        this.pointPolicyId = pointPolicyId;
+        this.accumulatePoint = accumulatePoint;
+        this.createdAt = createdAt;
+        this.pointPolicyType = pointPolicyType;
+    }
 }
