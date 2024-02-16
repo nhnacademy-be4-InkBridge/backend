@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * class: SecurityConfig.
- *
+ * security 설정 클래스입니다.
  * @author minseo
  * @version 2/15/24
  */

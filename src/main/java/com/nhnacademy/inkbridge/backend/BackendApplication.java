@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
  * @author nhn
  * @version 2024/02/08
  */
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class BackendApplication {
 
     public static void main(String[] args) {
