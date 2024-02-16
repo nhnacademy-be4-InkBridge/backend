@@ -25,7 +25,7 @@ public class Coupon {
 
     @Id
     @Column(name = "coupon_id")
-    private Long couponId;
+    private String couponId;
 
     @Column(name = "coupon_name")
     private String couponName;
@@ -47,6 +47,9 @@ public class Coupon {
 
     @Column(name = "validity")
     private Integer validity;
+
+    @Column(name = "is_birth")
+    private Boolean isBirth;
 
     @OneToOne
     @JoinColumn(name = "coupon_type_id")

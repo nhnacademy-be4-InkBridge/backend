@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,10 @@ public class MemberAuth {
 
     @Column(name = "member_auth_name")
     private String memberAuthName;
+
+    @Builder(builderMethodName = "create")
+    public MemberAuth(Integer memberAuthId, String memberAuthName) {
+        this.memberAuthId = memberAuthId;
+        this.memberAuthName = memberAuthName;
+    }
 }

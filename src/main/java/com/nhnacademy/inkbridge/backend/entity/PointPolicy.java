@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,12 +30,13 @@ public class PointPolicy {
     @Column(name = "point_policy_id")
     private Long pointPolicyId;
 
-    @Column(name = "policy_type")
-    private String policyType;
-
     @Column(name = "accumulate_point")
     private Long accumulatePoint;
 
     @Column(name = "created_at")
     private LocalDate createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "point_policy_type_id")
+    private PointPolicyType pointPolicyType;
 }

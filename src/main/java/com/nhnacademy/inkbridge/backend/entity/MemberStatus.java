@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,10 @@ public class MemberStatus {
 
     @Column(name = "member_status_name")
     private String memberStatusName;
+
+    @Builder(builderMethodName = "create")
+    public MemberStatus(Integer memberStatusId, String memberStatusName) {
+        this.memberStatusId = memberStatusId;
+        this.memberStatusName = memberStatusName;
+    }
 }

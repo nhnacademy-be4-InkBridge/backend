@@ -53,13 +53,13 @@ public class BookCoupon {
     public static class Pk implements Serializable {
 
         @Column(name = "coupon_id")
-        private Long couponId;
+        private String couponId;
 
         @Column(name = "book_id")
         private Long bookId;
 
         @Builder
-        public Pk(Long couponId, Long bookId) {
+        public Pk(String couponId, Long bookId) {
             this.couponId = couponId;
             this.bookId = bookId;
         }
