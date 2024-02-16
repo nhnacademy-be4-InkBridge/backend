@@ -5,7 +5,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
@@ -57,7 +56,7 @@ public class BookAdminRestController {
         @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(BookMessageEnum.BOOK_VALID_FAIL.toString());
+            throw new ValidationException(bindingResult.toString());
         }
         bookService.createBook(bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -68,7 +67,7 @@ public class BookAdminRestController {
         @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(BookMessageEnum.BOOK_VALID_FAIL.toString());
+            throw new ValidationException(bindingResult.toString());
         }
 
         BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(

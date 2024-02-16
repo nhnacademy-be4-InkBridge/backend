@@ -8,7 +8,6 @@ package com.nhnacademy.inkbridge.backend.enums;
  */
 public enum BookMessageEnum {
     BOOK_NOT_FOUND,
-    BOOK_VALID_FAIL,
     BOOK_THUMBNAIL_NOT_FOUND,
     BOOK_PUBLISHER_NOT_FOUND,
     BOOK_STATUS_NOT_FOUND

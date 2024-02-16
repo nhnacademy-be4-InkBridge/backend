@@ -169,6 +169,8 @@ public class BookServiceImpl implements BookService {
             bookAdminUpdateRequestDto.getDiscountRatio(), bookAdminUpdateRequestDto.getStock(),
             bookAdminUpdateRequestDto.getIsPackagable(), bookStatus, publisher, thumbnail);
 
-        return BookAdminUpdateResponseDto.builder().bookId(bookId).build();
+        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = new BookAdminUpdateResponseDto();
+        bookAdminUpdateResponseDto.setBookId(bookId);
+        return bookAdminUpdateResponseDto;
     }
 }
