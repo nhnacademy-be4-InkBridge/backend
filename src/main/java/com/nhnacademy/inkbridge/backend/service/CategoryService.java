@@ -1,11 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.category.CategoryReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
-import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * class: CategoryService.
@@ -19,4 +14,5 @@ public interface CategoryService {
 
     void createCategory(CategoryCreateRequestDto request);
 
+    void deleteCategory(Long categoryId);
 }
