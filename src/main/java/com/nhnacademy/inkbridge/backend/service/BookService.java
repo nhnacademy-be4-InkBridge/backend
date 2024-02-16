@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
@@ -22,4 +23,6 @@ public interface BookService {
     Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable);
 
     void createBook(BookCreateRequestDto bookCreateRequestDto);
+
+    BookAdminReadResponseDto readBookByAdmin(Long bookId);
 }

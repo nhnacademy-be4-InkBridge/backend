@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
@@ -15,10 +16,11 @@ import com.nhnacademy.inkbridge.backend.repository.BookStatusRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import javax.transaction.Transactional;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: BookServiceImpl.
@@ -74,7 +76,7 @@ public class BookServiceImpl implements BookService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public void createBook(BookCreateRequestDto bookCreateRequestDto) {
         BookStatus bookStatus = bookStatusRepository.findById(bookCreateRequestDto.getStatusId())
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString()));
@@ -101,5 +103,19 @@ public class BookServiceImpl implements BookService {
             .build();
 
         bookRepository.save(book);
+    }
+
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    @Transactional()
+    public BookAdminReadResponseDto readBookByAdmin(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString());
+        }
+
+        return bookRepository.findBookByAdminByBookId(bookId);
     }
 }

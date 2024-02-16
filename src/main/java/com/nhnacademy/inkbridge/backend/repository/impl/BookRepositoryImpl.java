@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -7,7 +8,6 @@ import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
-import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
 import com.nhnacademy.inkbridge.backend.repository.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
@@ -39,7 +39,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QAuthor qAuthor = QAuthor.author;
         QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
         QPublisher qPublisher = QPublisher.publisher;
-        QFile qFile = QFile.file;
         QBookStatus qBookStatus = QBookStatus.bookStatus;
 
         List<BooksReadResponseDto> content = from(qBook)
@@ -49,14 +48,11 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(qBook.eq(qBookAuthor.book))
             .innerJoin(qAuthor)
             .on(qBookAuthor.author.eq(qAuthor))
-            .innerJoin(qFile)
-            .on(qFile.eq(qBook.thumbnailFile))
             .innerJoin(qBookStatus)
             .on(qBookStatus.eq(qBook.bookStatus))
             .where(qBookStatus.statusId.eq(1L)) // status가 판매
             .select(Projections.constructor(BooksReadResponseDto.class,
-                qBook.bookTitle, qBook.price, qPublisher.publisherName, qAuthor.authorName,
-                qFile.fileUrl, qFile.fileName, qFile.fileExtension))
+                qBook.bookTitle, qBook.price, qPublisher.publisherName, qAuthor.authorName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -93,5 +89,33 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .fetch();
 
         return new PageImpl<>(content, pageable, content.size());
+    }
+
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
+        QBook qBook = QBook.book;
+        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
+        QAuthor qAuthor = QAuthor.author;
+        QPublisher qPublisher = QPublisher.publisher;
+        QBookStatus qBookStatus = QBookStatus.bookStatus;
+
+        // Tag, category, file을 따로
+        return from(qBook)
+            .innerJoin(qBookAuthor)
+            .on(qBookAuthor.book.eq(qBook))
+            .innerJoin(qAuthor)
+            .on(qAuthor.eq(qBookAuthor.author))
+            .innerJoin(qPublisher)
+            .on(qPublisher.eq(qBook.publisher))
+            .where(qBook.bookId.eq(bookId))
+            .select(Projections.constructor(BookAdminReadResponseDto.class, qBook.bookTitle,
+                qBook.bookIndex, qBook.description, qBook.publicatedAt, qBook.isbn,
+                qBook.regularPrice, qBook.price, qBook.discountRatio, qBook.stock, qBook.stock,
+                qBook.isPackagable, qAuthor.authorName, qBookStatus.statusName))
+            .fetchOne();
     }
 }

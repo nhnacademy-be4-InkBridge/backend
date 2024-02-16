@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +38,15 @@ public class BookAdminRestController {
 
     @GetMapping
     public ResponseEntity<List<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
-        List<BooksAdminReadResponseDto> content = bookService.readBooksByAdmin(pageable)
+        List<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(pageable)
             .getContent();
-        return new ResponseEntity<>(content, HttpStatus.OK);
+        return new ResponseEntity<>(booksDtoByAdmin, HttpStatus.OK);
+    }
+
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookAdminReadResponseDto> readBook(@PathVariable Long bookId) {
+        BookAdminReadResponseDto bookDtoByAdmin = bookService.readBookByAdmin(bookId);
+        return new ResponseEntity<>(bookDtoByAdmin, HttpStatus.OK);
     }
 
     @PostMapping
