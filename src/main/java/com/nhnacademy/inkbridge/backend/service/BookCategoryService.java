@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryReadResponseDto;
 import java.util.List;
 
@@ -11,5 +12,7 @@ import java.util.List;
  */
 public interface BookCategoryService {
 
+    void createBookCategory(BookCategoryCreateRequestDto request);
     List<BookCategoryReadResponseDto> readBookCategory(Long bookId);
+
 }
