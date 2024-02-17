@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -9,6 +10,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,21 +56,21 @@ class PointPolicyControllerTest {
     @Test
     @DisplayName("포인트 정책 전체 조회 테스트")
     void testGetPointPolicies() throws Exception {
-        PointPolicyReadResponseDto responseDto = new PointPolicyReadResponseDto();
-        responseDto.setPointPolicyId(1L);
-        responseDto.setPolicyType("REGISTER");
-        responseDto.setAccumulatePoint(1000L);
-        responseDto.setCreatedAt(LocalDate.of(2024, 1, 1));
+        PointPolicyReadResponseDto responseDto = new PointPolicyReadResponseDto(1L, "REGISTER", 1000L, LocalDate.of(2024, 1, 1));
 
         List<PointPolicyReadResponseDto> list = new ArrayList<>();
         list.add(responseDto);
 
         given(pointPolicyService.getPointPolicies()).willReturn(list);
 
-        mockMvc.perform(get("/pointpolicy"))
+        mockMvc.perform(get("/api/pointpolicy"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$[0].pointPolicyId", equalTo(1)))
+            .andExpect(jsonPath("$[0].policyType", equalTo("REGISTER")))
+            .andExpect(jsonPath("$[0].accumulatePoint", equalTo(1000)))
+            .andExpect(jsonPath("$[0].createdAt", equalTo("2024-01-01")))
             .andDo(document("docs"));
-
     }
 
     @WithMockUser
@@ -78,7 +81,7 @@ class PointPolicyControllerTest {
         requestDto.setAccumulatePoint(-100L);
         requestDto.setPointPolicyTypeId(1);
 
-        mockMvc.perform(post("/pointpolicy")
+        mockMvc.perform(post("/api/pointpolicy")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -99,7 +102,7 @@ class PointPolicyControllerTest {
         doThrow(new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()))
             .when(pointPolicyService).createPointPolicy(any());
 
-        mockMvc.perform(post("/pointpolicy")
+        mockMvc.perform(post("/api/pointpolicy")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -119,7 +122,7 @@ class PointPolicyControllerTest {
         requestDto.setAccumulatePoint(100L);
         requestDto.setPointPolicyTypeId(1);
 
-        mockMvc.perform(post("/pointpolicy")
+        mockMvc.perform(post("/api/pointpolicy")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
