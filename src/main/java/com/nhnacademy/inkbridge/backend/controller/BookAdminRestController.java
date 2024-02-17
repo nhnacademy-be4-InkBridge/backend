@@ -38,6 +38,12 @@ public class BookAdminRestController {
         this.bookService = bookService;
     }
 
+    /**
+     * admin 도서 목록 조회 api입니다.
+     *
+     * @param pageable pagination
+     * @return ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
         List<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(pageable)
@@ -45,12 +51,25 @@ public class BookAdminRestController {
         return new ResponseEntity<>(booksDtoByAdmin, HttpStatus.OK);
     }
 
+    /**
+     * admin 도서 상세 조회 api입니다.
+     *
+     * @param bookId Long
+     * @return ResponseEntity
+     */
     @GetMapping("/{bookId}")
     public ResponseEntity<BookAdminReadResponseDto> readBook(@PathVariable Long bookId) {
         BookAdminReadResponseDto bookDtoByAdmin = bookService.readBookByAdmin(bookId);
         return new ResponseEntity<>(bookDtoByAdmin, HttpStatus.OK);
     }
 
+    /**
+     * admin 도서 등록 api입니다.
+     *
+     * @param bookAdminCreateRequestDto bookAdminCreateRequestDto
+     * @param bindingResult             validation result
+     * @return ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
         @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
@@ -62,6 +81,14 @@ public class BookAdminRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * admin 도서 업데이트 api입니다.
+     *
+     * @param bookId                    Long
+     * @param bookAdminUpdateRequestDto bookAdminUpdateRequestDto
+     * @param bindingResult             validation result
+     * @return ResponseEntity
+     */
     @PutMapping("/{bookId}")
     public ResponseEntity<BookAdminUpdateResponseDto> updateBook(@PathVariable Long bookId,
         @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,

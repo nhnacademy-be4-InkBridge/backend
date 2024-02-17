@@ -47,7 +47,7 @@ public class BookServiceImpl implements BookService {
 
 
     /**
-     * page에 따른 전체 도서를 가져오는 메서드.
+     * page에 따른 전체 도서를 가져오는 메서드입니다.
      *
      * @param pageable pageable
      * @return BooksReadResponseDto
@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * id값으로 dto에 대한 데이터를 가져오는 메서드. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을 던진다.
+     * id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을 던진다.
      *
      * @return BookReadResponseDto
      */
@@ -74,7 +74,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드.
+     * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드입니다.
      *
      * @param pageable pageable
      * @return BooksAdminReadResponseDto
@@ -86,7 +86,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * admin 페이지에서 필요한 상세 도서 관련 데이터를 가져오는 메서드. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
+     * admin 페이지에서 필요한 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
      * 던진다.
      *
      * @param bookId 도서 id, 0보다 커야 한다
@@ -103,11 +103,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 입력값에 대해 새로운 Book을 데이터베이스에 추가하는 메서드. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
+     * 입력값에 대해 새로운 Book을 데이터베이스에 추가하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
      * NotFoundException을 던진다.
      *
      * @param bookAdminCreateRequestDto BookCreateRequestDto
-     * @return nothing
      */
     @Override
     @Transactional
@@ -142,9 +141,11 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * @param bookId
-     * @param bookAdminUpdateRequestDto
-     * @return
+     * 입력값에 대해 도서 정보를 수정하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
+     * NotFoundException을 던진다.
+     *
+     * @param bookId                    Long
+     * @param bookAdminUpdateRequestDto BookAdminUpdateResponseDto
      */
     @Transactional
     @Override
@@ -169,8 +170,6 @@ public class BookServiceImpl implements BookService {
             bookAdminUpdateRequestDto.getDiscountRatio(), bookAdminUpdateRequestDto.getStock(),
             bookAdminUpdateRequestDto.getIsPackagable(), bookStatus, publisher, thumbnail);
 
-        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = new BookAdminUpdateResponseDto();
-        bookAdminUpdateResponseDto.setBookId(bookId);
-        return bookAdminUpdateResponseDto;
+        return BookAdminUpdateResponseDto.builder().bookId(bookId).build();
     }
 }

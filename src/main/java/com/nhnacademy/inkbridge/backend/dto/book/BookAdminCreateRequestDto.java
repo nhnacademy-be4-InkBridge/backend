@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * class: BookCreateRequestDto.
@@ -15,8 +13,6 @@ import lombok.Setter;
  * @version 2024/02/14
  */
 @Getter
-@Setter
-@NoArgsConstructor
 public class BookAdminCreateRequestDto {
 
     @NotBlank

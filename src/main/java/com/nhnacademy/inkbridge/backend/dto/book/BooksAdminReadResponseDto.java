@@ -2,27 +2,20 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
- * class: BookAdminReadResponse.
+ * class: BooksAdminReadResponse.
  *
  * @author minm063
  * @version 2024/02/15
  */
 @Getter
-@Setter
-@NoArgsConstructor
 public class BooksAdminReadResponseDto {
 
-    private String bookTitle;
-
-    private String authorName;
-
-    private String publisherName;
-
-    private String statusName;
+    private final String bookTitle;
+    private final String authorName;
+    private final String publisherName;
+    private final String statusName;
 
     @Builder
     public BooksAdminReadResponseDto(String bookTitle, String authorName, String publisherName,

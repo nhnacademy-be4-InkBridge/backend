@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * class: BookAdminUpdateRequestDto.
@@ -14,7 +13,6 @@ import lombok.Setter;
  * @version 2024/02/16
  */
 @Getter
-@Setter
 public class BookAdminUpdateRequestDto {
 
     @NotBlank

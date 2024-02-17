@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * class: BookAdminUpdateResponseDto.
@@ -10,8 +10,12 @@ import lombok.Setter;
  * @version 2024/02/16
  */
 @Getter
-@Setter
 public class BookAdminUpdateResponseDto {
 
-    private Long bookId;
+    private final Long bookId;
+
+    @Builder
+    public BookAdminUpdateResponseDto(Long bookId) {
+        this.bookId = bookId;
+    }
 }

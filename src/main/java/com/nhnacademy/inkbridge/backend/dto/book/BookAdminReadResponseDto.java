@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * class: BookAdminReadResponseDto.
@@ -14,35 +12,31 @@ import lombok.Setter;
  * @version 2024/02/15
  */
 @Getter
-@Setter
-@NoArgsConstructor
 public class BookAdminReadResponseDto {
 
-    private String bookTitle;
+    private final String bookTitle;
 
-    private String bookIndex;
+    private final String bookIndex;
 
-    private String description;
+    private final String description;
 
-    private LocalDate publicatedAt;
+    private final LocalDate publicatedAt;
 
-    private String isbn;
+    private final String isbn;
 
-    private Long regularPrice;
+    private final Long regularPrice;
 
-    private Long price;
+    private final Long price;
 
-    private BigDecimal discountRatio;
+    private final BigDecimal discountRatio;
 
-    private Integer stock;
+    private final Integer stock;
 
-    private Boolean isPackagable;
+    private final Boolean isPackagable;
 
-    // publisher
-    private String publisherName;
+    private final String publisherName;
 
-    // status
-    private String statusName;
+    private final String statusName;
 
     @Builder
     public BookAdminReadResponseDto(String bookTitle, String bookIndex, String description,

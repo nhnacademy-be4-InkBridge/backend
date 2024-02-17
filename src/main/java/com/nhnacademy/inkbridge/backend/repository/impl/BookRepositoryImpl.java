@@ -31,25 +31,25 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 메인 페이지용 도서 조회 메서드입니다.
+     * 메인 페이지 도서 목록 조회 메서드입니다.
      *
-     * @param pageable
-     * @return
+     * @param pageable pagination
+     * @return 메인 페이지 도서 목록 조회 데이터
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
-        QBook qBook = QBook.book;
-        QPublisher qPublisher = QPublisher.publisher;
-        QBookStatus qBookStatus = QBookStatus.bookStatus;
+        QBook book = QBook.book;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        List<BooksReadResponseDto> content = from(qBook)
-            .innerJoin(qPublisher)
-            .on(qBook.publisher.eq(qPublisher))
-            .innerJoin(qBookStatus)
-            .on(qBookStatus.eq(qBook.bookStatus))
-            .where(qBookStatus.statusId.eq(1L)) // status가 판매
+        List<BooksReadResponseDto> content = from(book)
+            .innerJoin(publisher)
+            .on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus)
+            .on(bookStatus.eq(book.bookStatus))
+            .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
-                qBook.bookTitle, qBook.price, qPublisher.publisherName))
+                book.bookTitle, book.price, publisher.publisherName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -58,54 +58,56 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 도서 조회.
+     * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
      *
-     * @param bookId
-     * @return
+     * @param bookId Long
+     * @return 도서 상세 조회 데이터
      */
     @Override
     public BookReadResponseDto findByBookId(Long bookId) {
-        QBook qBook = QBook.book;
-        QPublisher qPublisher = QPublisher.publisher;
-        QBookStatus qBookStatus = QBookStatus.bookStatus;
+        QBook book = QBook.book;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        return from(qBook)
-            .innerJoin(qPublisher)
-            .on(qPublisher.eq(qBook.publisher))
-            .innerJoin(qBookStatus)
-            .on(qBookStatus.eq(qBook.bookStatus))
-            .where(qBookStatus.statusId.eq(1L).and(qBook.bookId.eq(bookId)))
+        return from(book)
+            .innerJoin(publisher)
+            .on(publisher.eq(book.publisher))
+            .innerJoin(bookStatus)
+            .on(bookStatus.eq(book.bookStatus))
+            .where(bookStatus.statusId.eq(1L).and(book.bookId.eq(bookId)))
             .select(
-                Projections.constructor(BookReadResponseDto.class, qBook.bookTitle, qBook.bookIndex,
-                    qBook.description, qBook.publicatedAt, qBook.isbn, qBook.regularPrice,
-                    qBook.price, qBook.discountRatio, qBook.isPackagable, qPublisher.publisherName))
+                Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
+                    book.description, book.publicatedAt, book.isbn, book.regularPrice,
+                    book.price, book.discountRatio, book.isPackagable, publisher.publisherName))
             .fetchOne();
     }
 
     /**
-     * @param pageable
-     * @return
+     * admin 도서 목록 페이지 조회 메서드입니다.
+     *
+     * @param pageable pagination
+     * @return admin 도서 목록 조회 데이터
      */
     @Override
     public Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable) {
-        QBook qBook = QBook.book;
-        QAuthor qAuthor = QAuthor.author;
-        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
-        QPublisher qPublisher = QPublisher.publisher;
-        QBookStatus qBookStatus = QBookStatus.bookStatus;
+        QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        List<BooksAdminReadResponseDto> content = from(qBook)
-            .innerJoin(qBookAuthor)
-            .on(qBook.eq(qBookAuthor.book))
-            .innerJoin(qAuthor)
-            .on(qBookAuthor.author.eq(qAuthor))
-            .innerJoin(qPublisher)
-            .on(qBook.publisher.eq(qPublisher))
-            .innerJoin(qBookStatus)
-            .on(qBook.bookStatus.eq(qBookStatus))
-            .where(qBookStatus.statusId.in(1L, 2L, 3L, 4L))
-            .select(Projections.constructor(BooksAdminReadResponseDto.class, qBook.bookTitle,
-                qAuthor.authorName, qPublisher.publisherName, qBookStatus.statusName))
+        List<BooksAdminReadResponseDto> content = from(book)
+            .innerJoin(bookAuthor)
+            .on(book.eq(bookAuthor.book))
+            .innerJoin(author)
+            .on(bookAuthor.author.eq(author))
+            .innerJoin(publisher)
+            .on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus)
+            .on(book.bookStatus.eq(bookStatus))
+            .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
+            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookTitle,
+                author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -114,33 +116,34 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * @param bookId
-     * @return
+     * admin 도서 상세 페이지 조회 메서드입니다.
+     *
+     * @param bookId Long
+     * @return admin 도서 상세 조회 데이터
      */
     @Override
     public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
-        QBook qBook = QBook.book;
-        QAuthor qAuthor = QAuthor.author;
-        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
-        QPublisher qPublisher = QPublisher.publisher;
-        QBookStatus qBookStatus = QBookStatus.bookStatus;
+        QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        // Tag, category, file을 따로
-        return from(qBook)
-            .innerJoin(qPublisher)
-            .on(qPublisher.eq(qBook.publisher))
-            .where(qBook.bookId.eq(bookId))
-            .innerJoin(qBookAuthor)
-            .on(qBook.eq(qBookAuthor.book))
-            .innerJoin(qAuthor)
-            .on(qBookAuthor.author.eq(qAuthor))
-            .innerJoin(qBookStatus)
-            .on(qBook.bookStatus.eq(qBookStatus))
-            .where(qBook.bookId.eq(bookId))
-            .select(Projections.constructor(BookAdminReadResponseDto.class, qBook.bookTitle,
-                qBook.bookIndex, qBook.description, qBook.publicatedAt, qBook.isbn,
-                qBook.regularPrice, qBook.price, qBook.discountRatio, qBook.stock,
-                qBook.isPackagable, qPublisher.publisherName, qBookStatus.statusName))
+        return from(book)
+            .innerJoin(publisher)
+            .on(publisher.eq(book.publisher))
+            .where(book.bookId.eq(bookId))
+            .innerJoin(bookAuthor)
+            .on(book.eq(bookAuthor.book))
+            .innerJoin(author)
+            .on(bookAuthor.author.eq(author))
+            .innerJoin(bookStatus)
+            .on(book.bookStatus.eq(bookStatus))
+            .where(book.bookId.eq(bookId))
+            .select(Projections.constructor(BookAdminReadResponseDto.class, book.bookTitle,
+                book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                book.regularPrice, book.price, book.discountRatio, book.stock,
+                book.isPackagable, publisher.publisherName, bookStatus.statusName))
             .fetchOne();
     }
 }

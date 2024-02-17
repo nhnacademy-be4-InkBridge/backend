@@ -22,8 +22,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -57,8 +56,12 @@ class BookAdminRestControllerTest {
     @Test
     @WithMockUser
     void whenAdminReadBooks_thenReturnDtoList() throws Exception {
-        BooksAdminReadResponseDto booksAdminReadResponseDto = new BooksAdminReadResponseDto("title",
-            "author", "publisher", "status");
+        BooksAdminReadResponseDto booksAdminReadResponseDto = BooksAdminReadResponseDto.builder()
+            .bookTitle("title")
+            .authorName("author")
+            .publisherName("publisher")
+            .statusName("status")
+            .build();
         Page<BooksAdminReadResponseDto> page = new PageImpl<>(List.of(booksAdminReadResponseDto),
             pageable, 0);
         when(bookService.readBooksByAdmin(any(Pageable.class))).thenReturn(page);
@@ -75,9 +78,10 @@ class BookAdminRestControllerTest {
     @Test
     @WithMockUser
     void whenAdminReadBook_thenReturnDto() throws Exception {
-        BookAdminReadResponseDto bookAdminReadResponseDto = new BookAdminReadResponseDto("title",
-            "index", "description", LocalDate.now(), "1234567890123", 10000L, 8800L,
-            new BigDecimal("3.3"), 999, false, "publisher", "author", "판매중");
+        BookAdminReadResponseDto bookAdminReadResponseDto = BookAdminReadResponseDto.builder()
+            .bookTitle("title")
+            .build();
+
         when(bookService.readBookByAdmin(anyLong())).thenReturn(bookAdminReadResponseDto);
 
         mockMvc.perform(get("/api/admin/books/{bookId}", 1))
@@ -91,8 +95,8 @@ class BookAdminRestControllerTest {
     void whenCreateBook_thenReturnHttpStatus() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         BookAdminCreateRequestDto bookAdminCreateRequestDto = new BookAdminCreateRequestDto();
-        bookAdminCreateRequestDto.setBookTitle("title");
-        bookAdminCreateRequestDto.setIsbn("1234567890123");
+        ReflectionTestUtils.setField(bookAdminCreateRequestDto, "bookTitle", "title");
+        ReflectionTestUtils.setField(bookAdminCreateRequestDto, "isbn", "1234567890123");
 
         doNothing().when(bookService).createBook(bookAdminCreateRequestDto);
 
@@ -108,8 +112,6 @@ class BookAdminRestControllerTest {
     void givenInvalidRequest_whenCreateBook_thenThrowValidationException() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         BookAdminCreateRequestDto bookAdminCreateRequestDto = new BookAdminCreateRequestDto();
-        bookAdminCreateRequestDto.setBookTitle("");
-        bookAdminCreateRequestDto.setIsbn("1234567890");
 
         mockMvc.perform(post("/api/admin/books")
                 .with(csrf())
@@ -125,12 +127,12 @@ class BookAdminRestControllerTest {
     @WithMockUser
     void whenUpdateBook_thenReturnDto() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = new BookAdminUpdateResponseDto();
-        bookAdminUpdateResponseDto.setBookId(1L);
-
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto = new BookAdminUpdateRequestDto();
-        bookAdminUpdateRequestDto.setBookTitle("title");
-        bookAdminUpdateRequestDto.setIsbn("1234567890123");
+        ReflectionTestUtils.setField(bookAdminUpdateRequestDto, "bookTitle", "title");
+        ReflectionTestUtils.setField(bookAdminUpdateRequestDto, "isbn", "1234567890123");
+        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = BookAdminUpdateResponseDto.builder()
+            .bookId(1L)
+            .build();
 
         when(bookService.updateBookByAdmin(anyLong(),
             any(BookAdminUpdateRequestDto.class))).thenReturn(
@@ -149,13 +151,9 @@ class BookAdminRestControllerTest {
     @WithMockUser
     void givenInvalidRequest_whenUpdateBook_thenThrowValidationException() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = new BookAdminUpdateResponseDto();
-        bookAdminUpdateResponseDto.setBookId(1L);
-
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto = new BookAdminUpdateRequestDto();
-        bookAdminUpdateRequestDto.setBookTitle("");
-        bookAdminUpdateRequestDto.setIsbn("123456789");
-
+        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = BookAdminUpdateResponseDto.builder()
+            .build();
         when(bookService.updateBookByAdmin(anyLong(),
             any(BookAdminUpdateRequestDto.class))).thenReturn(
             bookAdminUpdateResponseDto);
