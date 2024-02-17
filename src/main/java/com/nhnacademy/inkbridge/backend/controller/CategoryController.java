@@ -4,9 +4,11 @@ import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateResponseDto;
-import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
+import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
+import com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CategoryService;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,7 +43,7 @@ public class CategoryController {
     public ResponseEntity<HttpStatus> createCategory(
         @Valid @RequestBody CategoryCreateRequestDto request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.toString());
+            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
         }
 
         categoryService.createCategory(request);
@@ -54,11 +56,17 @@ public class CategoryController {
         return new ResponseEntity<>(categoryReadResponseDto, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ParentCategoryReadResponseDto>> readAllCategory(){
+        List<ParentCategoryReadResponseDto> parentCategoryReadResponseDto = categoryService.readAllCategory();
+        return new ResponseEntity<>(parentCategoryReadResponseDto,HttpStatus.OK);
+    }
+
     @PutMapping("{categoryId}")
     public ResponseEntity<CategoryUpdateResponseDto> updateCategory(@PathVariable Long categoryId, @RequestBody
     CategoryUpdateRequestDto request, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult.toString());
+            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
         }
         CategoryUpdateResponseDto categoryUpdateResponseDto = categoryService.updateCategory(categoryId, request);
         return new ResponseEntity<>(categoryUpdateResponseDto, HttpStatus.OK);

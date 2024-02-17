@@ -4,12 +4,15 @@ import com.nhnacademy.inkbridge.backend.dto.category.CategoryCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryUpdateResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.service.CategoryService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +51,15 @@ public class CategoryServiceImpl implements CategoryService {
             .categoryId(currentCategory.getCategoryId())
             .categoryName(currentCategory.getCategoryName())
             .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ParentCategoryReadResponseDto> readAllCategory() {
+        List<Category> parentCategory = categoryRepository.findAllByCategoryParentIsNull();
+        return parentCategory.stream()
+            .map(ParentCategoryReadResponseDto::new)
+            .collect(Collectors.toList());
     }
 
     @Override
