@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
-import com.nhnacademy.inkbridge.backend.dto.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.impl.MemberServiceImpl;
 import javax.validation.Valid;

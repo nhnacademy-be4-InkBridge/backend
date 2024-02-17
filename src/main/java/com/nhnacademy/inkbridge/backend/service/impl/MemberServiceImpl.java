@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberAuth;
 import com.nhnacademy.inkbridge.backend.entity.MemberGrade;

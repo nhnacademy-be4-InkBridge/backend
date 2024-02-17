@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.dto.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
 
 /**
  * class: MemberService.
