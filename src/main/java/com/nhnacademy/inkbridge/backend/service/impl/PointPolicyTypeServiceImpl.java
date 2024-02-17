@@ -48,14 +48,14 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     public void createPointPolicyType(
         PointPolicyTypeCreateRequestDto pointPolicyTypeCreateRequestDto) {
 
-        if (Boolean.FALSE.equals(pointPolicyTypeRepository.existsByPolicyType(
-            pointPolicyTypeCreateRequestDto.getPolicyType()))) {
+        if (pointPolicyTypeRepository.existsByPolicyType(
+            pointPolicyTypeCreateRequestDto.getPolicyType())) {
             throw new AlreadyExistException(
                 PointPolicyMessageEnum.POINT_POLICY_TYPE_ALREADY_EXIST.name());
         }
 
         PointPolicyType pointPolicyType = PointPolicyType.builder()
-            .pointPolicyTypeId(pointPolicyTypeRepository.countAllBy())
+            .pointPolicyTypeId(Math.addExact(pointPolicyTypeRepository.countAllBy(), 1))
             .policyType(pointPolicyTypeCreateRequestDto.getPolicyType())
             .build();
 

@@ -1,7 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.pointpolicytype;
 
 import javax.validation.constraints.NotBlank;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PointPolicyTypeCreateRequestDto {
     @NotBlank
     private String policyType;
