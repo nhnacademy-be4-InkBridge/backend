@@ -14,16 +14,16 @@ import lombok.Getter;
 @Getter
 public class BookReadResponseDto {
 
-    private String bookTitle;
-    private String bookIndex;
-    private String description;
-    private LocalDate publicatedAt;
-    private String isbn;
-    private Long regularPrice;
-    private Long price;
-    private BigDecimal discountRatio;
-    private Boolean isPackagable;
-    private String publisherName;
+    private final String bookTitle;
+    private final String bookIndex;
+    private final String description;
+    private final LocalDate publicatedAt;
+    private final String isbn;
+    private final Long regularPrice;
+    private final Long price;
+    private final BigDecimal discountRatio;
+    private final Boolean isPackagable;
+    private final String publisherName;
 
     @Builder
     public BookReadResponseDto(String bookTitle, String bookIndex, String description,

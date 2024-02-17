@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author minm063
  * @version 2024/02/14
  */
-
 @RestController
 @RequestMapping("/api/books")
 public class BookRestController {
@@ -29,6 +28,12 @@ public class BookRestController {
         this.bookService = bookService;
     }
 
+    /**
+     * 메인 페이지 도서 목록 조회 api입니다.
+     *
+     * @param pageable pagination
+     * @return BooksReadResponseDto List
+     */
     @GetMapping
     public ResponseEntity<List<BooksReadResponseDto>> readBooks(Pageable pageable) {
         List<BooksReadResponseDto> content = bookService.readBooks(pageable)
@@ -36,6 +41,12 @@ public class BookRestController {
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
+    /**
+     * 도서 상세 조회 api입니다.
+     *
+     * @param bookId Long
+     * @return BookReadResponseDto
+     */
     @GetMapping("/{bookId}")
     public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId) {
         BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId);
