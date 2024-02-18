@@ -33,7 +33,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void createCategory(CategoryCreateRequestDto request) {
-        Category parentCategory = categoryRepository.findById(request.getParentId()).orElse(null);
+        Category parentCategory;
+        if (request.getParentId() == null) {
+            parentCategory = null;
+        } else {
+            parentCategory = categoryRepository.findById(request.getParentId()).orElse(null);
+        }
+
         Category newCategory = Category.create()
             .categoryName(request.getCategoryName())
             .categoryParent(parentCategory)
