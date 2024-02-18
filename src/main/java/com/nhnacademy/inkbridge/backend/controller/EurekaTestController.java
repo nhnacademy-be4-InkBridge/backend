@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/test")
 public class EurekaTestController {
 
-    @Value("${eureka.instance.instance-id}")
+    @Value("${spring.application.name}")
     private String name;
 
     @GetMapping
