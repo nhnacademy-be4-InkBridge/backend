@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,11 @@ public class Tag {
 
     @Column(name = "tag_name")
     private String tagName;
+
+
+    @Builder
+    public Tag(Long tagId, String tagName) {
+        this.tagName = tagName;
+        this.tagId = tagId;
+    }
 }
