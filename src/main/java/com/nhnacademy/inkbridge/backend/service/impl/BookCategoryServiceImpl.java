@@ -62,6 +62,5 @@ public class BookCategoryServiceImpl implements BookCategoryService {
         return bookCategoryByBookId.stream()
             .map(BookCategoryReadResponseDto::new)
             .collect(Collectors.toList());
-
     }
 }

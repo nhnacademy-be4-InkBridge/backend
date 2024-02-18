@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,36 +38,36 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<HttpStatus> createCategory(
         @Valid @RequestBody CategoryCreateRequestDto request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
         }
-
         categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("{categoryId}")
-    public ResponseEntity<CategoryReadResponseDto> readCategory(@PathVariable Long categoryId){
+    public ResponseEntity<CategoryReadResponseDto> readCategory(@PathVariable Long categoryId) {
         CategoryReadResponseDto categoryReadResponseDto = categoryService.readCategory(categoryId);
         return new ResponseEntity<>(categoryReadResponseDto, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<ParentCategoryReadResponseDto>> readAllCategory(){
-        List<ParentCategoryReadResponseDto> parentCategoryReadResponseDto = categoryService.readAllCategory();
-        return new ResponseEntity<>(parentCategoryReadResponseDto,HttpStatus.OK);
+    public ResponseEntity<List<ParentCategoryReadResponseDto>> readAllCategory() {
+        List<ParentCategoryReadResponseDto> allCategories = categoryService.readAllCategory();
+        return new ResponseEntity<>(allCategories, HttpStatus.OK);
     }
 
     @PutMapping("{categoryId}")
-    public ResponseEntity<CategoryUpdateResponseDto> updateCategory(@PathVariable Long categoryId, @RequestBody
-    CategoryUpdateRequestDto request, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
+    public ResponseEntity<CategoryUpdateResponseDto> updateCategory(@PathVariable Long categoryId,
+        @Valid @RequestBody
+        CategoryUpdateRequestDto request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
         }
-        CategoryUpdateResponseDto categoryUpdateResponseDto = categoryService.updateCategory(categoryId, request);
+        CategoryUpdateResponseDto categoryUpdateResponseDto = categoryService.updateCategory(
+            categoryId, request);
         return new ResponseEntity<>(categoryUpdateResponseDto, HttpStatus.OK);
     }
 
