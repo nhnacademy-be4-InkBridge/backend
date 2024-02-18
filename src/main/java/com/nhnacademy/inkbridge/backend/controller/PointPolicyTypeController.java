@@ -39,8 +39,7 @@ public class PointPolicyTypeController {
      * @return PointPolicyTypeReadResponseDto
      */
     @GetMapping
-    public ResponseEntity<List<PointPolicyTypeReadResponseDto>> getPointPolicyTypes() throws Exception {
-        Thread.sleep(10000);
+    public ResponseEntity<List<PointPolicyTypeReadResponseDto>> getPointPolicyTypes() {
 
         return ResponseEntity.ok(pointPolicyTypeService.getPointPolicyTypes());
     }
