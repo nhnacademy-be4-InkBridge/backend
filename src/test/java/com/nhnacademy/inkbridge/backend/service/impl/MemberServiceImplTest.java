@@ -30,6 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * class: MemberServiceImplTest.
@@ -40,6 +41,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 class MemberServiceImplTest {
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @Mock
     private MemberRepository memberRepository;
     @Mock
@@ -74,6 +77,7 @@ class MemberServiceImplTest {
         when(memberAuthRepository.findById(anyInt())).thenReturn(Optional.ofNullable(memberAuth));
         when(memberStatusRepository.findById(anyInt())).thenReturn(Optional.ofNullable(memberStatus));
         when(memberGradeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(memberGrade));
+
 
         memberService.createMember(requestDto);
 
