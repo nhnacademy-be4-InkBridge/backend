@@ -26,7 +26,7 @@ import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.*;
 /**
  * class: CouponServiceImpl.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/15
  */
 @Service

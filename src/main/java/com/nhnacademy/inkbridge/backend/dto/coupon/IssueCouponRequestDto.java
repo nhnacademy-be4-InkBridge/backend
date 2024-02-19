@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * class: IssueCouponDto.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/19
  */
 @Getter

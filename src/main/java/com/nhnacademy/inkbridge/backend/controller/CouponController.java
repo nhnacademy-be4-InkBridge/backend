@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * class: CouponController.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/16
  */
 @RestController

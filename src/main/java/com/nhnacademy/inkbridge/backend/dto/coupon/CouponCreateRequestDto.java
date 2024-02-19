@@ -9,7 +9,7 @@ import lombok.Getter;
 /**
  * class: CouponCreateRequestDTO.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/15
  */
 @Getter

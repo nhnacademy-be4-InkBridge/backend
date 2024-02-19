@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * class: MemberCouponRepository.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/19
  */
 public interface MemberCouponRepository extends JpaRepository<MemberCoupon,String> {

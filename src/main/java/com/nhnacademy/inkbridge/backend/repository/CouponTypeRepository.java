@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * class: CouponTypeRepository.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/19
  */
 public interface CouponTypeRepository extends JpaRepository<CouponType,Integer> {

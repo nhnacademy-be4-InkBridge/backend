@@ -6,7 +6,7 @@ import com.nhnacademy.inkbridge.backend.repository.CouponRepository;
 /**
  * class: CouponService.
  *
- * @author ijeongbeom
+ * @author JBum
  * @version 2024/02/15
  */
 public interface CouponService {
