@@ -167,6 +167,20 @@ class TagRestControllerTest {
 
     @Test
     @WithMockUser
+    void updateTagWhenValidationFailed() throws Exception{
+        TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
+
+        mvc.perform(put("/api/tag/{tagId}", testTagId1)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())));
+    }
+
+    @Test
+    @WithMockUser
     void updateTagWhenNotFoundTag() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName2);
