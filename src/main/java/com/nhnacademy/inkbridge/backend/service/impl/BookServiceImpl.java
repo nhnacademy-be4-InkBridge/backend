@@ -67,7 +67,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public BookReadResponseDto readBook(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString());
+            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
         return bookRepository.findByBookId(bookId);
@@ -96,7 +96,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public BookAdminReadResponseDto readBookByAdmin(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString());
+            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
         return bookRepository.findBookByAdminByBookId(bookId);
@@ -113,13 +113,13 @@ public class BookServiceImpl implements BookService {
     public void createBook(BookAdminCreateRequestDto bookAdminCreateRequestDto) {
         BookStatus bookStatus = bookStatusRepository.findById(
                 bookAdminCreateRequestDto.getStatusId())
-            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString()));
+            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
         File file = fileRepository.findById(bookAdminCreateRequestDto.getThumbnailId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.toString()));
+            () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
         Publisher publisher = publisherRepository.findById(
                 bookAdminCreateRequestDto.getThumbnailId())
             .orElseThrow(
-                () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.toString()));
+                () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
@@ -152,16 +152,16 @@ public class BookServiceImpl implements BookService {
     public BookAdminUpdateResponseDto updateBookByAdmin(Long bookId,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto) {
         Book book = bookRepository.findById(bookId)
-            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString()));
+            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
         Publisher publisher = publisherRepository.findById(
             bookAdminUpdateRequestDto.getPublisherId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.toString()));
+            () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
         BookStatus bookStatus = bookStatusRepository.findById(
             bookAdminUpdateRequestDto.getStatusId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.toString()));
+            () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
         File thumbnail = fileRepository.findById(bookAdminUpdateRequestDto.getThumbnailId())
             .orElseThrow(
-                () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.toString()));
+                () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,6 +26,7 @@ import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author minm063
  * @version 2024/02/16
  */
+@AutoConfigureRestDocs
 @WebMvcTest(BookAdminRestController.class)
 class BookAdminRestControllerTest {
 
@@ -72,7 +75,8 @@ class BookAdminRestControllerTest {
             .andExpect(jsonPath("$[0].bookTitle", equalTo("title")))
             .andExpect(jsonPath("$[0].authorName", equalTo("author")))
             .andExpect(jsonPath("$[0].publisherName", equalTo("publisher")))
-            .andExpect(jsonPath("$[0].statusName", equalTo("status")));
+            .andExpect(jsonPath("$[0].statusName", equalTo("status")))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -87,7 +91,8 @@ class BookAdminRestControllerTest {
         mockMvc.perform(get("/api/admin/books/{bookId}", 1))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.bookTitle", equalTo("title")));
+            .andExpect(jsonPath("$.bookTitle", equalTo("title")))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -104,7 +109,8 @@ class BookAdminRestControllerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bookAdminCreateRequestDto)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andDo(document("docs"));
     }
 
     @Test
@@ -120,7 +126,8 @@ class BookAdminRestControllerTest {
                 .content(objectMapper.writeValueAsString(bookAdminCreateRequestDto)))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
-                result -> assertTrue(result.getResolvedException() instanceof ValidationException));
+                result -> assertTrue(result.getResolvedException() instanceof ValidationException))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -143,8 +150,8 @@ class BookAdminRestControllerTest {
                 .content(objectMapper.writeValueAsString(bookAdminUpdateRequestDto))
                 .with(csrf()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.bookId", equalTo(1)));
-
+            .andExpect(jsonPath("$.bookId", equalTo(1)))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -165,7 +172,8 @@ class BookAdminRestControllerTest {
                 .with(csrf()))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
-                result -> assertTrue(result.getResolvedException() instanceof ValidationException));
+                result -> assertTrue(result.getResolvedException() instanceof ValidationException))
+            .andDo(document("docs"));
     }
 
 

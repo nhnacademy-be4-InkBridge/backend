@@ -8,6 +8,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -75,7 +76,8 @@ public class BookAdminRestController {
         @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.toString());
+            throw new ValidationException(
+                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
         bookService.createBook(bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -94,7 +96,8 @@ public class BookAdminRestController {
         @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.toString());
+            throw new ValidationException(
+                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
 
         BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(
