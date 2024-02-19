@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.bookcategory;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class BookCategoryDeleteRequestDto {
     private Long categoryId;
 }

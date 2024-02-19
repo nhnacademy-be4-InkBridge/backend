@@ -1,11 +1,9 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -100,15 +98,15 @@ class CategoryControllerTest {
     @DisplayName("Category 모든 데이터 조회 테스트")
     void When_ReadAllCategory_Expect_Success() throws Exception {
         Category IT = Category.create().categoryName("IT").build();
-        ReflectionTestUtils.setField(IT,"categoryId",1L);
+        ReflectionTestUtils.setField(IT, "categoryId", 1L);
 
         Category java = Category.create().categoryName("자바").categoryParent(IT).build();
-        ReflectionTestUtils.setField(java,"categoryId",2L);
+        ReflectionTestUtils.setField(java, "categoryId", 2L);
 
         Category javascript = Category.create().categoryName("자바스크립트").categoryParent(IT).build();
-        ReflectionTestUtils.setField(javascript,"categoryId",3L);
+        ReflectionTestUtils.setField(javascript, "categoryId", 3L);
 
-        ReflectionTestUtils.setField(IT,"categoryChildren",List.of(java,javascript));
+        ReflectionTestUtils.setField(IT, "categoryChildren", List.of(java, javascript));
 
         ParentCategoryReadResponseDto response = new ParentCategoryReadResponseDto(IT);
         when(categoryService.readAllCategory()).thenReturn(List.of(response));
