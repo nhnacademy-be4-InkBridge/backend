@@ -8,7 +8,6 @@ import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseD
 import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
-import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.service.CategoryService;
 import java.util.List;
@@ -77,19 +76,5 @@ public class CategoryServiceImpl implements CategoryService {
         currentCategory.updateCategory(request.getCategoryName());
 
         return CategoryUpdateResponseDto.builder().categoryName(request.getCategoryName()).build();
-    }
-
-    @Override
-    @Transactional
-    public void deleteCategory(Long categoryId) {
-        Category currentCategory = categoryRepository.findById(categoryId).orElse(null);
-        if (currentCategory == null) {
-            throw new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString());
-        }
-        if (currentCategory.getCategoryChildren() == null) {
-            throw new ValidationException(CategoryMessageEnum.SUB_CATEGORY_EXIST.toString());
-        }
-
-        categoryRepository.delete(currentCategory);
     }
 }

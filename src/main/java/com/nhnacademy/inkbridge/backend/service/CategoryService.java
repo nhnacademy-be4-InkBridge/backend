@@ -23,6 +23,4 @@ public interface CategoryService {
     List<ParentCategoryReadResponseDto> readAllCategory();
 
     CategoryUpdateResponseDto updateCategory(Long categoryId, CategoryUpdateRequestDto request);
-
-    void deleteCategory(Long categoryId);
 }

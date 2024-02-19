@@ -70,10 +70,4 @@ public class CategoryController {
             categoryId, request);
         return new ResponseEntity<>(categoryUpdateResponseDto, HttpStatus.OK);
     }
-
-    @DeleteMapping("{categoryId}")
-    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable Long categoryId) {
-        categoryService.deleteCategory(categoryId);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 }

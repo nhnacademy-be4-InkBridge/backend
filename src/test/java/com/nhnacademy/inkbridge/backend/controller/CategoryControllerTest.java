@@ -171,16 +171,16 @@ class CategoryControllerTest {
         verify(categoryService, times(0)).updateCategory(categoryId, request);
     }
 
-    @Test
-    @WithMockUser
-    @DisplayName("category 삭제 테스트 - 성공")
-    void When_DeleteCategory_Expect_Success() throws Exception {
-        Long categoryId = 1L;
-
-        mockMvc.perform(delete("/api/category/1")
-                .with(csrf()))
-            .andExpect(status().isOk());
-
-        verify(categoryService, times(1)).deleteCategory(categoryId);
-    }
+//    @Test
+//    @WithMockUser
+//    @DisplayName("category 삭제 테스트 - 성공")
+//    void When_DeleteCategory_Expect_Success() throws Exception {
+//        Long categoryId = 1L;
+//
+//        mockMvc.perform(delete("/api/category/1")
+//                .with(csrf()))
+//            .andExpect(status().isOk());
+//
+//        verify(categoryService, times(1)).deleteCategory(categoryId);
+//    }
 }
