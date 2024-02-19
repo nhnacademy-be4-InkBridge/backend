@@ -1,7 +1,9 @@
 package com.nhnacademy.inkbridge.backend.dto.tag;
 
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * class: TagUpdateRequestDto.
@@ -14,5 +16,7 @@ import lombok.Setter;
 @Setter
 public class TagUpdateRequestDto {
 
+    @NotBlank
+    @Length(max = 10)
     String tagName;
 }

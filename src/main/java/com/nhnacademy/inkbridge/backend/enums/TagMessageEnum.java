@@ -7,5 +7,5 @@ package com.nhnacademy.inkbridge.backend.enums;
  * @version 2/15/24
  */
 public enum TagMessageEnum {
-    TAG_NOT_FOUND, TAG_ALREADY_EXIST
+    TAG_NOT_FOUND, TAG_ALREADY_EXIST, TAG_TYPE_VALID_FAIL
 }
