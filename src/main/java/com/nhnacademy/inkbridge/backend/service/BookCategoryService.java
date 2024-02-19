@@ -15,4 +15,5 @@ public interface BookCategoryService {
     void createBookCategory(BookCategoryCreateRequestDto request);
     List<BookCategoryReadResponseDto> readBookCategory(Long bookId);
 
+    void deleteBookCategory(Long bookId);
 }
