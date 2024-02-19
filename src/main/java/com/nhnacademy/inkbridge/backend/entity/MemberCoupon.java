@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,4 +45,14 @@ public class MemberCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @Builder
+    public MemberCoupon(String memberCouponId, LocalDateTime expiredAt, LocalDateTime issuedAt,
+        LocalDateTime usedAt, Member member, Coupon coupon) {
+        this.memberCouponId = memberCouponId;
+        this.expiredAt = expiredAt;
+        this.issuedAt = issuedAt;
+        this.usedAt = usedAt;
+        this.member = member;
+        this.coupon = coupon;
+    }
 }
