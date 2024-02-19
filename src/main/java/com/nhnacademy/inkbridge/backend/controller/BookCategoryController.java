@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryDeleteRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookCategoryService;
 import java.util.List;
@@ -45,8 +46,9 @@ public class BookCategoryController {
     }
 
     @DeleteMapping("{bookId}")
-    public ResponseEntity<HttpStatus> deleteBookCategory(@PathVariable Long bookId){
-        bookCategoryService.deleteBookCategory(bookId);
+    public ResponseEntity<HttpStatus> deleteBookCategory(@PathVariable Long bookId, @RequestBody
+        BookCategoryDeleteRequestDto request){
+        bookCategoryService.deleteBookCategory(bookId,request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

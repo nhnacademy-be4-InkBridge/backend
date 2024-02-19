@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryDeleteRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory;
@@ -48,7 +49,8 @@ public class BookCategoryServiceImpl implements BookCategoryService {
             .orElseThrow(() -> new NotFoundException(
                 BookMessageEnum.BOOK_NOT_FOUND.toString()));
 
-        BookCategory bookCategory = BookCategory.create().pk(pk).category(category).book(book).build();
+        BookCategory bookCategory = BookCategory.create().pk(pk).category(category).book(book)
+            .build();
         bookCategoryRepository.save(bookCategory);
     }
 
@@ -67,12 +69,16 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 
     @Override
     @Transactional
-    public void deleteBookCategory(Long bookId) {
+    public void deleteBookCategory(Long bookId, BookCategoryDeleteRequestDto request) {
         List<BookCategory> bookCategories = bookCategoryRepository.findByPk_BookId(bookId);
-        if(bookCategories ==null){
+        if (bookCategories == null) {
             throw new NotFoundException(BookCategoryMessageEnum.BOOK_CATEGORY_NOT_FOUND.toString());
         }
 
-        bookCategoryRepository.deleteByPk_BookId(bookId);
+        BookCategory.Pk pk = BookCategory.Pk.builder().bookId(bookId)
+            .categoryId(request.getCategoryId()).build();
+        bookCategoryRepository.deleteByPk(pk);
     }
+
+
 }
