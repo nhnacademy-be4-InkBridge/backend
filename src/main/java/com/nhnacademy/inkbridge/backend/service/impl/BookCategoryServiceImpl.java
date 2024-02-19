@@ -6,7 +6,6 @@ import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoryReadRespons
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory;
 import com.nhnacademy.inkbridge.backend.entity.Category;
-import com.nhnacademy.inkbridge.backend.enums.BookCategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
@@ -57,12 +56,12 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<BookCategoryReadResponseDto> readBookCategory(Long bookId) {
-        List<BookCategory> bookCategoryByBookId = bookCategoryRepository.findByPk_BookId(bookId);
-        if (bookCategoryByBookId == null) {
+        if (!bookCategoryRepository.existsByPk_BookId(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString());
         }
+        List<BookCategory> bookCategories = bookCategoryRepository.findByPk_BookId(bookId);
 
-        return bookCategoryByBookId.stream()
+        return bookCategories.stream()
             .map(BookCategoryReadResponseDto::new)
             .collect(Collectors.toList());
     }
@@ -70,15 +69,12 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     @Override
     @Transactional
     public void deleteBookCategory(Long bookId, BookCategoryDeleteRequestDto request) {
-        List<BookCategory> bookCategories = bookCategoryRepository.findByPk_BookId(bookId);
-        if (bookCategories == null) {
-            throw new NotFoundException(BookCategoryMessageEnum.BOOK_CATEGORY_NOT_FOUND.toString());
+        if (!bookCategoryRepository.existsByPk_BookId(bookId)) {
+            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.toString());
         }
 
         BookCategory.Pk pk = BookCategory.Pk.builder().bookId(bookId)
             .categoryId(request.getCategoryId()).build();
         bookCategoryRepository.deleteByPk(pk);
     }
-
-
 }

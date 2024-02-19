@@ -1,0 +1,41 @@
+POST http://localhost:8080/api/category
+Content-Type: application/json
+
+{
+  "categoryName": "상의",
+  "parentId": null
+}
+
+###
+PUT http://localhost:8080/api/category/4
+Content-Type: application/json
+
+{
+  "categoryName" : "updateTest"
+}
+
+###
+DELETE http://localhost:8080/api/category/4
+
+###
+GET http://localhost:8080/api/category
+
+###
+POST http://localhost:8080/api/book-category
+Content-Type: application/json
+
+{
+  "categoryId": 3,
+  "bookId": 3
+}
+
+###
+GET http://localhost:8080/api/book-category/1
+
+###
+DELETE http://localhost:8080/api/book-category/3
+Content-Type: application/json
+
+{
+  "categoryId": 3
+}
