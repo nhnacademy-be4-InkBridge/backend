@@ -63,7 +63,7 @@ class PointPolicyControllerTest {
 
         given(pointPolicyService.getPointPolicies()).willReturn(list);
 
-        mockMvc.perform(get("/api/pointpolicy"))
+        mockMvc.perform(get("/api/point-policies"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].pointPolicyId", equalTo(1)))
@@ -81,7 +81,7 @@ class PointPolicyControllerTest {
         requestDto.setAccumulatePoint(-100L);
         requestDto.setPointPolicyTypeId(1);
 
-        mockMvc.perform(post("/api/pointpolicy")
+        mockMvc.perform(post("/api/point-policies")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -102,7 +102,7 @@ class PointPolicyControllerTest {
         doThrow(new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()))
             .when(pointPolicyService).createPointPolicy(any());
 
-        mockMvc.perform(post("/api/pointpolicy")
+        mockMvc.perform(post("/api/point-policies")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -122,7 +122,7 @@ class PointPolicyControllerTest {
         requestDto.setAccumulatePoint(100L);
         requestDto.setPointPolicyTypeId(1);
 
-        mockMvc.perform(post("/api/pointpolicy")
+        mockMvc.perform(post("/api/point-policies")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

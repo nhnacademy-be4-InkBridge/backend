@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/15
  */
 @RestController
-@RequestMapping("/api/point-policy-type")
+@RequestMapping("/api/point-policy-types")
 @RequiredArgsConstructor
 public class PointPolicyTypeController {
 

@@ -62,7 +62,7 @@ class PointPolicyTypeControllerTest {
 
         given(pointPolicyTypeService.getPointPolicyTypes()).willReturn(list);
 
-        mockMvc.perform(get("/api/point-policy-type")
+        mockMvc.perform(get("/api/point-policy-types")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -78,7 +78,7 @@ class PointPolicyTypeControllerTest {
         PointPolicyTypeCreateRequestDto requestDto = new PointPolicyTypeCreateRequestDto();
         requestDto.setPolicyType("");
 
-        mockMvc.perform(post("/api/point-policy-type")
+        mockMvc.perform(post("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ class PointPolicyTypeControllerTest {
             PointPolicyMessageEnum.POINT_POLICY_TYPE_ALREADY_EXIST.name()))
             .when(pointPolicyTypeService).createPointPolicyType(any());
 
-        mockMvc.perform(post("/api/point-policy-type")
+        mockMvc.perform(post("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class PointPolicyTypeControllerTest {
         PointPolicyTypeCreateRequestDto requestDto = new PointPolicyTypeCreateRequestDto();
         requestDto.setPolicyType("REGISTER");
 
-        mockMvc.perform(post("/api/point-policy-type")
+        mockMvc.perform(post("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -132,7 +132,7 @@ class PointPolicyTypeControllerTest {
         requestDto.setPointPolicyTypeId(1);
         requestDto.setPolicyType("");
 
-        mockMvc.perform(put("/api/point-policy-type")
+        mockMvc.perform(put("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -153,7 +153,7 @@ class PointPolicyTypeControllerTest {
         doThrow(new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()))
             .when(pointPolicyTypeService).updatePointPolicyType(any());
 
-        mockMvc.perform(put("/api/point-policy-type")
+        mockMvc.perform(put("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -171,7 +171,7 @@ class PointPolicyTypeControllerTest {
         requestDto.setPointPolicyTypeId(1);
         requestDto.setPolicyType("REVIEW");
 
-        mockMvc.perform(put("/api/point-policy-type")
+        mockMvc.perform(put("/api/point-policy-types")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -186,7 +186,7 @@ class PointPolicyTypeControllerTest {
         doThrow(new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()))
             .when(pointPolicyTypeService).deletePointPolicyTypeById(anyInt());
 
-        mockMvc.perform(delete("/api/point-policy-type/{pointPolicyTypeId}", 1)
+        mockMvc.perform(delete("/api/point-policy-types/{pointPolicyTypeId}", 1)
                 .with(csrf()))
             .andExpect(status().isNotFound())
             .andExpect(exception -> assertThat(exception.getResolvedException())
@@ -197,7 +197,7 @@ class PointPolicyTypeControllerTest {
     @Test
     @DisplayName("포인트 정책 유형 삭제 - 성공")
     void testDeletePointPolicyType_success() throws Exception {
-        mockMvc.perform(delete("/api/point-policy-type/{pointPolicyTypeId}", 1)
+        mockMvc.perform(delete("/api/point-policy-types/{pointPolicyTypeId}", 1)
                 .with(csrf()))
             .andExpect(status().isOk());
     }
