@@ -20,6 +20,6 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon,Strin
      * @param member 쿠폰 발급 여부를 확인할 회원
      * @return 해당 회원이 해당 쿠폰을 이미 발급받았으면 true, 그렇지 않으면 false를 반환합니다.
      */
-    boolean existsByCouponAndMemberAnd(Coupon coupon, Member member);
+    boolean existsByCouponAndMember(Coupon coupon, Member member);
 
 }

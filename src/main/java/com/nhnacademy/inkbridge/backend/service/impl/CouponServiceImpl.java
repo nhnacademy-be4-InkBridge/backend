@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -41,8 +42,8 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: CouponServiceImpl.
@@ -101,12 +102,16 @@ public class CouponServiceImpl implements CouponService {
      * @throws NotFoundException 요청한 책이 존재하지 않는 경우 예외 발생
      */
     @Override
+    @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
-        CouponType couponType = Optional.ofNullable(
-                couponTypeRepository.getReferenceById(couponCreateRequestDto.getCouponTypeId()))
+        CouponType couponType =
+                couponTypeRepository.findById(couponCreateRequestDto.getCouponTypeId())
             .orElseThrow(() -> new NotFoundException(
                 String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
                     COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
+        if(couponRepository.existsByCouponName(couponCreateRequestDto.getCouponName())){
+           throw new UsedException(COUPON_DUPLICATED.getMessage());
+        }
         Coupon newCoupon = Coupon.builder()
             .couponId(generateCoupon())
             .couponType(couponType)
@@ -156,7 +161,7 @@ public class CouponServiceImpl implements CouponService {
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
                     issueCouponDto.getMemberId())));
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
-        if (memberCouponRepository.existsByCouponAndMemberAnd(coupon, member)) {
+        if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()

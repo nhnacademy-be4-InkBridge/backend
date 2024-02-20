@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version 2024/02/15
  */
 public interface CouponRepository extends JpaRepository<Coupon,String> {
-
+    boolean existsByCouponName(String name);
 }

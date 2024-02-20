@@ -15,8 +15,9 @@ public enum CouponMessageEnum {
     COUPON_ISSUED_EXIST("해당 유저는 이미 발급받은 쿠폰입니다"),
     COUPON_ISSUE_PERIOD_NOT_STARTED("쿠폰 발급 시작 기간이 아닙니다."),
     COUPON_ISSUE_PERIOD_EXPIRED("쿠폰 발급 기간이 지났습니다."),
-    COUPON_ALREADY_USED("이미 사용된 쿠폰입니다.");
+    COUPON_ALREADY_USED("이미 사용된 쿠폰입니다."),
 
+    COUPON_DUPLICATED("이미 생산된 이름을 가진 쿠폰입니다");
 
     private final String message;
 
