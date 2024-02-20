@@ -41,7 +41,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public TagCreateResponseDto createTag(TagCreateRequestDto newTag) {
         if (Boolean.TRUE.equals(tagRepository.existsByTagName(newTag.getTagName()))) {
-            throw new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.name());
+            throw new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.getMessage());
         }
         Tag tag = Tag.builder().tagName(newTag.getTagName()).build();
         Tag savedTag = tagRepository.save(tag);
@@ -73,10 +73,10 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public TagUpdateResponseDto updateTag(Long tagId, TagUpdateRequestDto newTag) {
         if (!tagRepository.existsById(tagId)) {
-            throw new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name());
+            throw new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.getMessage());
         }
         if (Boolean.TRUE.equals(tagRepository.existsByTagName(newTag.getTagName()))) {
-            throw new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.name());
+            throw new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.getMessage());
         }
         Tag tag = Tag.builder().tagId(tagId).tagName(newTag.getTagName()).build();
         return TagUpdateResponseDto.builder().tag(tagRepository.save(tag)).build();
@@ -93,7 +93,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public TagDeleteResponseDto deleteTag(Long tagId) {
         if (!tagRepository.existsById(tagId)) {
-            throw new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name());
+            throw new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.getMessage());
         }
         tagRepository.deleteTag(tagId);
         return TagDeleteResponseDto.builder().message(tagId + " is deleted").build();

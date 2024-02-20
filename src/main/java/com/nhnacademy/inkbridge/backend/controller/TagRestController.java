@@ -55,7 +55,7 @@ public class TagRestController {
     public ResponseEntity<TagCreateResponseDto> createTag(
         @RequestBody @Valid TagCreateRequestDto newTag, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(TagMessageEnum.TAG_TYPE_VALID_FAIL.name());
+            throw new ValidationException(TagMessageEnum.TAG_TYPE_VALID_FAIL.getMessage());
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(tagService.createTag(newTag));
     }
@@ -89,7 +89,7 @@ public class TagRestController {
     public ResponseEntity<TagUpdateResponseDto> modifyTag(@PathVariable(name = "tagId") Long tagId,
         @RequestBody @Valid TagUpdateRequestDto newTag, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(TagMessageEnum.TAG_TYPE_VALID_FAIL.name());
+            throw new ValidationException(TagMessageEnum.TAG_TYPE_VALID_FAIL.getMessage());
         }
         return ResponseEntity.ok(tagService.updateTag(tagId, newTag));
     }
