@@ -1,10 +1,12 @@
 package com.nhnacademy.inkbridge.backend.dto.coupon;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * class: CouponCreateRequestDTO.
@@ -13,6 +15,8 @@ import lombok.Getter;
  * @version 2024/02/15
  */
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CouponCreateRequestDto {
     @NotNull
     private String couponName;
@@ -32,4 +36,7 @@ public class CouponCreateRequestDto {
     private Integer couponTypeId;
     @NotNull
     private Boolean isBirth;
+
+    private List<Long> categoryIds;
+    private List<Long> bookIds;
 }
