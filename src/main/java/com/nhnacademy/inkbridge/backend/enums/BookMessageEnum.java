@@ -7,6 +7,14 @@ package com.nhnacademy.inkbridge.backend.enums;
  * @version 2024/02/15
  */
 public enum BookMessageEnum {
-    BOOK_NOT_FOUND,
-    BOOK_VALID_FAIL
+    BOOK_NOT_FOUND("책를 찾을 수 없습니다.");
+    private final String message;
+
+    BookMessageEnum(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
