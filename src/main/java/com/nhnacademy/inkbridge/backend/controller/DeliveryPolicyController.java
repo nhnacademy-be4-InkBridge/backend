@@ -68,7 +68,7 @@ public class DeliveryPolicyController {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
-                DeliveryPolicyMessageEnum.DELIVERY_POLICY_VALID_FAIL.name());
+                DeliveryPolicyMessageEnum.DELIVERY_VALID_FAIL.getMessage());
         }
 
         deliveryPolicyService.createDeliveryPolicy(deliveryPolicyCreateRequestDto);

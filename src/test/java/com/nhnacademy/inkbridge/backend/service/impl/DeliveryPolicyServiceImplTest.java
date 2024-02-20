@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,16 +41,18 @@ class DeliveryPolicyServiceImplTest {
     @Test
     @DisplayName("배송비 정책 전체 조회 메소드")
     void testGetDeliveryPolicies() {
-        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
 
-        given(deliveryPolicyRepository.findAllDeliveryPolicyBy()).willReturn(List.of(responseDto));
+        DeliveryPolicyReadResponseDto responseDto1 = ReflectionUtils.newInstance(
+            DeliveryPolicyReadResponseDto.class,
+            1L, 1000L, LocalDate.of(2024, 1,1));
+
+        given(deliveryPolicyRepository.findAllDeliveryPolicyBy()).willReturn(List.of(responseDto1));
 
         List<DeliveryPolicyReadResponseDto> result = deliveryPolicyService.getDeliveryPolicies();
 
         assertAll(
             () -> assertEquals(1, result.size()),
-            () -> assertEquals(responseDto, result.get(0))
+            () -> assertEquals(responseDto1, result.get(0))
         );
 
         verify(deliveryPolicyRepository, times(1)).findAllDeliveryPolicyBy();

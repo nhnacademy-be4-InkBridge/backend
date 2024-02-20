@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 public class DeliveryPolicyCreateRequestDto {
 
-    @NotNull
-    @Min(0)
+    @NotNull(message = "배송비는 필수 입력 항목입니다.")
+    @Min(value = 0L, message = "배송비는 음수일 수 없습니다.")
     private Long deliveryPrice;
 }
