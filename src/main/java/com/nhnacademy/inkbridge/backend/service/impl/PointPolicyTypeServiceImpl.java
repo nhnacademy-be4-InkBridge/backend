@@ -51,7 +51,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
         if (pointPolicyTypeRepository.existsByPolicyType(
             pointPolicyTypeCreateRequestDto.getPolicyType())) {
             throw new AlreadyExistException(
-                PointPolicyMessageEnum.POINT_POLICY_TYPE_ALREADY_EXIST.name());
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_ALREADY_EXIST.getMessage());
         }
 
         PointPolicyType pointPolicyType = PointPolicyType.builder()
@@ -76,7 +76,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
         PointPolicyType pointPolicyType = pointPolicyTypeRepository.findById(
                 pointPolicyTypeUpdateRequestDto.getPointPolicyTypeId())
             .orElseThrow(() -> new NotFoundException(
-                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()));
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
 
         pointPolicyType.setPointPolicyType(pointPolicyTypeUpdateRequestDto);
 
@@ -93,7 +93,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     @Override
     public void deletePointPolicyTypeById(Integer pointPolicyTypeId) {
         if (!pointPolicyTypeRepository.existsById(pointPolicyTypeId)) {
-            throw new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.name());
+            throw new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage());
         }
 
         pointPolicyTypeRepository.deleteById(pointPolicyTypeId);

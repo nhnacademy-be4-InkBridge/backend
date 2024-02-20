@@ -80,7 +80,7 @@ public class PointPolicyTypeController {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
-                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.name());
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.getMessage());
         }
 
         pointPolicyTypeService.updatePointPolicyType(pointPolicyTypeUpdateRequestDto);

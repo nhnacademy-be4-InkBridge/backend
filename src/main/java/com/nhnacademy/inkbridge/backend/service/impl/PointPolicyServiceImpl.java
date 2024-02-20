@@ -51,7 +51,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
         PointPolicyType pointPolicyType = pointPolicyTypeRepository.findById(
             pointPolicyCreateRequestDto.getPointPolicyTypeId()
         ).orElseThrow(() -> new NotFoundException(
-            PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()));
+            PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
 
         pointPolicyRepository.save(PointPolicy.builder()
             .accumulatePoint(pointPolicyCreateRequestDto.getAccumulatePoint())

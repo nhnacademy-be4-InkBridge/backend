@@ -53,7 +53,8 @@ public class PointPolicyController {
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(PointPolicyMessageEnum.POINT_POLICY_VALID_FAIL.name());
+            throw new ValidationException(
+                PointPolicyMessageEnum.POINT_POLICY_VALID_FAIL.getMessage());
         }
 
         pointPolicyService.createPointPolicy(pointPolicyCreateRequestDto);
