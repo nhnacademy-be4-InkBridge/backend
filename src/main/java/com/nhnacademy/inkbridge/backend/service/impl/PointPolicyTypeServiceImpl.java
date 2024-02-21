@@ -3,12 +3,15 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicytype.PointPolicyTypeCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicytype.PointPolicyTypeReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicytype.PointPolicyTypeUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
 import com.nhnacademy.inkbridge.backend.service.PointPolicyTypeService;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
 
     private final PointPolicyTypeRepository pointPolicyTypeRepository;
+    private final PointPolicyRepository pointPolicyRepository;
 
     /**
      * 포인트 정책 유형 조회 메소드 입니다.
@@ -59,7 +63,14 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
             .policyType(pointPolicyTypeCreateRequestDto.getPolicyType())
             .build();
 
+        PointPolicy pointPolicy = PointPolicy.builder()
+            .accumulatePoint(pointPolicyTypeCreateRequestDto.getAccumulatePoint())
+            .createdAt(LocalDate.now())
+            .pointPolicyType(pointPolicyType)
+            .build();
+
         pointPolicyTypeRepository.save(pointPolicyType);
+        pointPolicyRepository.save(pointPolicy);
     }
 
     /**

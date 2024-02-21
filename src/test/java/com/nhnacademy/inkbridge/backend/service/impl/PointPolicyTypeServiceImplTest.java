@@ -13,6 +13,7 @@ import com.nhnacademy.inkbridge.backend.dto.pointpolicytype.PointPolicyTypeUpdat
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,9 @@ class PointPolicyTypeServiceImplTest {
 
     @Mock
     PointPolicyTypeRepository pointPolicyTypeRepository;
+
+    @Mock
+    PointPolicyRepository pointPolicyRepository;
 
     @Test
     @DisplayName("포인트 정책 유형 조회 테스트")
@@ -80,6 +84,7 @@ class PointPolicyTypeServiceImplTest {
 
         verify(pointPolicyTypeRepository, times(1)).existsByPolicyType("REGISTER");
         verify(pointPolicyTypeRepository, times(1)).save(any());
+        verify(pointPolicyRepository, times(1)).save(any());
     }
 
     @Test
