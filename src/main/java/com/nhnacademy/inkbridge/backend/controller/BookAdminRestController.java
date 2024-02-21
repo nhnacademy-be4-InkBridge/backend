@@ -10,10 +10,12 @@ import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/15
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/books")
 public class BookAdminRestController {
@@ -75,9 +78,10 @@ public class BookAdminRestController {
     public ResponseEntity<HttpStatus> createBook(
         @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(
-                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        if (bindingResult.hasErrors() || bindingResult.getErrorCount() != 0) {
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         bookService.createBook(bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -95,11 +99,11 @@ public class BookAdminRestController {
     public ResponseEntity<BookAdminUpdateResponseDto> updateBook(@PathVariable Long bookId,
         @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(
-                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        if (bindingResult.hasErrors() || bindingResult.getErrorCount() != 0) {
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
-
         BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(
             bookId, bookAdminUpdateRequestDto);
         return new ResponseEntity<>(bookAdminUpdateResponseDto, HttpStatus.OK);
