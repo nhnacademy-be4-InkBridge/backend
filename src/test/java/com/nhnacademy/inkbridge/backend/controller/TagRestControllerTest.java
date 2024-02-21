@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -171,7 +170,7 @@ class TagRestControllerTest {
 
     @Test
     @WithMockUser
-    void updateTagWhenValidationFailed() throws Exception{
+    void updateTagWhenValidationFailed() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
 
         mvc.perform(put("/api/tag/{tagId}", testTagId1)
@@ -235,7 +234,7 @@ class TagRestControllerTest {
 
     @Test
     @WithMockUser
-    void deleteTagWhenNotFound() throws Exception{
+    void deleteTagWhenNotFound() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenThrow(
             new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name()));
         mvc.perform(delete("/api/tag/{tagId}", testTagId1)
