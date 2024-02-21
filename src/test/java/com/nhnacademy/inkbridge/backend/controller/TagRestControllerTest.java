@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -89,9 +90,9 @@ class TagRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
-            .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("tagName", equalTo("testTag")));
+            .andExpect(jsonPath("tagName", equalTo("testTag")))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -104,9 +105,9 @@ class TagRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
-            .andDo(print())
             .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -123,7 +124,8 @@ class TagRestControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newTestTag)))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.name())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -142,7 +144,8 @@ class TagRestControllerTest {
             .andExpect(jsonPath("$[0].tagName", equalTo(tagList.get(0).getTagName())))
             .andExpect(jsonPath("$[0].tagId", equalTo(tagList.get(0).getTagId().intValue())))
             .andExpect(jsonPath("$[1].tagName", equalTo(tagList.get(1).getTagName())))
-            .andExpect(jsonPath("$[1].tagId", equalTo(tagList.get(1).getTagId().intValue())));
+            .andExpect(jsonPath("$[1].tagId", equalTo(tagList.get(1).getTagId().intValue())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -161,7 +164,8 @@ class TagRestControllerTest {
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("tagId", equalTo(testTagId1.intValue())))
-            .andExpect(jsonPath("tagName", equalTo(testTagName2)));
+            .andExpect(jsonPath("tagName", equalTo(testTagName2)))
+            .andDo(document("docs"));
 
     }
 
@@ -176,7 +180,8 @@ class TagRestControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -193,7 +198,8 @@ class TagRestControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -210,7 +216,8 @@ class TagRestControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.name())))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -222,7 +229,8 @@ class TagRestControllerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("message", equalTo(testTag1 + " is deleted")));
+            .andExpect(jsonPath("message", equalTo(testTag1 + " is deleted")))
+            .andDo(document("docs"));
     }
 
     @Test
@@ -234,6 +242,7 @@ class TagRestControllerTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())));
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())))
+            .andDo(document("docs"));
     }
 }

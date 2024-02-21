@@ -17,5 +17,5 @@ public class TagCreateRequestDto {
 
     @NotBlank
     @Length(max = 10)
-    String tagName;
+    private String tagName;
 }

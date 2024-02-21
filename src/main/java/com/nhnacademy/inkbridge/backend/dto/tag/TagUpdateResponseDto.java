@@ -14,8 +14,8 @@ import lombok.Getter;
 @Getter
 public class TagUpdateResponseDto {
 
-    Long tagId;
-    String tagName;
+    private final Long tagId;
+    private final String tagName;
 
     @Builder
     public TagUpdateResponseDto(Tag tag) {

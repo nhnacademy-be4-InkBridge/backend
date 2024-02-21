@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 public class TagDeleteResponseDto {
 
-    String message;
+    private final String message;
 
     @Builder
     public TagDeleteResponseDto(String message) {

@@ -18,5 +18,5 @@ public class TagUpdateRequestDto {
 
     @NotBlank
     @Length(max = 10)
-    String tagName;
+    private String tagName;
 }
