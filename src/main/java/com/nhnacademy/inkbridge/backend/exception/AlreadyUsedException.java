@@ -6,9 +6,9 @@ package com.nhnacademy.inkbridge.backend.exception;
  * @author JBum
  * @version 2024/02/19
  */
-public class UsedException extends RuntimeException {
+public class AlreadyUsedException extends RuntimeException {
 
-    public UsedException(String message) {
+    public AlreadyUsedException(String message) {
         super(message);
     }
 
