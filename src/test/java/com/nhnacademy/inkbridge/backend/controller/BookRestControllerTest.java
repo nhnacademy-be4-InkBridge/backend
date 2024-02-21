@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,7 +15,6 @@ import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -32,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author minm063
  * @version 2024/02/16
  */
-@AutoConfigureRestDocs
 @WebMvcTest(BookRestController.class)
 class BookRestControllerTest {
 
@@ -62,8 +59,7 @@ class BookRestControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].bookTitle", equalTo("title")))
             .andExpect(jsonPath("$[0].price", equalTo(1000)))
-            .andExpect(jsonPath("$[0].publisherName", equalTo("publisher")))
-            .andDo(document("docs"));
+            .andExpect(jsonPath("$[0].publisherName", equalTo("publisher")));
     }
 
     @Test
@@ -74,7 +70,6 @@ class BookRestControllerTest {
 
         mockMvc.perform(get("/api/books/{bookId}", 1))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andDo(document("docs"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
