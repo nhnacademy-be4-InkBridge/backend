@@ -26,9 +26,9 @@ import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
+import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
-import com.nhnacademy.inkbridge.backend.exception.UsedException;
 import com.nhnacademy.inkbridge.backend.repository.BookCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryCouponRepository;
@@ -50,11 +50,11 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author JBum
  * @version 2024/02/15
- * @
  */
 @Service
 public class CouponServiceImpl implements CouponService {
 
+    private static final int COUPON_LENGTH = 10;
     private final CouponRepository couponRepository;
     private final CouponTypeRepository couponTypeRepository;
     private final MemberRepository memberRepository;
@@ -63,19 +63,18 @@ public class CouponServiceImpl implements CouponService {
     private final CategoryCouponRepository categoryCouponRepository;
     private final BookRepository bookRepository;
     private final BookCouponRepository bookCouponRepository;
-    private static final int COUPON_LENGTH = 10;
 
     /**
      * couponService에 필요한 Repository들 주입.
      *
-     * @param couponRepository 쿠폰
-     * @param couponTypeRepository 쿠폰타입
-     * @param memberRepository 멤버
-     * @param memberCouponRepository 멤버가 가진 쿠폰
-     * @param categoryRepository 카테고리
+     * @param couponRepository         쿠폰
+     * @param couponTypeRepository     쿠폰타입
+     * @param memberRepository         멤버
+     * @param memberCouponRepository   멤버가 가진 쿠폰
+     * @param categoryRepository       카테고리
      * @param categoryCouponRepository 카테고리전용 쿠폰
-     * @param bookRepository 책
-     * @param bookCouponRepository 책전용 쿠폰
+     * @param bookRepository           책
+     * @param bookCouponRepository     책전용 쿠폰
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
@@ -93,24 +92,24 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * 관리자가 쿠폰을 생성하는 메소드.
-     * 관리자는 쿠폰을 등록하면서 해당 쿠폰을 특정한 책 전용 혹은 특정한 카테고리 전용으로 만들 수 있다.
+     * 관리자가 쿠폰을 생성하는 메소드. 관리자는 쿠폰을 등록하면서 해당 쿠폰을 특정한 책 전용 혹은 특정한 카테고리 전용으로 만들 수 있다.
      *
      * @param couponCreateRequestDto 쿠폰을 생성하기 위한 Request DTO
-     * @throws NotFoundException 입력된 쿠폰 타입이 존재하지 않는 경우 예외 발생
-     * @throws NotFoundException 요청한 카테고리가 존재하지 않는 경우 예외 발생
-     * @throws NotFoundException 요청한 책이 존재하지 않는 경우 예외 발생
+     * @throws NotFoundException    입력된 쿠폰 타입이 존재하지 않는 경우 예외 발생
+     * @throws NotFoundException    요청한 카테고리가 존재하지 않는 경우 예외 발생
+     * @throws NotFoundException    요청한 책이 존재하지 않는 경우 예외 발생
+     * @throws AlreadyUsedException 존재하지 않는 쿠폰타입이면 예외 발생
      */
     @Override
     @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType =
-                couponTypeRepository.findById(couponCreateRequestDto.getCouponTypeId())
-            .orElseThrow(() -> new NotFoundException(
-                String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
-                    COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
-        if(couponRepository.existsByCouponName(couponCreateRequestDto.getCouponName())){
-           throw new UsedException(COUPON_DUPLICATED.getMessage());
+            couponTypeRepository.findById(couponCreateRequestDto.getCouponTypeId())
+                .orElseThrow(() -> new NotFoundException(
+                    String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
+                        COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
+        if (couponRepository.existsByCouponName(couponCreateRequestDto.getCouponName())) {
+            throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
         }
         Coupon newCoupon = Coupon.builder()
             .couponId(generateCoupon())
@@ -190,11 +189,11 @@ public class CouponServiceImpl implements CouponService {
      * Member가 사용했는 쿠폰인지 확인하는 메소드.
      *
      * @param memberCoupon 멤버의 쿠폰
-     * @throws UsedException 사용한 쿠폰이라면 예외 발생
+     * @throws AlreadyUsedException 사용한 쿠폰이라면 예외 발생
      */
     private void validateCouponUsed(MemberCoupon memberCoupon) {
         if (memberCoupon.getUsedAt() == null) {
-            throw new UsedException(COUPON_ALREADY_USED.getMessage());
+            throw new AlreadyUsedException(COUPON_ALREADY_USED.getMessage());
         }
     }
 
@@ -218,7 +217,7 @@ public class CouponServiceImpl implements CouponService {
      * 카테고리 쿠폰을 저장하는 메소드.
      *
      * @param category 적용할 카테고리
-     * @param coupon 적용할 쿠폰
+     * @param coupon   적용할 쿠폰
      */
     private void saveCategoryCoupon(Category category, Coupon coupon) {
         CategoryCoupon categoryCoupon = CategoryCoupon.builder()
@@ -236,7 +235,7 @@ public class CouponServiceImpl implements CouponService {
     /**
      * 책 쿠폰을 저장하는 메소드.
      *
-     * @param book 적용할 책
+     * @param book   적용할 책
      * @param coupon 적용할 쿠폰
      */
     private void saveBookCoupon(Book book, Coupon coupon) {
