@@ -83,6 +83,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
      *
      * @return List - PointPolicyReadResponseDto
      */
+    @Transactional(readOnly = true)
     @Override
     public List<PointPolicyReadResponseDto> getCurrentPointPolicies() {
         return pointPolicyRepository.findAllCurrentPointPolicies();
@@ -95,6 +96,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
      * @return PointPolicyReadResponseDto
      * @throws NotFoundException 포인트 정책 유형이 존재하지 않을 때
      */
+    @Transactional(readOnly = true)
     @Override
     public PointPolicyReadResponseDto getCurrentPointPolicy(Integer pointPolicyTypeId) {
         if (!pointPolicyTypeRepository.existsById(pointPolicyTypeId)) {
