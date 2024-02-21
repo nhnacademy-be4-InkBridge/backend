@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.pointpolicytype;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,10 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @NoArgsConstructor
 public class PointPolicyTypeCreateRequestDto {
-    @Length(max = 20)
-    @NotBlank
+    @Length(max = 20, message = "포인트 정책 유형의 허용 글자수는 0~20자 사이입니다.")
+    @NotBlank(message = "포인트 정책 유형은 필수 입력 항목입니다.")
     private String policyType;
+
+    @Min(value = 0, message = "적립 포인트는 음수 일수 없습니다.")
+    private Long accumulatePoint;
 }
