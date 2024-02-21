@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 public class BookAdminUpdateRequestDto {
 
-    @NotBlank
+    @NotBlank(message = "도서 제목은 한 글자 이상이여야 합니다.")
     private String bookTitle;
 
     private String bookIndex;
@@ -25,7 +25,7 @@ public class BookAdminUpdateRequestDto {
     private LocalDate publicatedAt;
 
     @NotBlank
-    @Pattern(regexp = "^\\d{13}$")
+    @Pattern(regexp = "^\\d{13}$", message = "isbn은 숫자 13자로 구성되어야 합니다.")
     private String isbn;
 
     private Long regularPrice;
