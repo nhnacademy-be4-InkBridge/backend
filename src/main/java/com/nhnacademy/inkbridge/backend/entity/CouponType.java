@@ -29,7 +29,8 @@ public class CouponType {
     private String typeName;
 
     @Builder
-    public CouponType(Integer couponTypeId) {
+    public CouponType(Integer couponTypeId,String typeName) {
         this.couponTypeId = couponTypeId;
+        this.typeName=typeName;
     }
 }

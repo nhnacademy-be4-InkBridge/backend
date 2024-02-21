@@ -68,7 +68,7 @@ public class Coupon {
         this.basicIssuedDate = basicIssuedDate;
         this.basicExpiredDate = basicExpiredDate;
         this.validity = validity;
-        this.isBirth=isBirth;
+        this.isBirth = isBirth;
         this.couponType = couponType;
     }
 }
