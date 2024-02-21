@@ -31,6 +31,7 @@ public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
 
     /**
+     * {@inheritDoc}
      * 새로운 태그를 생성합니다. 태그의 이름이 이미 존재할 경우 {@link AlreadyExistException}을 발생시킵니다.
      *
      * @param newTag 생성할 태그의 정보를 담고 있는 {@link TagCreateRequestDto} 객체
@@ -40,7 +41,7 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public TagCreateResponseDto createTag(TagCreateRequestDto newTag) {
-        if (Boolean.TRUE.equals(tagRepository.existsByTagName(newTag.getTagName()))) {
+        if (tagRepository.existsByTagName(newTag.getTagName())) {
             throw new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.getMessage());
         }
         Tag tag = Tag.builder().tagName(newTag.getTagName()).build();

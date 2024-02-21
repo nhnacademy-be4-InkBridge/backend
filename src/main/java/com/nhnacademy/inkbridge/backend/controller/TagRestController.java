@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping(value = "/api/tag")
+@RequestMapping(value = "/api/tags")
 @RequiredArgsConstructor
 public class TagRestController {
 
