@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberGetLoginRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.MemberGetLoginResponseDto;
 
 /**
  * class: MemberService.
@@ -10,5 +13,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
  */
 public interface MemberService {
 
-    public void createMember(MemberCreateRequestDto memberCreateRequestDto);
+    MemberCreateResponseDto createMember(MemberCreateRequestDto memberCreateRequestDto);
+
+    MemberGetLoginResponseDto login(MemberGetLoginRequestDto memberGetLoginRequestDto);
 }

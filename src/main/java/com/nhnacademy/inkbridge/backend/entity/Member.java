@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * class: member.
@@ -46,8 +47,9 @@ public class Member {
     @Column(name = "birthday")
     private LocalDate birthday;
 
+    @Setter
     @Column(name = "last_login_date")
-    private LocalDateTime lastLoginDate;
+    private LocalDate lastLoginDate;
 
     @Column(name = "password")
     private String password;
@@ -74,9 +76,10 @@ public class Member {
     private MemberGrade memberGrade;
 
     @Builder(builderMethodName = "create")
-    public Member(String memberName, String phoneNumber, String email, LocalDate birthday, String password,
-                  LocalDateTime createdAt, Long memberPoint, MemberAuth memberAuth,
-                  MemberStatus memberStatus, MemberGrade memberGrade) {
+    public Member(String memberName, String phoneNumber, String email, LocalDate birthday,
+        String password,
+        LocalDateTime createdAt, Long memberPoint, MemberAuth memberAuth,
+        MemberStatus memberStatus, MemberGrade memberGrade) {
         this.memberName = memberName;
         this.phoneNumber = phoneNumber;
         this.email = email;

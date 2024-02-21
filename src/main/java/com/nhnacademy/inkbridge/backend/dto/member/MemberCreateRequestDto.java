@@ -19,6 +19,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MemberCreateRequestDto {
+
     @NotNull(message = "이름은 필수 입력 값입니다.")
     @NotBlank(message = "이름은 필수 입력 값입니다.")
     private String memberName;
@@ -31,6 +32,7 @@ public class MemberCreateRequestDto {
     private LocalDate birthday;
     @NotNull(message = "비밀번호는 필수 입력 값입니다.")
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,20}", message = "비밀번호는 8~20자 영문 대 소문자, 숫자 , 특수문자를 사용하세요.")
+    @Pattern(regexp = "(?=.*\\d)(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,20}",
+        message = "비밀번호는 8~20자 영문 대 소문자, 숫자 , 특수문자를 사용하세요.")
     private String password;
 }
