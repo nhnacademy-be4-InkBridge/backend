@@ -92,4 +92,75 @@ class PointPolicyServiceImplTest {
         verify(pointPolicyTypeRepository, times(1)).findById(1);
         verify(pointPolicyRepository, times(1)).save(any());
     }
+
+    @Test
+    @DisplayName("포인트 정책 유형 전체 목록 - 존재하지 않는 포인트 정책 유형")
+    void testGetPointPoliciesByTypeId_not_found() {
+        given(pointPolicyTypeRepository.existsById(1)).willReturn(false);
+
+        assertThrows(NotFoundException.class, () -> pointPolicyService.getPointPoliciesByTypeId(1));
+
+        verify(pointPolicyTypeRepository, times(1)).existsById(1);
+    }
+
+    @Test
+    @DisplayName("포인트 정책 유형 전체 목록 - 조회 성공")
+    void testGetPointPoliciesByTypeId_success() {
+        PointPolicyReadResponseDto responseDto = new PointPolicyReadResponseDto(1L, "REGISTER",
+            1500L, LocalDate.of(2024, 1, 1));
+
+        given(pointPolicyTypeRepository.existsById(1)).willReturn(true);
+        given(pointPolicyRepository.findAllPointPolicyByTypeId(1)).willReturn(List.of(responseDto));
+
+        List<PointPolicyReadResponseDto> result = pointPolicyService.getPointPoliciesByTypeId(1);
+
+        assertEquals(responseDto, result.get(0));
+
+        verify(pointPolicyTypeRepository, times(1)).existsById(1);
+        verify(pointPolicyRepository, times(1)).findAllPointPolicyByTypeId(1);
+    }
+
+    @Test
+    @DisplayName("적용중인 포인트 정책 목록 조회")
+    void testGetCurrentPointPolicies() {
+        PointPolicyReadResponseDto registerPointPolicy = new PointPolicyReadResponseDto(1L, "REGISTER",
+            1500L, LocalDate.of(2024, 1, 1));
+        PointPolicyReadResponseDto reviewPointPolicy = new PointPolicyReadResponseDto(1L, "REGISTER",
+            1500L, LocalDate.of(2024, 1, 1));
+
+        given(pointPolicyRepository.findAllCurrentPointPolicies()).willReturn(List.of(registerPointPolicy, reviewPointPolicy));
+
+        List<PointPolicyReadResponseDto> result = pointPolicyService.getCurrentPointPolicies();
+
+        assertEquals(2, result.size());
+
+        verify(pointPolicyRepository, times(1)).findAllCurrentPointPolicies();
+    }
+
+    @Test
+    @DisplayName("포인트 정책 유형 적용 정책 조회 - 존재하지 않는 포인트 정책 유형")
+    void testGetCurrentPointPolicyByTypeId_not_found() {
+        given(pointPolicyTypeRepository.existsById(1)).willReturn(false);
+
+        assertThrows(NotFoundException.class, () -> pointPolicyService.getCurrentPointPolicy(1));
+
+        verify(pointPolicyTypeRepository, times(1)).existsById(1);
+    }
+
+    @Test
+    @DisplayName("포인트 정책 유형 적용 정책 조회 - 조회 성공")
+    void testGetCurrentPointPolicyByTypeId_success() {
+        PointPolicyReadResponseDto responseDto = new PointPolicyReadResponseDto(1L, "REGISTER",
+            1500L, LocalDate.of(2024, 1, 1));
+
+        given(pointPolicyTypeRepository.existsById(1)).willReturn(true);
+        given(pointPolicyRepository.findCurrentPointPolicy(1)).willReturn(responseDto);
+
+        PointPolicyReadResponseDto result = pointPolicyService.getCurrentPointPolicy(1);
+
+        assertEquals(responseDto, result);
+
+        verify(pointPolicyTypeRepository, times(1)).existsById(1);
+        verify(pointPolicyRepository, times(1)).findCurrentPointPolicy(1);
+    }
 }

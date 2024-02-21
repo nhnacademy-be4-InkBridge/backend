@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,42 @@ public class PointPolicyController {
     public ResponseEntity<List<PointPolicyReadResponseDto>> getPointPolicies() {
         return ResponseEntity.ok(pointPolicyService.getPointPolicies());
     }
+
+    /**
+     * 포인트 정책 유형 id로 포인트 정책 내역을 조회하는 메소드 입니다.
+     *
+     * @param pointPolicyTypeId Integer
+     * @return List - PointPolicyReadResponseDto
+     */
+    @GetMapping("/{pointPolicyTypeId}")
+    public ResponseEntity<List<PointPolicyReadResponseDto>> getPointPoliciesByTypeId(
+        @PathVariable Integer pointPolicyTypeId) {
+
+        return ResponseEntity.ok(pointPolicyService.getPointPoliciesByTypeId(pointPolicyTypeId));
+    }
+
+    /**
+     * 등록된 모든 유형의 현재 적용중인 정책들을 조회하는 메소드입니다.
+     *
+     * @return List - PointPolicyReadResponseDto
+     */
+    @GetMapping("/current")
+    public ResponseEntity<List<PointPolicyReadResponseDto>> getCurrentPointPolicies() {
+        return ResponseEntity.ok(pointPolicyService.getCurrentPointPolicies());
+    }
+
+    /**
+     * 포인트 정책 id에 맞는 유형의 현재 적용중인 정책을 조회하는 메소드입니다.
+     *
+     * @param pointPolicyTypeId Integer
+     * @return PointPolicyReadResponseDto
+     */
+    @GetMapping("/current/{pointPolicyTypeId}")
+    public ResponseEntity<PointPolicyReadResponseDto> getCurrentPointPolicy(
+        @PathVariable Integer pointPolicyTypeId) {
+        return ResponseEntity.ok(pointPolicyService.getCurrentPointPolicy(pointPolicyTypeId));
+    }
+
 
     /**
      * 포인트 정책 생성 메서드 입니다.

@@ -30,10 +30,11 @@ class PointPolicyRepositoryTest {
     @Autowired
     PointPolicyRepository pointPolicyRepository;
     PointPolicy pointPolicy;
+    PointPolicyType pointPolicyType;
 
     @BeforeEach
     void setup() {
-        PointPolicyType pointPolicyType = PointPolicyType.builder()
+        pointPolicyType = PointPolicyType.builder()
             .pointPolicyTypeId(1)
             .policyType("REGISTER")
             .build();
@@ -66,4 +67,89 @@ class PointPolicyRepositoryTest {
         );
     }
 
+    @Test
+    @DisplayName("포인트 정책 유형 조회 테스트")
+    void testFindAllPointPolicyByTypeId() {
+        PointPolicyType reviewPointPolicyType = PointPolicyType.builder()
+            .pointPolicyTypeId(2)
+            .policyType("REVIEW")
+            .build();
+
+        entityManager.persist(reviewPointPolicyType);
+
+        PointPolicy updatePointPolicy = PointPolicy.builder()
+            .accumulatePoint(1500L)
+            .createdAt(LocalDate.of(2024, 1, 2))
+            .pointPolicyType(pointPolicyType)
+            .build();
+
+        entityManager.persist(updatePointPolicy);
+
+        PointPolicy reviewPointPolicy = PointPolicy.builder()
+            .accumulatePoint(1000L)
+            .pointPolicyType(reviewPointPolicyType)
+            .createdAt(LocalDate.of(2024, 1, 2))
+            .build();
+
+        entityManager.persist(reviewPointPolicy);
+
+        List<PointPolicyReadResponseDto> result = pointPolicyRepository.findAllPointPolicyByTypeId(1);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    @DisplayName("적용중인 포인트 정책 목록 조회 테스트")
+    void testFindAllCurrentPointPolicies() {
+        PointPolicyType reviewPointPolicyType = PointPolicyType.builder()
+            .pointPolicyTypeId(2)
+            .policyType("REVIEW")
+            .build();
+
+        entityManager.persist(reviewPointPolicyType);
+
+        PointPolicy updatePointPolicy = PointPolicy.builder()
+            .accumulatePoint(1500L)
+            .createdAt(LocalDate.of(2024, 1, 2))
+            .pointPolicyType(pointPolicyType)
+            .build();
+
+        entityManager.persist(updatePointPolicy);
+
+        PointPolicy reviewPointPolicy = PointPolicy.builder()
+            .accumulatePoint(1000L)
+            .pointPolicyType(reviewPointPolicyType)
+            .createdAt(LocalDate.of(2024, 1, 2))
+            .build();
+
+        entityManager.persist(reviewPointPolicy);
+
+        List<PointPolicyReadResponseDto> result = pointPolicyRepository.findAllCurrentPointPolicies();
+
+        assertAll(
+            () -> assertEquals(2, result.size()),
+            () -> assertEquals(1500L, result.get(0).getAccumulatePoint()),
+            () -> assertEquals("REGISTER", result.get(0).getPolicyType())
+        );
+    }
+
+    @Test
+    @DisplayName("포인트 정책 유형 적용 정책 조회")
+    void testFindAllCurrentPointPolicyByTypeId() {
+        PointPolicy updatePointPolicy = PointPolicy.builder()
+            .accumulatePoint(1500L)
+            .createdAt(LocalDate.of(2024, 1, 2))
+            .pointPolicyType(pointPolicyType)
+            .build();
+
+        entityManager.persist(updatePointPolicy);
+
+        PointPolicyReadResponseDto result = pointPolicyRepository.findCurrentPointPolicy(1);
+
+        assertAll(
+            () -> assertEquals(1500L, result.getAccumulatePoint()),
+            () -> assertEquals("REGISTER", result.getPolicyType()),
+            () -> assertEquals("2024-01-02", result.getCreatedAt().toString())
+        );
+    }
 }

@@ -13,4 +13,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface PointPolicyRepositoryCustom {
     List<PointPolicyReadResponseDto> findAllPointPolicyBy();
+
+    List<PointPolicyReadResponseDto> findAllPointPolicyByTypeId(Integer pointPolicyTypeId);
+
+    List<PointPolicyReadResponseDto> findAllCurrentPointPolicies();
+
+    PointPolicyReadResponseDto findCurrentPointPolicy(Integer pointPolicyTypeId);
 }

@@ -15,4 +15,10 @@ public interface PointPolicyService {
     List<PointPolicyReadResponseDto> getPointPolicies();
 
     void createPointPolicy(PointPolicyCreateRequestDto pointPolicyCreateRequestDto);
+
+    List<PointPolicyReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId);
+
+    List<PointPolicyReadResponseDto> getCurrentPointPolicies();
+
+    PointPolicyReadResponseDto getCurrentPointPolicy(Integer pointPolicyTypeId);
 }
