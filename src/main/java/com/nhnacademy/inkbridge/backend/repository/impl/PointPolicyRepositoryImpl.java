@@ -42,6 +42,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
                 pointPolicyType.policyType,
                 pointPolicy.accumulatePoint,
                 pointPolicy.createdAt))
+            .orderBy(pointPolicy.pointPolicyId.asc())
             .fetch();
     }
 
