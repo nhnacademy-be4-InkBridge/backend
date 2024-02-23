@@ -12,6 +12,7 @@ public enum CouponMessageEnum {
     COUPON_VALIDATION_ERROR("쿠폰 생성 규칙이 맞지 않습니다."),
     COUPON_TYPE_NOT_FOUND("CouponType을 찾을 수 없습니다."),
     COUPON_TYPE_ID("CouponTypeId: "),
+    COUPON_STATUS_NOT_FOUND("존재하지 않는 쿠폰 상태입니다"),
     COUPON_ISSUED_EXIST("해당 유저는 이미 발급받은 쿠폰입니다"),
     COUPON_ISSUE_PERIOD_NOT_STARTED("쿠폰 발급 시작 기간이 아닙니다."),
     COUPON_ISSUE_PERIOD_EXPIRED("쿠폰 발급 기간이 지났습니다."),
