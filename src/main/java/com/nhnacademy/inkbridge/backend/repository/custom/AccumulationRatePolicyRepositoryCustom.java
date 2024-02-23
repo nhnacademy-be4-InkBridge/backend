@@ -10,10 +10,25 @@ import java.util.List;
  * @version 2024/02/21
  */
 public interface AccumulationRatePolicyRepositoryCustom {
-
+    /**
+     * 적립율 정책 전체 내역을 조회하는 메소드입니다.
+     *
+     * @return List - AccumulationRatePolicyReadResponseDto
+     */
     List<AccumulationRatePolicyReadResponseDto> findAllAccumulationRatePolicies();
 
+    /**
+     * 적립율 정책 id로 정책 내역을 조회하는 메소드입니다.
+     *
+     * @param accumulationRatePolicyId Long
+     * @return AccumulationRatePolicyReadResponseDto
+     */
     AccumulationRatePolicyReadResponseDto findAccumulationRatePolicy(Long accumulationRatePolicyId);
 
+    /**
+     * 현재 적용되는 적립율 정책을 조회하는 메소드입니다.
+     *
+     * @return AccumulationRatePolicyReadResponseDto
+     */
     AccumulationRatePolicyReadResponseDto findCurrentAccumulationRatePolicy();
 }

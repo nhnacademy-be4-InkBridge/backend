@@ -26,9 +26,7 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
     private final AccumulationRatePolicyRepository accumulationRatePolicyRepository;
 
     /**
-     * 적립율 정책 전체 내역을 조회하는 메소드입니다.
-     *
-     * @return List - AccumulationRatePolicyReadResponseDto
+     * {@inheritDoc}
      */
     @Transactional(readOnly = true)
     @Override
@@ -37,11 +35,7 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
     }
 
     /**
-     * 적립율 정책 id로 내역을 조회하는 메소드입니다.
-     *
-     * @param accumulationRatePolicyId Long
-     * @return AccumulationRatePolicyReadResponseDto
-     * @throws NotFoundException 적립률 정책 id에 일치하는 정책이 존재하지 않는 경우
+     * {@inheritDoc}
      */
     @Transactional(readOnly = true)
     @Override
@@ -58,9 +52,7 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
     }
 
     /**
-     * 현재 적용되는 적립율 정책을 조회하는 메소드입니다.
-     *
-     * @return AccumulationRatePolicyReadResponseDto
+     * {@inheritDoc}
      */
     @Transactional(readOnly = true)
     @Override
@@ -69,9 +61,7 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
     }
 
     /**
-     * 적립율 정책을 생성하는 메소드입니다.
-     *
-     * @param requestDto AccumulationRatePolicyCreateRequestDto
+     * {@inheritDoc}
      */
     @Transactional
     @Override

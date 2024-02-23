@@ -22,9 +22,7 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
     }
 
     /**
-     * 적립율 정책 전체 내역을 조회하는 메소드입니다.
-     *
-     * @return List - AccumulationRatePolicyReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     public List<AccumulationRatePolicyReadResponseDto> findAllAccumulationRatePolicies() {
@@ -40,10 +38,7 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
     }
 
     /**
-     * 적립율 정책 id로 정책 내역을 조회하는 메소드입니다.
-     *
-     * @param accumulationRatePolicyId Long
-     * @return AccumulationRatePolicyReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     public AccumulationRatePolicyReadResponseDto findAccumulationRatePolicy(
@@ -60,9 +55,7 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
     }
 
     /**
-     * 현재 적용되는 적립율 정책을 조회하는 메소드입니다.
-     *
-     * @return AccumulationRatePolicyReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     public AccumulationRatePolicyReadResponseDto findCurrentAccumulationRatePolicy() {
