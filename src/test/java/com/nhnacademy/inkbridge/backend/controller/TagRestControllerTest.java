@@ -84,7 +84,7 @@ class TagRestControllerTest {
         TagCreateResponseDto tagCreateResponseDto = new TagCreateResponseDto(
             Tag.builder().tagName(tagCreateRequestDto.getTagName()).build());
         given(tagService.createTag(any())).willReturn(tagCreateResponseDto);
-        mvc.perform(post("/api/tag")
+        mvc.perform(post("/api/tags")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -99,13 +99,14 @@ class TagRestControllerTest {
     void createTagWhenValidationFailed() throws Exception {
         TagCreateRequestDto tagCreateRequestDto = new TagCreateRequestDto();
         tagCreateRequestDto.setTagName("");
-        mvc.perform(post("/api/tag")
+        mvc.perform(post("/api/tags")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())))
+            .andExpect(
+                jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.getMessage())))
             .andDo(document("docs"));
     }
 
@@ -117,7 +118,7 @@ class TagRestControllerTest {
         when(tagService.createTag(newTestTag)).thenThrow(AlreadyExistException.class);
         doThrow(new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.name()))
             .when(tagService).createTag(any());
-        mvc.perform(post("/api/tag")
+        mvc.perform(post("/api/tags")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -136,7 +137,7 @@ class TagRestControllerTest {
         List<TagReadResponseDto> result = tagList.stream().map(TagReadResponseDto::new)
             .collect(Collectors.toList());
         when(tagService.getTagList()).thenReturn(result);
-        mvc.perform(get("/api/tag")
+        mvc.perform(get("/api/tags")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -156,7 +157,7 @@ class TagRestControllerTest {
             Tag.builder().tagId(testTagId1).tagName(testTagName2).build());
         when(tagService.updateTag(any(), any())).thenReturn(
             tagUpdateResponseDto);
-        mvc.perform(put("/api/tag/{tagId}", testTagId1)
+        mvc.perform(put("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -173,13 +174,14 @@ class TagRestControllerTest {
     void updateTagWhenValidationFailed() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
 
-        mvc.perform(put("/api/tag/{tagId}", testTagId1)
+        mvc.perform(put("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.name())))
+            .andExpect(
+                jsonPath("message", equalTo(TagMessageEnum.TAG_TYPE_VALID_FAIL.getMessage())))
             .andDo(document("docs"));
     }
 
@@ -189,15 +191,15 @@ class TagRestControllerTest {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName2);
         when(tagService.updateTag(any(), any())).thenThrow(
-            new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name()));
+            new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.getMessage()));
 
-        mvc.perform(put("/api/tag/{tagId}", testTagId1)
+        mvc.perform(put("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())))
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.getMessage())))
             .andDo(document("docs"));
     }
 
@@ -207,15 +209,15 @@ class TagRestControllerTest {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName1);
         when(tagService.updateTag(any(), any())).thenThrow(
-            new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.name()));
+            new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.getMessage()));
 
-        mvc.perform(put("/api/tag/{tagId}", testTagId1)
+        mvc.perform(put("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.name())))
+            .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_ALREADY_EXIST.getMessage())))
             .andDo(document("docs"));
     }
 
@@ -224,7 +226,7 @@ class TagRestControllerTest {
     void deleteTag() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenReturn(
             new TagDeleteResponseDto(testTag1 + " is deleted"));
-        mvc.perform(delete("/api/tag/{tagId}", testTagId1)
+        mvc.perform(delete("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -237,7 +239,7 @@ class TagRestControllerTest {
     void deleteTagWhenNotFound() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenThrow(
             new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name()));
-        mvc.perform(delete("/api/tag/{tagId}", testTagId1)
+        mvc.perform(delete("/api/tags/{tagId}", testTagId1)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
