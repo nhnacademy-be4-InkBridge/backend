@@ -6,9 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,16 +27,6 @@ public class BookTag {
 
     @EmbeddedId
     private Pk pk;
-
-    @MapsId("bookId")
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
-
-    @MapsId("tagId")
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
 
     /**
      * class: BookTag.Pk.
