@@ -26,7 +26,7 @@ public class DeliveryPolicyServiceImpl implements DeliveryPolicyService {
     private final DeliveryPolicyRepository deliveryPolicyRepository;
 
     /**
-     * 배송비 정책을 전체 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @return List - DeliveryPolicyReadResponseDto
      */
@@ -37,7 +37,7 @@ public class DeliveryPolicyServiceImpl implements DeliveryPolicyService {
     }
 
     /**
-     * 배송비 정책 id로 배송비 정책을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param deliveryPolicyId Long
      * @return DeliveryPolicyReadResponseDto
@@ -54,7 +54,7 @@ public class DeliveryPolicyServiceImpl implements DeliveryPolicyService {
     }
 
     /**
-     * 현재 사용중인 배송비 정책을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @return DeliveryPolicyReadResponseDto
      */
@@ -65,7 +65,7 @@ public class DeliveryPolicyServiceImpl implements DeliveryPolicyService {
     }
 
     /**
-     * 배송비 정책을 생성하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param deliveryPolicyCreateRequestDto DeliveryPolicyCreateRequestDto
      */

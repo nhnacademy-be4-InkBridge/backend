@@ -21,6 +21,11 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
         super(DeliveryPolicy.class);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return List - DeliveryPolicyReadResponseDto
+     */
     @Override
     public List<DeliveryPolicyReadResponseDto> findAllDeliveryPolicyBy() {
         QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
@@ -33,6 +38,12 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param deliveryPolicyId Long
+     * @return DeliveryPolicyReadResponseDto
+     */
     @Override
     public DeliveryPolicyReadResponseDto findDeliveryPolicyById(Long deliveryPolicyId) {
         QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
@@ -46,6 +57,11 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .fetchOne();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return DeliveryPolicyReadResponseDto
+     */
     @Override
     public DeliveryPolicyReadResponseDto findCurrentPolicy() {
         QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
