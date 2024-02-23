@@ -25,7 +25,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     /**
-     * 포인트 정책 조회 메소드 입니다.
+     * {@inheritDoc}
      *
      * @return List - PointPolicyReadResponseDto
      */
@@ -47,7 +47,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     /**
-     * 포인트 정책 유형 내역을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeId Integer
      * @return PointPolicyReadResponseDto
@@ -71,8 +71,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
 
 
     /**
-     * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다. <br/> 변경 일자를 통해 가장 마지막에 등록한 날의 정책을 조회합니다. <br/> 같은 날 여러 번의
-     * 변경이 이루어 진다면 가장 마지막에 변경된 정책을 조회합니다. <br/> 정렬 순서는 정책 유형의 id 번호 순으로 정렬됩니다.
+     * {@inheritDoc}
      *
      * @return List - PointPolicyReadResponseDto
      */
@@ -90,11 +89,9 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
                 pointPolicy.createdAt))
             .innerJoin(pointPolicyType)
             .on(pointPolicy.pointPolicyType.eq(pointPolicyType))
-            .where(Expressions.list(pointPolicy.pointPolicyType, pointPolicy.pointPolicyId,
-                pointPolicy.createdAt).in(
+            .where(Expressions.list(pointPolicy.pointPolicyType, pointPolicy.pointPolicyId).in(
                 JPAExpressions.select(subPointPolicy.pointPolicyType,
-                        subPointPolicy.pointPolicyId.max(),
-                        subPointPolicy.createdAt.max())
+                        subPointPolicy.pointPolicyId.max())
                     .from(subPointPolicy)
                     .groupBy(subPointPolicy.pointPolicyType)
             ))
@@ -103,7 +100,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     /**
-     * 포인트 정책 유형에 맞는 현재 적용중인 정책을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeId Integer
      * @return PointPolicyReadResponseDto

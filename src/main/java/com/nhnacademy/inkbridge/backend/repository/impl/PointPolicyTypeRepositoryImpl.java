@@ -21,7 +21,11 @@ public class PointPolicyTypeRepositoryImpl extends QuerydslRepositorySupport imp
         super(PointPolicyType.class);
     }
 
-
+    /**
+     * {@inheritDoc}
+     *
+     * @return List - PointPolicyTypeReadResponseDto
+     */
     @Override
     public List<PointPolicyTypeReadResponseDto> findAllPointPolicyTypeBy() {
         QPointPolicyType pointPolicyType = QPointPolicyType.pointPolicyType;

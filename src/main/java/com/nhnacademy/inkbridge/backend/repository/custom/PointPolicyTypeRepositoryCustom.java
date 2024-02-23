@@ -13,6 +13,11 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface PointPolicyTypeRepositoryCustom {
 
+    /**
+     * 포인트 정책 유형 리스트를 조회하는 메소드입니다.
+     *
+     * @return List - PointPolicyTypeReadResponseDto
+     */
     List<PointPolicyTypeReadResponseDto> findAllPointPolicyTypeBy();
 
 }

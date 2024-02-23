@@ -31,7 +31,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     private final PointPolicyRepository pointPolicyRepository;
 
     /**
-     * 포인트 정책 유형 조회 메소드 입니다.
+     * {@inheritDoc}
      *
      * @return List - PointPolicyTypeReadResponseDto
      */
@@ -42,10 +42,10 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     }
 
     /**
-     * 포인트 정책 유형 생성 메소드 입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeCreateRequestDto PointPolicyTypeCreateRequestDto
-     * @throws AlreadyExistException 포인트 유형이 이미 존재할 경우
+     * @throws AlreadyExistException 정책 유형이 이미 존재하는 경우
      */
     @Transactional
     @Override
@@ -74,7 +74,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     }
 
     /**
-     * 포인트 정책 유형 수정 메소드 입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeUpdateRequestDto PointPolicyTypeUpdateRequestDto
      * @throws NotFoundException 수정할 정책 유형이 존재하지 않을 경우
@@ -95,7 +95,7 @@ public class PointPolicyTypeServiceImpl implements PointPolicyTypeService {
     }
 
     /**
-     * 포인트 정책 유형 삭제 메소드 입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeId Integer
      * @throws NotFoundException 삭제할 포인트 정책 유형이 존재하지 않을 경우

@@ -29,9 +29,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     private final PointPolicyTypeRepository pointPolicyTypeRepository;
 
     /**
-     * 포인트 정책 전체 조회 메서드 입니다.
+     * {@inheritDoc}
      *
-     * @return PointPolicyReadResponseDto
+     * @return List - PointPolicyReadResponseDto
      */
     @Override
     @Transactional(readOnly = true)
@@ -40,7 +40,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     }
 
     /**
-     * 포인트 정책 생성 메서드 입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyCreateRequestDto PointPolicyCreateRequestDto
      * @throws NotFoundException 포인트 정책 유형이 존재하지 않을 경우
@@ -61,7 +61,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     }
 
     /**
-     * 포인트 정책 유형 Id로 포인트 정책 내역 리스트를 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeId Integer
      * @return List - PointPolicyReadResponseDto
@@ -79,7 +79,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     }
 
     /**
-     * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @return List - PointPolicyReadResponseDto
      */
@@ -90,7 +90,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     }
 
     /**
-     * 포인트 정책 유형의 현재 적용중인 정책을 조회하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyTypeId Integer
      * @return PointPolicyReadResponseDto
