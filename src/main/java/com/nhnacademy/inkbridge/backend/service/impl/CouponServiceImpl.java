@@ -186,7 +186,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * Member가 사용했는 쿠폰인지 확인하는 메소드.
+     * Member가 사용했는 쿠폰인지 확인하는 메소드. d t ad
      *
      * @param memberCoupon 멤버의 쿠폰
      * @throws AlreadyUsedException 사용한 쿠폰이라면 예외 발생
