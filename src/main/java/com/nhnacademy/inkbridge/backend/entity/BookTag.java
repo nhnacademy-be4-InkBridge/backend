@@ -41,6 +41,13 @@ public class BookTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    @Builder
+    public BookTag(Pk pk, Book book, Tag tag) {
+        this.pk = pk;
+        this.book = book;
+        this.tag = tag;
+    }
+
     /**
      * class: BookTag.Pk.
      *

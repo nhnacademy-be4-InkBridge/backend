@@ -41,6 +41,13 @@ public class BookAuthor {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @Builder
+    public BookAuthor(Pk pk, Author author, Book book) {
+        this.pk = pk;
+        this.author = author;
+        this.book = book;
+    }
+
     /**
      * class: BookAuthor.Pk.
      *

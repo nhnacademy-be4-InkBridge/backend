@@ -106,7 +106,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookStatus)
             .on(book.bookStatus.eq(bookStatus))
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
-            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookTitle,
+            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId, book.bookTitle,
                 author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())

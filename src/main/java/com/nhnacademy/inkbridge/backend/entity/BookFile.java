@@ -9,6 +9,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,10 @@ public class BookFile {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Builder
+    public BookFile(Long fileId, Book book) {
+        this.fileId = fileId;
+        this.book = book;
+    }
 }

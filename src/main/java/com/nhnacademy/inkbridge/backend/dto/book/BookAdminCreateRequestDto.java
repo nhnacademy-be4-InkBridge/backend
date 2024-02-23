@@ -2,9 +2,11 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookCreateRequestDto.
@@ -42,5 +44,13 @@ public class BookAdminCreateRequestDto {
 
     private Long publisherId;
 
-    private Long thumbnailId;
+    private MultipartFile thumbnail;
+
+    private List<MultipartFile> bookImageList;
+
+    private List<Long> categoryIdList;
+
+    private List<Long> tagIdList;
+
+    private List<Long> authorIdList;
 }

@@ -7,21 +7,39 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
+import com.nhnacademy.inkbridge.backend.entity.BookAuthor;
+import com.nhnacademy.inkbridge.backend.entity.BookCategory;
+import com.nhnacademy.inkbridge.backend.entity.BookCategory.Pk;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
+import com.nhnacademy.inkbridge.backend.entity.BookTag;
+import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
+import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
+import com.nhnacademy.inkbridge.backend.repository.BookAuthorRepository;
+import com.nhnacademy.inkbridge.backend.repository.BookCategoryRepository;
+import com.nhnacademy.inkbridge.backend.repository.BookFileRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookStatusRepository;
+import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
+import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
+import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
+import com.nhnacademy.inkbridge.backend.service.FileService;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookServiceImpl.
@@ -36,21 +54,40 @@ public class BookServiceImpl implements BookService {
     private final BookStatusRepository bookStatusRepository;
     private final FileRepository fileRepository;
     private final PublisherRepository publisherRepository;
+    private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
+    private final AuthorRepository authorRepository;
+    private final BookTagRepository bookTagRepository;
+    private final BookCategoryRepository bookCategoryRepository;
+    private final BookAuthorRepository bookAuthorRepository;
+    private final BookFileRepository bookFileRepository;
+    private final FileService fileService;
+
 
     public BookServiceImpl(BookRepository bookRepository, BookStatusRepository bookStatusRepository,
-        FileRepository fileRepository, PublisherRepository publisherRepository) {
+        FileRepository fileRepository, PublisherRepository publisherRepository,
+        CategoryRepository categoryRepository, TagRepository tagRepository,
+        AuthorRepository authorRepository, BookTagRepository bookTagRepository,
+        BookCategoryRepository bookCategoryRepository,
+        BookAuthorRepository bookAuthorRepository, BookFileRepository bookFileRepository,
+        FileService fileService) {
         this.bookRepository = bookRepository;
         this.bookStatusRepository = bookStatusRepository;
         this.fileRepository = fileRepository;
         this.publisherRepository = publisherRepository;
+        this.categoryRepository = categoryRepository;
+        this.tagRepository = tagRepository;
+        this.authorRepository = authorRepository;
+        this.bookTagRepository = bookTagRepository;
+        this.bookCategoryRepository = bookCategoryRepository;
+        this.bookAuthorRepository = bookAuthorRepository;
+        this.bookFileRepository = bookFileRepository;
+        this.fileService = fileService;
     }
 
 
     /**
-     * page에 따른 전체 도서를 가져오는 메서드입니다.
-     *
-     * @param pageable pageable
-     * @return BooksReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
@@ -59,9 +96,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을 던진다.
-     *
-     * @return BookReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
@@ -74,10 +109,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드입니다.
-     *
-     * @param pageable pageable
-     * @return BooksAdminReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
@@ -86,11 +118,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * admin 페이지에서 필요한 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
-     * 던진다.
-     *
-     * @param bookId 도서 id, 0보다 커야 한다
-     * @return BookAdminReadResponseDto
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
@@ -103,10 +131,7 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 입력값에 대해 새로운 Book을 데이터베이스에 추가하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
-     * NotFoundException을 던진다.
-     *
-     * @param bookAdminCreateRequestDto BookCreateRequestDto
+     * {@inheritDoc}
      */
     @Override
     @Transactional
@@ -114,12 +139,13 @@ public class BookServiceImpl implements BookService {
         BookStatus bookStatus = bookStatusRepository.findById(
                 bookAdminCreateRequestDto.getStatusId())
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
-        File file = fileRepository.findById(bookAdminCreateRequestDto.getThumbnailId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
         Publisher publisher = publisherRepository.findById(
-                bookAdminCreateRequestDto.getThumbnailId())
+                bookAdminCreateRequestDto.getPublisherId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
+
+        MultipartFile thumbnail = bookAdminCreateRequestDto.getThumbnail();
+        File savedThumbnail = fileService.saveFile(thumbnail);
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
@@ -131,21 +157,55 @@ public class BookServiceImpl implements BookService {
             .price(bookAdminCreateRequestDto.getPrice())
             .discountRatio(bookAdminCreateRequestDto.getDiscountRatio())
             .stock(bookAdminCreateRequestDto.getStock())
-            .isPackagable(bookAdminCreateRequestDto.getIsPackagable())
-            .bookStatus(bookStatus)
+            .isPackagable(bookAdminCreateRequestDto.getIsPackagable()).bookStatus(bookStatus)
             .publisher(publisher)
-            .thumbnailFile(file)
+            .thumbnailFile(savedThumbnail)
             .build();
 
-        bookRepository.save(book);
+        Book saved = bookRepository.save(book);
+
+        List<BookCategory> bookCategoryList = new ArrayList<>();
+        for (Long categoryId : bookAdminCreateRequestDto.getCategoryIdList()) {
+            Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException(""));
+            BookCategory bookCategory = BookCategory.builder()
+                .pk(Pk.builder().categoryId(categoryId).bookId(saved.getBookId()).build())
+                .category(category)
+                .book(saved)
+                .build();
+            bookCategoryList.add(bookCategory);
+        }
+        bookCategoryRepository.saveAll(bookCategoryList);
+
+        List<BookTag> bookTagList = new ArrayList<>();
+        for (Long tagId : bookAdminCreateRequestDto.getTagIdList()) {
+            Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new NotFoundException(""));
+            BookTag bookTag = BookTag.builder()
+                .pk(BookTag.Pk.builder().bookId(saved.getBookId()).tagId(tagId).build())
+                .book(saved)
+                .tag(tag)
+                .build();
+            bookTagList.add(bookTag);
+        }
+        bookTagRepository.saveAll(bookTagList);
+
+        List<BookAuthor> bookAuthorList = new ArrayList<>();
+        for (Long authorId : bookAdminCreateRequestDto.getAuthorIdList()) {
+            Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new NotFoundException(""));
+            BookAuthor bookAuthor = BookAuthor.builder()
+                .pk(BookAuthor.Pk.builder().bookId(saved.getBookId()).authorId(authorId).build())
+                .author(author)
+                .book(saved)
+                .build();
+            bookAuthorList.add(bookAuthor);
+        }
+        bookAuthorRepository.saveAll(bookAuthorList);
     }
 
     /**
-     * 입력값에 대해 도서 정보를 수정하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
-     * NotFoundException을 던진다.
-     *
-     * @param bookId                    Long
-     * @param bookAdminUpdateRequestDto BookAdminUpdateResponseDto
+     * {@inheritDoc}
      */
     @Transactional
     @Override
@@ -154,11 +214,13 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(bookId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
         Publisher publisher = publisherRepository.findById(
-            bookAdminUpdateRequestDto.getPublisherId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
+                bookAdminUpdateRequestDto.getPublisherId())
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
         BookStatus bookStatus = bookStatusRepository.findById(
-            bookAdminUpdateRequestDto.getStatusId()).orElseThrow(
-            () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
+                bookAdminUpdateRequestDto.getStatusId())
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
         File thumbnail = fileRepository.findById(bookAdminUpdateRequestDto.getThumbnailId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
