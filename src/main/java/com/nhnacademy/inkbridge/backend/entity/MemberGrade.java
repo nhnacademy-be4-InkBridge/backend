@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,11 @@ public class MemberGrade {
     @Column(name = "standard_amount")
     private Long standardAmount;
 
+    @Builder(builderMethodName = "create")
+    public MemberGrade(Integer gradeId, String grade, BigDecimal pointRate, Long standardAmount) {
+        this.gradeId = gradeId;
+        this.grade = grade;
+        this.pointRate = pointRate;
+        this.standardAmount = standardAmount;
+    }
 }

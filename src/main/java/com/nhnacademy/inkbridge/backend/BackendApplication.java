@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author nhn
  * @version 2024/02/08
  */
+@EnableEurekaClient
 @SpringBootApplication
 public class BackendApplication {
 

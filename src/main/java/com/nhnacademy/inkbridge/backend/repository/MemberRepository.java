@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * class: MemberRepository.
  *
- * @author JBum
- * @version 2024/02/19
+ * @author minseo
+ * @version 2/15/24
  */
-public interface MemberRepository extends JpaRepository<Member,Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
+    boolean existsByEmail(String email);
 
 }

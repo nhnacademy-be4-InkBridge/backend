@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * class: BookRepository.
  *
- * @author JBum
- * @version 2024/02/20
+ * @author minm063
+ * @version 2024/02/14
  */
-public interface BookRepository extends JpaRepository<Book,Long> {
+public interface BookRepository extends JpaRepository<Book, Long>, BookRepositoryCustom {
 
 }
