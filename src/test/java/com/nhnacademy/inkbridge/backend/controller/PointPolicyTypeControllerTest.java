@@ -94,6 +94,7 @@ class PointPolicyTypeControllerTest {
     void testCreatePointPolicyType_duplicate() throws Exception {
         PointPolicyTypeCreateRequestDto requestDto = new PointPolicyTypeCreateRequestDto();
         requestDto.setPolicyType("REGISTER");
+        requestDto.setAccumulatePoint(1000L);
 
         doThrow(new AlreadyExistException(
             PointPolicyMessageEnum.POINT_POLICY_TYPE_ALREADY_EXIST.name()))
@@ -115,6 +116,7 @@ class PointPolicyTypeControllerTest {
     void testCreatePointPolicyType_success() throws Exception {
         PointPolicyTypeCreateRequestDto requestDto = new PointPolicyTypeCreateRequestDto();
         requestDto.setPolicyType("REGISTER");
+        requestDto.setAccumulatePoint(1000L);
 
         mockMvc.perform(post("/api/point-policy-types")
                 .with(csrf())
