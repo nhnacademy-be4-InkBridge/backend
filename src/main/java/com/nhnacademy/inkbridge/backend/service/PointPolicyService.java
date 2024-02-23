@@ -12,7 +12,40 @@ import java.util.List;
  */
 public interface PointPolicyService {
 
+    /**
+     * 포인트 정책 전체 조회 메서드 입니다.
+     *
+     * @return List - PointPolicyReadResponseDto
+     */
     List<PointPolicyReadResponseDto> getPointPolicies();
 
+    /**
+     * 포인트 정책 생성 메서드 입니다.
+     *
+     * @param pointPolicyCreateRequestDto PointPolicyCreateRequestDto
+     */
     void createPointPolicy(PointPolicyCreateRequestDto pointPolicyCreateRequestDto);
+
+    /**
+     * 포인트 정책 유형 Id로 포인트 정책 내역 리스트를 조회하는 메소드입니다.
+     *
+     * @param pointPolicyTypeId Integer
+     * @return List - PointPolicyReadResponseDto
+     */
+    List<PointPolicyReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId);
+
+    /**
+     * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다.
+     *
+     * @return List - PointPolicyReadResponseDto
+     */
+    List<PointPolicyReadResponseDto> getCurrentPointPolicies();
+
+    /**
+     * 포인트 정책 유형의 현재 적용중인 정책을 조회하는 메소드입니다.
+     *
+     * @param pointPolicyTypeId Integer
+     * @return PointPolicyReadResponseDto
+     */
+    PointPolicyReadResponseDto getCurrentPointPolicy(Integer pointPolicyTypeId);
 }

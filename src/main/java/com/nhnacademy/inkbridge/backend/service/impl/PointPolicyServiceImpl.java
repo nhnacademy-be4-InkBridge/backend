@@ -29,9 +29,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     private final PointPolicyTypeRepository pointPolicyTypeRepository;
 
     /**
-     * 포인트 정책 전체 조회 메서드 입니다.
+     * {@inheritDoc}
      *
-     * @return PointPolicyReadResponseDto
+     * @return List - PointPolicyReadResponseDto
      */
     @Override
     @Transactional(readOnly = true)
@@ -40,7 +40,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
     }
 
     /**
-     * 포인트 정책 생성 메서드 입니다.
+     * {@inheritDoc}
      *
      * @param pointPolicyCreateRequestDto PointPolicyCreateRequestDto
      * @throws NotFoundException 포인트 정책 유형이 존재하지 않을 경우
@@ -51,12 +51,59 @@ public class PointPolicyServiceImpl implements PointPolicyService {
         PointPolicyType pointPolicyType = pointPolicyTypeRepository.findById(
             pointPolicyCreateRequestDto.getPointPolicyTypeId()
         ).orElseThrow(() -> new NotFoundException(
-            PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.name()));
+            PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
 
         pointPolicyRepository.save(PointPolicy.builder()
             .accumulatePoint(pointPolicyCreateRequestDto.getAccumulatePoint())
             .pointPolicyType(pointPolicyType)
             .createdAt(LocalDate.now())
             .build());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param pointPolicyTypeId Integer
+     * @return List - PointPolicyReadResponseDto
+     * @throws NotFoundException pointPolicyTypeId가 존재하지 않는 경우
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<PointPolicyReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId) {
+        if (!pointPolicyTypeRepository.existsById(pointPolicyTypeId)) {
+            throw new NotFoundException(
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage());
+        }
+
+        return pointPolicyRepository.findAllPointPolicyByTypeId(pointPolicyTypeId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return List - PointPolicyReadResponseDto
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<PointPolicyReadResponseDto> getCurrentPointPolicies() {
+        return pointPolicyRepository.findAllCurrentPointPolicies();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param pointPolicyTypeId Integer
+     * @return PointPolicyReadResponseDto
+     * @throws NotFoundException 포인트 정책 유형이 존재하지 않을 때
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public PointPolicyReadResponseDto getCurrentPointPolicy(Integer pointPolicyTypeId) {
+        if (!pointPolicyTypeRepository.existsById(pointPolicyTypeId)) {
+            throw new NotFoundException(
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage());
+        }
+
+        return pointPolicyRepository.findCurrentPointPolicy(pointPolicyTypeId);
     }
 }
