@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/15
  */
 @RestController
-@RequestMapping("/api/point-policy-type")
+@RequestMapping("/api/point-policy-types")
 @RequiredArgsConstructor
 public class PointPolicyTypeController {
 
@@ -52,12 +53,12 @@ public class PointPolicyTypeController {
      */
     @PostMapping
     public ResponseEntity<Void> createPointPolicyType(
-        @Valid PointPolicyTypeCreateRequestDto pointPolicyTypeCreateRequestDto,
+        @RequestBody @Valid PointPolicyTypeCreateRequestDto pointPolicyTypeCreateRequestDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
-                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.name());
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.getMessage());
         }
 
         pointPolicyTypeService.createPointPolicyType(pointPolicyTypeCreateRequestDto);
@@ -74,12 +75,12 @@ public class PointPolicyTypeController {
      */
     @PutMapping
     public ResponseEntity<Void> updatePointPolicyType(
-        @Valid PointPolicyTypeUpdateRequestDto pointPolicyTypeUpdateRequestDto,
+        @RequestBody @Valid PointPolicyTypeUpdateRequestDto pointPolicyTypeUpdateRequestDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
-                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.name());
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_VALID_FAIL.getMessage());
         }
 
         pointPolicyTypeService.updatePointPolicyType(pointPolicyTypeUpdateRequestDto);

@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,19 @@ public class AccumulationRatePolicy {
 
     @Column(name = "created_at")
     private LocalDate createdAt;
+
+    /**
+     * 기본 적립율 정책 생성자입니다.
+     *
+     * @param accumulationRatePolicyId Long
+     * @param accumulationRate         Integer
+     * @param createdAt                LocalDate
+     */
+    @Builder
+    public AccumulationRatePolicy(Long accumulationRatePolicyId, Integer accumulationRate,
+        LocalDate createdAt) {
+        this.accumulationRatePolicyId = accumulationRatePolicyId;
+        this.accumulationRate = accumulationRate;
+        this.createdAt = createdAt;
+    }
 }

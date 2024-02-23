@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.entity;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +38,7 @@ public class PointPolicy {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "point_policy_type_id")
     private PointPolicyType pointPolicyType;
 
