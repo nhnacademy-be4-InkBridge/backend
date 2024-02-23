@@ -27,6 +27,8 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
 
     /**
      * {@inheritDoc}
+     *
+     * @return List - AccumulationRatePolicyReadResponseDto
      */
     @Transactional(readOnly = true)
     @Override
@@ -36,6 +38,10 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
 
     /**
      * {@inheritDoc}
+     *
+     * @param accumulationRatePolicyId Long
+     * @return AccumulationRatePolicyReadResponseDto
+     * @throws NotFoundException 적립률 정책 id에 일치하는 정책이 존재하지 않는 경우
      */
     @Transactional(readOnly = true)
     @Override
@@ -53,6 +59,8 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
 
     /**
      * {@inheritDoc}
+     *
+     * @return AccumulationRatePolicyReadResponseDto
      */
     @Transactional(readOnly = true)
     @Override
@@ -62,6 +70,8 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
 
     /**
      * {@inheritDoc}
+     *
+     * @param requestDto AccumulationRatePolicyCreateRequestDto
      */
     @Transactional
     @Override

@@ -2,7 +2,6 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
-import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import java.util.List;
 
 /**
@@ -25,7 +24,6 @@ public interface AccumulationRatePolicyService {
      *
      * @param accumulationRatePolicyId Long
      * @return AccumulationRatePolicyReadResponseDto
-     * @throws NotFoundException 적립률 정책 id에 일치하는 정책이 존재하지 않는 경우
      */
     AccumulationRatePolicyReadResponseDto getAccumulationRatePolicy(Long accumulationRatePolicyId);
 

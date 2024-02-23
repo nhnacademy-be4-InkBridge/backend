@@ -23,6 +23,8 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
 
     /**
      * {@inheritDoc}
+     *
+     * @return List - AccumulationRatePolicyReadResponseDto
      */
     @Override
     public List<AccumulationRatePolicyReadResponseDto> findAllAccumulationRatePolicies() {
@@ -39,6 +41,9 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
 
     /**
      * {@inheritDoc}
+     *
+     * @param accumulationRatePolicyId Long
+     * @return AccumulationRatePolicyReadResponseDto
      */
     @Override
     public AccumulationRatePolicyReadResponseDto findAccumulationRatePolicy(
@@ -56,6 +61,8 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
 
     /**
      * {@inheritDoc}
+     *
+     * @return AccumulationRatePolicyReadResponseDto
      */
     @Override
     public AccumulationRatePolicyReadResponseDto findCurrentAccumulationRatePolicy() {
