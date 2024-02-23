@@ -9,7 +9,8 @@ import lombok.Getter;
  * @version 2024/02/19
  */
 @Getter
-public class IssueCouponRequestDto {
+public class CouponIssueRequestDto {
+
     Long memberId;
     String couponId;
 }
