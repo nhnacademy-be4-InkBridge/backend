@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
  * @author jangjaehun
  * @version 2024/02/15
  */
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name = "point_policy_type")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PointPolicyType {
 
     @Id

@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,18 @@ public class DeliveryPolicy {
 
     @Column(name = "created_at")
     private LocalDate createdAt;
+
+    /**
+     * 배송지 정책 생성자 입니다.
+     *
+     * @param deliveryPolicyId Long
+     * @param deliveryPrice    Long
+     * @param createdAt        LocalDate
+     */
+    @Builder
+    public DeliveryPolicy(Long deliveryPolicyId, Long deliveryPrice, LocalDate createdAt) {
+        this.deliveryPolicyId = deliveryPolicyId;
+        this.deliveryPrice = deliveryPrice;
+        this.createdAt = createdAt;
+    }
 }

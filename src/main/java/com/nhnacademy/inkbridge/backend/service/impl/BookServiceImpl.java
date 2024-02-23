@@ -168,7 +168,7 @@ public class BookServiceImpl implements BookService {
         for (Long categoryId : bookAdminCreateRequestDto.getCategoryIdList()) {
             Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException(""));
-            BookCategory bookCategory = BookCategory.builder()
+            BookCategory bookCategory = BookCategory.create()
                 .pk(Pk.builder().categoryId(categoryId).bookId(saved.getBookId()).build())
                 .category(category)
                 .book(saved)

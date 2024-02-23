@@ -40,7 +40,7 @@ public class BookCategory {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @Builder
+    @Builder(builderMethodName = "create")
     public BookCategory(Pk pk, Category category, Book book) {
         this.pk = pk;
         this.category = category;

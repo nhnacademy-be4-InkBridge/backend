@@ -2,8 +2,7 @@ package com.nhnacademy.inkbridge.backend.dto.pointpolicy;
 
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * class: PointPolicyReadResponseDto.
@@ -12,12 +11,11 @@ import lombok.Setter;
  * @version 2024/02/15
  */
 @Getter
-@Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class PointPolicyReadResponseDto {
 
-    private Long pointPolicyId;
-    private String policyType;
-    private Long accumulatePoint;
-    private LocalDate createdAt;
+    private final Long pointPolicyId;
+    private final String policyType;
+    private final Long accumulatePoint;
+    private final LocalDate createdAt;
 }

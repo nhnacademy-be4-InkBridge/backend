@@ -1,8 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
-import com.nhnacademy.inkbridge.backend.dto.pointpolicytype.PointPolicyTypeReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
-import java.util.List;
+import com.nhnacademy.inkbridge.backend.repository.custom.PointPolicyTypeRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,9 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author jangjaehun
  * @version 2024/02/15
  */
-public interface PointPolicyTypeRepository extends JpaRepository<PointPolicyType, Integer> {
-
-    List<PointPolicyTypeReadResponseDto> findAllPointPolicyTypeBy();
+public interface PointPolicyTypeRepository extends JpaRepository<PointPolicyType, Integer>,
+    PointPolicyTypeRepositoryCustom {
 
     boolean existsByPolicyType(String policyType);
 
