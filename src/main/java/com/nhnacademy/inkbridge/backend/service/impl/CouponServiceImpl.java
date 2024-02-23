@@ -15,13 +15,15 @@ import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_NOT_FOUND;
 
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.IssueCouponRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon.Pk;
 import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.entity.CategoryCoupon;
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
+import com.nhnacademy.inkbridge.backend.entity.CouponStatus;
 import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
@@ -34,6 +36,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.CouponRepository;
+import com.nhnacademy.inkbridge.backend.repository.CouponStatusRepository;
 import com.nhnacademy.inkbridge.backend.repository.CouponTypeRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
@@ -41,7 +44,9 @@ import com.nhnacademy.inkbridge.backend.service.CouponService;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +60,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponServiceImpl implements CouponService {
 
     private static final int COUPON_LENGTH = 10;
+    private static final int COUPON_NORMAL = 1;
+    private static final int COUPON_WAIT = 4;
     private final CouponRepository couponRepository;
     private final CouponTypeRepository couponTypeRepository;
     private final MemberRepository memberRepository;
@@ -63,6 +70,7 @@ public class CouponServiceImpl implements CouponService {
     private final CategoryCouponRepository categoryCouponRepository;
     private final BookRepository bookRepository;
     private final BookCouponRepository bookCouponRepository;
+    private final CouponStatusRepository couponStatusRepository;
 
     /**
      * couponService에 필요한 Repository들 주입.
@@ -75,12 +83,13 @@ public class CouponServiceImpl implements CouponService {
      * @param categoryCouponRepository 카테고리전용 쿠폰
      * @param bookRepository           책
      * @param bookCouponRepository     책전용 쿠폰
+     * @param couponStatusRepository
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
         MemberCouponRepository memberCouponRepository, CategoryRepository categoryRepository,
         CategoryCouponRepository categoryCouponRepository, BookRepository bookRepository,
-        BookCouponRepository bookCouponRepository) {
+        BookCouponRepository bookCouponRepository, CouponStatusRepository couponStatusRepository) {
         this.couponRepository = couponRepository;
         this.couponTypeRepository = couponTypeRepository;
         this.memberRepository = memberRepository;
@@ -89,6 +98,7 @@ public class CouponServiceImpl implements CouponService {
         this.categoryCouponRepository = categoryCouponRepository;
         this.bookRepository = bookRepository;
         this.bookCouponRepository = bookCouponRepository;
+        this.couponStatusRepository = couponStatusRepository;
     }
 
     /**
@@ -103,14 +113,18 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
-        CouponType couponType =
-            couponTypeRepository.findById(couponCreateRequestDto.getCouponTypeId())
-                .orElseThrow(() -> new NotFoundException(
-                    String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
-                        COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
+        CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
+
         if (couponRepository.existsByCouponName(couponCreateRequestDto.getCouponName())) {
             throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
         }
+        CouponStatus couponStatus = couponStatusRepository.findById(
+                LocalDate.now().isAfter(couponCreateRequestDto.getBasicIssuedDate()) ? COUPON_WAIT
+                    : COUPON_NORMAL)
+            .orElseThrow(() -> new NotFoundException(
+                String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
+                    COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
+
         Coupon newCoupon = Coupon.builder()
             .couponId(generateCoupon())
             .couponType(couponType)
@@ -122,9 +136,10 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(couponCreateRequestDto.getMinPrice())
             .isBirth(couponCreateRequestDto.getIsBirth())
             .validity(couponCreateRequestDto.getValidity())
+            .couponStatus(couponStatus)
             .build();
         couponRepository.saveAndFlush(newCoupon);
-        List<Long> categoryIds = couponCreateRequestDto.getCategoryIds();
+        Set<Long> categoryIds = couponCreateRequestDto.getCategoryIds();
         for (Long categoryId : categoryIds) {
             Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException(
@@ -132,7 +147,7 @@ public class CouponServiceImpl implements CouponService {
             saveCategoryCoupon(category, newCoupon);
         }
 
-        List<Long> bookIds = couponCreateRequestDto.getBookIds();
+        Set<Long> bookIds = couponCreateRequestDto.getBookIds();
         for (Long bookId : bookIds) {
             Book book = bookRepository.findById(bookId)
                 .orElseThrow(
@@ -150,7 +165,7 @@ public class CouponServiceImpl implements CouponService {
      * @throws InvalidPeriodException 쿠폰 발급이 가능한 날짜가 아닌 경우 예외 발생
      */
     @Override
-    public void issueCoupon(IssueCouponRequestDto issueCouponDto) {
+    public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
         Coupon coupon = couponRepository.findById(issueCouponDto.getCouponId())
             .orElseThrow(() -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
@@ -171,6 +186,13 @@ public class CouponServiceImpl implements CouponService {
             .expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
         memberCouponRepository.saveAndFlush(memberCoupon);
+    }
+
+    @Override
+    public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponTypeId) {
+        System.out.println(couponTypeId);
+        CouponType couponType = findCouponType(couponTypeId);
+        return couponRepository.findByCouponType(couponType, pageable);
     }
 
     /**
@@ -248,5 +270,12 @@ public class CouponServiceImpl implements CouponService {
                 .build())
             .build();
         bookCouponRepository.save(bookCoupon);
+    }
+
+    private CouponType findCouponType(int couponTypeId) {
+        return couponTypeRepository.findById(couponTypeId)
+            .orElseThrow(() -> new NotFoundException(
+                String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
+                    COUPON_TYPE_ID.getMessage(), couponTypeId)));
     }
 }
