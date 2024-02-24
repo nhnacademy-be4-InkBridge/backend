@@ -9,6 +9,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookService.
@@ -48,7 +49,8 @@ public interface BookService {
      *
      * @param bookAdminCreateRequestDto BookCreateRequestDto
      */
-    void createBook(BookAdminCreateRequestDto bookAdminCreateRequestDto);
+    void createBook(MultipartFile thumbnail, MultipartFile[] bookImages,
+        BookAdminCreateRequestDto bookAdminCreateRequestDto);
 
     /**
      * admin 페이지에서 필요한 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을

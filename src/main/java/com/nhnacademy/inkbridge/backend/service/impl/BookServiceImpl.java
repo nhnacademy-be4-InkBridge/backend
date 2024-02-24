@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory.Pk;
+import com.nhnacademy.inkbridge.backend.entity.BookFile;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
 import com.nhnacademy.inkbridge.backend.entity.BookTag;
 import com.nhnacademy.inkbridge.backend.entity.Category;
@@ -34,6 +35,7 @@ import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -135,39 +137,44 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional
-    public void createBook(BookAdminCreateRequestDto bookAdminCreateRequestDto) {
-        BookStatus bookStatus = bookStatusRepository.findById(
-                bookAdminCreateRequestDto.getStatusId())
-            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
+    public void createBook(MultipartFile thumbnail, MultipartFile[] bookImages,
+        BookAdminCreateRequestDto bookAdminCreateRequestDto) {
         Publisher publisher = publisherRepository.findById(
                 bookAdminCreateRequestDto.getPublisherId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
 
-        MultipartFile thumbnail = bookAdminCreateRequestDto.getThumbnail();
         File savedThumbnail = fileService.saveFile(thumbnail);
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
             .bookIndex(bookAdminCreateRequestDto.getBookIndex())
-            .description(bookAdminCreateRequestDto.getDescription())
+            .description(bookAdminCreateRequestDto.getDescription() == null ? ""
+                : bookAdminCreateRequestDto.getDescription())
             .publicatedAt(bookAdminCreateRequestDto.getPublicatedAt())
             .isbn(bookAdminCreateRequestDto.getIsbn())
             .regularPrice(bookAdminCreateRequestDto.getRegularPrice())
             .price(bookAdminCreateRequestDto.getPrice())
             .discountRatio(bookAdminCreateRequestDto.getDiscountRatio())
             .stock(bookAdminCreateRequestDto.getStock())
-            .isPackagable(bookAdminCreateRequestDto.getIsPackagable()).bookStatus(bookStatus)
+            .isPackagable(bookAdminCreateRequestDto.getIsPackagable())
+            .bookStatus(BookStatus.builder().statusId(1L).build())
             .publisher(publisher)
             .thumbnailFile(savedThumbnail)
             .build();
 
         Book saved = bookRepository.save(book);
 
+        if (bookImages != null && bookImages.length != 0) {
+            // save
+            fileService.bookFile(saved, Arrays.asList(bookImages));
+        }
+
         List<BookCategory> bookCategoryList = new ArrayList<>();
-        for (Long categoryId : bookAdminCreateRequestDto.getCategoryIdList()) {
+        for (Long categoryId : bookAdminCreateRequestDto.getCategories()) {
             Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(""));
+                .orElseThrow(() -> new NotFoundException(
+                    BookMessageEnum.BOOK_CATEGORY_NOT_FOUND.getMessage()));
             BookCategory bookCategory = BookCategory.create()
                 .pk(Pk.builder().categoryId(categoryId).bookId(saved.getBookId()).build())
                 .category(category)
@@ -177,23 +184,27 @@ public class BookServiceImpl implements BookService {
         }
         bookCategoryRepository.saveAll(bookCategoryList);
 
-        List<BookTag> bookTagList = new ArrayList<>();
-        for (Long tagId : bookAdminCreateRequestDto.getTagIdList()) {
-            Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new NotFoundException(""));
-            BookTag bookTag = BookTag.builder()
-                .pk(BookTag.Pk.builder().bookId(saved.getBookId()).tagId(tagId).build())
-                .book(saved)
-                .tag(tag)
-                .build();
-            bookTagList.add(bookTag);
+        if (!bookAdminCreateRequestDto.getTags().isEmpty()) {
+            List<BookTag> bookTagList = new ArrayList<>();
+            for (Long tagId : bookAdminCreateRequestDto.getTags()) {
+                Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new NotFoundException(
+                        BookMessageEnum.BOOK_TAG_NOT_FOUND.getMessage()));
+                BookTag bookTag = BookTag.builder()
+                    .pk(BookTag.Pk.builder().bookId(saved.getBookId()).tagId(tagId).build())
+                    .book(saved)
+                    .tag(tag)
+                    .build();
+                bookTagList.add(bookTag);
+            }
+            bookTagRepository.saveAll(bookTagList);
         }
-        bookTagRepository.saveAll(bookTagList);
 
         List<BookAuthor> bookAuthorList = new ArrayList<>();
-        for (Long authorId : bookAdminCreateRequestDto.getAuthorIdList()) {
+        for (Long authorId : bookAdminCreateRequestDto.getAuthors()) {
             Author author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new NotFoundException(""));
+                .orElseThrow(() -> new NotFoundException(
+                    BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
             BookAuthor bookAuthor = BookAuthor.builder()
                 .pk(BookAuthor.Pk.builder().bookId(saved.getBookId()).authorId(authorId).build())
                 .author(author)
@@ -224,6 +235,9 @@ public class BookServiceImpl implements BookService {
         File thumbnail = fileRepository.findById(bookAdminUpdateRequestDto.getThumbnailId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
+        BookFile bookFile = bookFileRepository.findById(thumbnail.getFileId())
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_THUMBNAIL_NOT_FOUND.getMessage()));
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),
@@ -232,6 +246,10 @@ public class BookServiceImpl implements BookService {
             bookAdminUpdateRequestDto.getDiscountRatio(), bookAdminUpdateRequestDto.getStock(),
             bookAdminUpdateRequestDto.getIsPackagable(), bookStatus, publisher, thumbnail);
 
+        // author, file, tag, category update
+        bookFile.updateBookFile(bookFile.getFileId(), thumbnail, book);
+
+//        tagRepository.findById(dto)
         return BookAdminUpdateResponseDto.builder().bookId(bookId).build();
     }
 }

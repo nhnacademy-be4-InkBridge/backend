@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookAdminRestController.
@@ -75,14 +77,16 @@ public class BookAdminRestController {
      */
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
-        @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
+        @RequestPart(value = "thumbnail") MultipartFile thumbnail,
+        @RequestPart(value = "bookImages", required = false) MultipartFile[] bookImages,
+        @Valid @RequestPart(value = "book") BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors() || bindingResult.getErrorCount() != 0) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.createBook(bookAdminCreateRequestDto);
+        bookService.createBook(thumbnail, bookImages, bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

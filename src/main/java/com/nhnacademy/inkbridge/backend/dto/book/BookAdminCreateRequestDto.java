@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * class: BookCreateRequestDto.
@@ -15,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 2024/02/14
  */
 @Getter
+@NoArgsConstructor
+@Setter
+@AllArgsConstructor
 public class BookAdminCreateRequestDto {
 
     @NotBlank(message = "도서 제목은 한 글자 이상이여야 합니다.")
@@ -40,17 +45,11 @@ public class BookAdminCreateRequestDto {
 
     private Boolean isPackagable;
 
-    private Long statusId;
-
     private Long publisherId;
 
-    private MultipartFile thumbnail;
+    private List<Long> categories;
 
-    private List<MultipartFile> bookImageList;
+    private List<Long> tags;
 
-    private List<Long> categoryIdList;
-
-    private List<Long> tagIdList;
-
-    private List<Long> authorIdList;
+    private List<Long> authors;
 }

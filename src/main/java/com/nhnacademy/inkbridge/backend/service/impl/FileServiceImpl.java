@@ -47,7 +47,7 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             throw new FileStorageException(FileMessageEnum.FILE_SAVE_ERROR.getMessage());
         }
-        File newFile = File.builder().fileName(fileName).build();
+        File newFile = File.builder().fileUrl("url").fileName(fileName).build();
 
         return fileRepository.save(newFile);
     }
