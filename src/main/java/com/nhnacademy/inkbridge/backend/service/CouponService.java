@@ -18,5 +18,5 @@ public interface CouponService {
 
     void issueCoupon(CouponIssueRequestDto issueCouponDto);
 
-    Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponType);
+    Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId);
 }

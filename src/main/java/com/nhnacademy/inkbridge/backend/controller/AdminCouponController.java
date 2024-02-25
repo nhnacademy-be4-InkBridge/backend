@@ -28,9 +28,9 @@ public class AdminCouponController {
 
     @GetMapping
     public ResponseEntity<Page<CouponReadResponseDto>> getCoupons(
-        @RequestParam(name = "coupon-type-id") int couponTypeId, Pageable pageable) {
+        @RequestParam(name = "coupon-status-id") int couponStatusId, Pageable pageable) {
         Page<CouponReadResponseDto> coupons = couponService.adminViewCoupons(pageable,
-            couponTypeId);
+            couponStatusId);
         return ResponseEntity.ok(coupons);
     }
 }

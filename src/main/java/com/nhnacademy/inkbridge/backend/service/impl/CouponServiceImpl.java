@@ -9,6 +9,7 @@ import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_IS
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_NOT_STARTED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_NOT_FOUND;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_STATUS_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TYPE_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TYPE_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID;
@@ -189,10 +190,9 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponTypeId) {
-        System.out.println(couponTypeId);
-        CouponType couponType = findCouponType(couponTypeId);
-        return couponRepository.findByCouponType(couponType, pageable);
+    public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId) {
+        CouponStatus couponStatus = findCouponStatus(couponStatusId);
+        return couponRepository.findByCouponStatus(couponStatus, pageable);
     }
 
     /**
@@ -272,10 +272,13 @@ public class CouponServiceImpl implements CouponService {
         bookCouponRepository.save(bookCoupon);
     }
 
+    private CouponStatus findCouponStatus(int couponStatusId) {
+        return couponStatusRepository.findById(couponStatusId)
+            .orElseThrow(() -> new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage()));
+    }
+
     private CouponType findCouponType(int couponTypeId) {
         return couponTypeRepository.findById(couponTypeId)
-            .orElseThrow(() -> new NotFoundException(
-                String.format("%s%s%d", COUPON_TYPE_NOT_FOUND.getMessage(),
-                    COUPON_TYPE_ID.getMessage(), couponTypeId)));
+            .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
     }
 }
