@@ -38,18 +38,25 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
-        QBook book = QBook.book;
-        QPublisher publisher = QPublisher.publisher;
-        QBookStatus bookStatus = QBookStatus.bookStatus;
+        QBook qBook = QBook.book;
+        QAuthor qAuthor = QAuthor.author;
+        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
+        QPublisher qPublisher = QPublisher.publisher;
+        QBookStatus qBookStatus = QBookStatus.bookStatus;
 
-        List<BooksReadResponseDto> content = from(book)
-            .innerJoin(publisher)
-            .on(book.publisher.eq(publisher))
-            .innerJoin(bookStatus)
-            .on(bookStatus.eq(book.bookStatus))
-            .where(bookStatus.statusId.eq(1L))
+        List<BooksReadResponseDto> content = from(qBook)
+            .innerJoin(qPublisher)
+            .on(qBook.publisher.eq(qPublisher))
+            .innerJoin(qBookStatus)
+            .on(qBookStatus.eq(qBook.bookStatus))
+            .innerJoin(qBookAuthor)
+            .on(qBookAuthor.book.eq(qBook))
+            .innerJoin(qAuthor)
+            .on(qAuthor.eq(qBookAuthor.author))
+            .where(qBookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
-                book.bookTitle, book.price, publisher.publisherName))
+                qBook.bookId, qBook.bookTitle, qBook.price, qPublisher.publisherName,
+                qAuthor.authorName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -106,6 +113,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookStatus)
             .on(book.bookStatus.eq(bookStatus))
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
+            .orderBy(book.bookId.asc())
             .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId, book.bookTitle,
                 author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
