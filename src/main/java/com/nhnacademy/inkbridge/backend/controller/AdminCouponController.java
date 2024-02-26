@@ -1,8 +1,9 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
-import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import javax.validation.Valid;
@@ -51,11 +52,52 @@ public class AdminCouponController {
     }
 
     /**
+     * admin이 책 쿠폰을 생성하는 메소드.
+     *
+     * @param bookCouponCreateRequestDto 쿠폰생성시 필요한 필드들
+     * @param bindingResult              valid결과
+     * @return 생성되었습니다
+     * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
+     */
+    @PostMapping("/book-coupons")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity createBookCoupon(
+        @Valid @RequestBody BookCouponCreateRequestDto bookCouponCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+        }
+        couponService.createBookCoupon(bookCouponCreateRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * admin이 카테고리 쿠폰을 생성하는 메소드.
+     *
+     * @param categoryCouponCreateRequestDto 카테고리 쿠폰 생성 시 필요한 필드들
+     * @param bindingResult                  valid결과
+     * @return 생성되었습니다
+     * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
+     */
+    @PostMapping("/category-coupons")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity creatCategoryCoupon(
+        @Valid @RequestBody CategoryCouponCreateRequestDto categoryCouponCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+        }
+        couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
      * admin이 쿠폰을 생성하는 메소드.
      *
      * @param couponCreateRequestDto 쿠폰생성시 필요한 필드들
      * @param bindingResult          valid결과
      * @return 생성되었습니다
+     * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,7 +105,7 @@ public class AdminCouponController {
         @Valid @RequestBody CouponCreateRequestDto couponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(CouponMessageEnum.COUPON_VALIDATION_ERROR.getMessage());
+            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
