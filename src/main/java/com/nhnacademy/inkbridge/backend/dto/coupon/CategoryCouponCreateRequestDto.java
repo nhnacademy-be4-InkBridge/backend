@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.coupon;
 
 import java.time.LocalDate;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Min;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CouponCreateRequestDto {
+public class CategoryCouponCreateRequestDto {
 
     @NotNull(message = "쿠폰이름을 지정하지 않았습니다.")
     private String couponName;
@@ -39,6 +40,6 @@ public class CouponCreateRequestDto {
     private Integer validity;
     @NotNull(message = "쿠폰이 어떤 타입인지 고르지 않았습니다.")
     private Integer couponTypeId;
-    @NotNull(message = "생일쿠폰 여부를 선택하지 않았습니다")
-    private Boolean isBirth;
+    @NotNull(message = "카테고리 쿠폰에 카테고리를 선정하지 않았습니다.")
+    private Set<Long> categoryIds;
 }
