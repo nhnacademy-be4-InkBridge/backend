@@ -3,13 +3,12 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,9 +49,9 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
-        List<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(pageable)
-            .getContent();
+    public ResponseEntity<Page<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
+        Page<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(
+            pageable);
         return new ResponseEntity<>(booksDtoByAdmin, HttpStatus.OK);
     }
 
@@ -78,15 +77,14 @@ public class BookAdminRestController {
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
         @RequestPart(value = "thumbnail") MultipartFile thumbnail,
-        @RequestPart(value = "bookImages", required = false) MultipartFile[] bookImages,
         @Valid @RequestPart(value = "book") BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || bindingResult.getErrorCount() != 0) {
+        if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.createBook(thumbnail, bookImages, bookAdminCreateRequestDto);
+        bookService.createBook(thumbnail, bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -99,16 +97,17 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookAdminUpdateResponseDto> updateBook(@PathVariable Long bookId,
+    public ResponseEntity<HttpStatus> updateBook(@PathVariable Long bookId,
+        @RequestPart(value = "thumbnail") MultipartFile thumbnail,
+        @RequestPart(value = "bookImages", required = false) MultipartFile[] bookImages,
         @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || bindingResult.getErrorCount() != 0) {
+        if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(
-            bookId, bookAdminUpdateRequestDto);
-        return new ResponseEntity<>(bookAdminUpdateResponseDto, HttpStatus.OK);
+        bookService.updateBookByAdmin(bookId, thumbnail, bookImages, bookAdminUpdateRequestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

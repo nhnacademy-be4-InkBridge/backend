@@ -90,6 +90,19 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
+     * 도서 개수를 조회하는 메서드입니다.
+     *
+     * @return Book Count
+     */
+    private Long getCount() {
+        QBook qBook = QBook.book;
+
+        return from(qBook)
+            .select(qBook.count())
+            .fetchOne();
+    }
+
+    /**
      * admin 도서 목록 페이지 조회 메서드입니다.
      *
      * @param pageable pagination
@@ -120,7 +133,9 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = getCount();
+
+        return new PageImpl<>(content, pageable, count);
     }
 
     /**

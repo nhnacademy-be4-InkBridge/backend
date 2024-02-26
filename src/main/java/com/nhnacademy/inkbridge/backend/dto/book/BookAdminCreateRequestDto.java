@@ -5,10 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * class: BookCreateRequestDto.
@@ -17,9 +14,6 @@ import lombok.Setter;
  * @version 2024/02/14
  */
 @Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
 public class BookAdminCreateRequestDto {
 
     @NotBlank(message = "도서 제목은 한 글자 이상이여야 합니다.")
@@ -51,5 +45,5 @@ public class BookAdminCreateRequestDto {
 
     private List<Long> tags;
 
-    private List<Long> authors;
+    private Long authorId;
 }
