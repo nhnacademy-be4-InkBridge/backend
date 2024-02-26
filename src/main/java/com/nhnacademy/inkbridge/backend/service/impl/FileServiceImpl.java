@@ -29,9 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- *  * 파일 관련 서비스를 제공하는 구현 클래스입니다.
- *  * 파일 저장 및 조회, 책과 리뷰에 대한 파일 연동 기능을 포함합니다.
- * class: FileServiceImpl.
+ * * 파일 관련 서비스를 제공하는 구현 클래스입니다. * 파일 저장 및 조회, 책과 리뷰에 대한 파일 연동 기능을 포함합니다. class: FileServiceImpl.
  *
  * @author jeongbyeonghun
  * @version 2/21/24
@@ -46,8 +44,9 @@ public class FileServiceImpl implements FileService {
     private final BookRepository bookRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewFileRepository reviewFileRepository;
+    private final FileUtil fileUtil = new FileUtilImpl();
     private static final String URL_HEAD = "https://inkbridge.store/image/";
-    private final String uploadDir = System.getProperty("user.dir") + "/upload";
+    private final String uploadDir = System.getProperty("user.dir") + "/upload/";
     private final Path fileStorage = Paths.get("upload");
     private final Path noImageFile = Paths.get("upload/noImage.png");
 
@@ -62,13 +61,9 @@ public class FileServiceImpl implements FileService {
     @Override
     public File saveFile(MultipartFile file) {
         String fileName = LocalDateTime.now() + file.getOriginalFilename();
-        java.io.File saveFile = new java.io.File(uploadDir + fileName);
+        java.io.File saveFile = new java.io.File(uploadDir + fileName.trim());
+        fileUtil.transferToLocalFile(file, saveFile);
 
-        try {
-            file.transferTo(saveFile);
-        } catch (IOException e) {
-            throw new FileStorageException(FileMessageEnum.FILE_SAVE_ERROR.getMessage());
-        }
         File newFile = File.builder().fileName(fileName).fileUrl(URL_HEAD + fileName).build();
 
         return fileRepository.save(newFile);
@@ -83,25 +78,14 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public Resource loadFile(String fileName) {
-        Path filePath = fileStorage.resolve(fileName).normalize();
-
-        try {
-            Resource resource = new UrlResource(filePath.toUri());
-            if (!resource.exists()) {
-                return new UrlResource(noImageFile.toUri());
-            }
-            return resource;
-
-        } catch (MalformedURLException e) {
-            throw new FileStorageException(FileMessageEnum.FILE_LOAD_ERROR.getMessage());
-        }
+        return fileUtil.imageFileToResource(fileStorage.resolve(fileName).normalize());
     }
 
     /**
      * 지정된 책 ID에 대해 업로드된 파일들을 저장하고, 책과 파일의 연동 정보를 데이터베이스에 기록합니다.
      *
      * @param bookId 책의 ID
-     * @param files 저장할 파일 리스트
+     * @param files  저장할 파일 리스트
      * @return 저장된 파일들의 정보 리스트
      * @throws NotFoundException 지정된 책 ID가 존재하지 않을 경우 발생
      */
@@ -121,7 +105,7 @@ public class FileServiceImpl implements FileService {
      * 지정된 리뷰 ID에 대해 업로드된 파일들을 저장하고, 리뷰와 파일의 연동 정보를 데이터베이스에 기록합니다.
      *
      * @param reviewId 리뷰의 ID
-     * @param files 저장할 파일 리스트
+     * @param files    저장할 파일 리스트
      * @return 저장된 파일들의 정보 리스트
      * @throws NotFoundException 지정된 리뷰 ID가 존재하지 않을 경우 발생
      */
@@ -136,6 +120,39 @@ public class FileServiceImpl implements FileService {
                 Collectors.toList());
         reviewFileRepository.saveAll(reviewFileList);
         return fileList;
+    }
+
+    interface FileUtil {
+
+        void transferToLocalFile(MultipartFile file, java.io.File saveFile);
+
+        Resource imageFileToResource(Path filePath);
+    }
+
+    class FileUtilImpl implements FileUtil {
+
+        @Override
+        public void transferToLocalFile(MultipartFile file, java.io.File saveFile) {
+            try {
+                file.transferTo(saveFile);
+            } catch (IOException e) {
+                throw new FileStorageException(FileMessageEnum.FILE_SAVE_ERROR.getMessage());
+            }
+        }
+
+        @Override
+        public Resource imageFileToResource(Path filePath) {
+            try {
+                Resource resource = new UrlResource(filePath.toUri());
+                if (!resource.exists()) {
+                    return new UrlResource(noImageFile.toUri());
+                }
+                return resource;
+
+            } catch (MalformedURLException e) {
+                throw new NotFoundException(FileMessageEnum.FILE_LOAD_ERROR.getMessage());
+            }
+        }
     }
 
 

@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,5 +56,16 @@ public class Review {
     @Column(name = "score")
     private Integer score;
 
-
+    @Builder
+    public Review(Long reviewId, Member member, Book book, BookOrderDetail bookOrderDetail,
+        String reviewTitle, String reviewContent, LocalDateTime registeredAt, Integer score) {
+        this.reviewId = reviewId;
+        this.member = member;
+        this.book = book;
+        this.bookOrderDetail = bookOrderDetail;
+        this.reviewTitle = reviewTitle;
+        this.reviewContent = reviewContent;
+        this.registeredAt = registeredAt;
+        this.score = score;
+    }
 }
