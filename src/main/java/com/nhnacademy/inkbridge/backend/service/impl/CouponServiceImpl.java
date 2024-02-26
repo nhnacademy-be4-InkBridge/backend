@@ -42,10 +42,9 @@ import com.nhnacademy.inkbridge.backend.repository.CouponTypeRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -84,7 +83,7 @@ public class CouponServiceImpl implements CouponService {
      * @param categoryCouponRepository 카테고리전용 쿠폰
      * @param bookRepository           책
      * @param bookCouponRepository     책전용 쿠폰
-     * @param couponStatusRepository
+     * @param couponStatusRepository   쿠폰상태
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
@@ -158,7 +157,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * 사용자가 쿠폰을 등록하는 메소드.
+     * 사용자가 쿠폰을 등록하는 메소드. UUID에 randomUUID기능을 사용하여 난수의 중복을 방지한다.
      *
      * @param issueCouponDto 쿠폰을 등록하기 위한 Request DTO
      * @throws NotFoundException      존재하지 않는 쿠폰이 입력된 경우 예외 발생
@@ -180,7 +179,7 @@ public class CouponServiceImpl implements CouponService {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()
-            .memberCouponId(generateCoupon())
+            .memberCouponId(UUID.randomUUID().toString())
             .member(member)
             .coupon(coupon)
             .issuedAt(LocalDate.now())
@@ -189,26 +188,23 @@ public class CouponServiceImpl implements CouponService {
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 
+    /**
+     * 관리자용 쿠폰리스트를 보여주는 메소드.
+     *
+     * @param pageable       페이지
+     * @param couponStatusId 쿠폰상태별로 보기 위한 파라미터
+     * @return 쿠폰리스트
+     * @throws NotFoundException 존재하는 쿠폰상태가 아닌 경우 예외 발생
+     */
     @Override
     public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId) {
         CouponStatus couponStatus = findCouponStatus(couponStatusId);
         return couponRepository.findByCouponStatus(couponStatus, pageable);
     }
 
-    /**
-     * 쿠폰ID를 생성하는 메소드. 쿠폰ID는 예측이 불가능해야 하므로 SecureRandom을 사용하여 안전한 난수를 생성한다.
-     *
-     * @return 랜덤한 BigInteger값을 16진수로 변경한 쿠폰ID
-     */
-    private String generateCoupon() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[COUPON_LENGTH / 2];
-        secureRandom.nextBytes(randomBytes);
-        return new BigInteger(1, randomBytes).toString(16);
-    }
 
     /**
-     * Member가 사용했는 쿠폰인지 확인하는 메소드. d t ad
+     * Member가 사용했는 쿠폰인지 확인하는 메소드.
      *
      * @param memberCoupon 멤버의 쿠폰
      * @throws AlreadyUsedException 사용한 쿠폰이라면 예외 발생
@@ -272,11 +268,25 @@ public class CouponServiceImpl implements CouponService {
         bookCouponRepository.save(bookCoupon);
     }
 
+    /**
+     * 입력받은 쿠폰상태가 존재하는지 찾는 메소드.
+     *
+     * @param couponStatusId 쿠폰상태 id
+     * @return 쿠폰상태
+     * @throws NotFoundException 존재하는 쿠폰상태가 아닌 경우 예외 발생
+     */
     private CouponStatus findCouponStatus(int couponStatusId) {
         return couponStatusRepository.findById(couponStatusId)
             .orElseThrow(() -> new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage()));
     }
 
+    /**
+     * 입력받은 쿠폰타입이 존재하는지 찾는 메소드.
+     *
+     * @param couponTypeId 쿠폰타입 id
+     * @return 쿠폰타입
+     * @throws NotFoundException 존재하는 쿠폰타입이 아닌 경우 예외 발생
+     */
     private CouponType findCouponType(int couponTypeId) {
         return couponTypeRepository.findById(couponTypeId)
             .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
