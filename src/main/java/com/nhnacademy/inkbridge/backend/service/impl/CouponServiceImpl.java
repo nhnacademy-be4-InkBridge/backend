@@ -102,7 +102,8 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * 관리자가 쿠폰을 생성하는 메소드. 관리자는 쿠폰을 등록하면서 해당 쿠폰을 특정한 책 전용 혹은 특정한 카테고리 전용으로 만들 수 있다.
+     * 관리자가 쿠폰을 생성하는 메소드. 관리자는 쿠폰을 등록하면서 해당 쿠폰을 특정한 책 전용 혹은 특정한 카테고리 전용으로 만들 수 있다. UUID에
+     * randomUUID기능을 사용하여 난수의 중복을 방지한다.
      *
      * @param couponCreateRequestDto 쿠폰을 생성하기 위한 Request DTO
      * @throws NotFoundException    입력된 쿠폰 타입이 존재하지 않는 경우 예외 발생
@@ -126,7 +127,7 @@ public class CouponServiceImpl implements CouponService {
                     COUPON_TYPE_ID.getMessage(), couponCreateRequestDto.getCouponTypeId())));
 
         Coupon newCoupon = Coupon.builder()
-            .couponId(generateCoupon())
+            .couponId(UUID.randomUUID().toString())
             .couponType(couponType)
             .couponName(couponCreateRequestDto.getCouponName())
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
