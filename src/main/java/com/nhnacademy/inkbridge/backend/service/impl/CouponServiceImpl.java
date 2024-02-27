@@ -3,7 +3,6 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
-import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -109,7 +108,6 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(couponCreateRequestDto.getCouponName());
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             couponCreateRequestDto.getBasicIssuedDate());
 
@@ -133,7 +131,6 @@ public class CouponServiceImpl implements CouponService {
     public void createCategoryCoupon(
         CategoryCouponCreateRequestDto categoryCouponCreateRequestDto) {
         CouponType couponType = findCouponType(categoryCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(categoryCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             categoryCouponCreateRequestDto.getBasicIssuedDate());
@@ -164,7 +161,6 @@ public class CouponServiceImpl implements CouponService {
     @Transactional
     public void createBookCoupon(BookCouponCreateRequestDto bookCouponCreateRequestDto) {
         CouponType couponType = findCouponType(bookCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(bookCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             bookCouponCreateRequestDto.getBasicIssuedDate());
@@ -315,17 +311,5 @@ public class CouponServiceImpl implements CouponService {
     private CouponType findCouponType(int couponTypeId) {
         return couponTypeRepository.findById(couponTypeId)
             .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
-    }
-
-    /**
-     * 중복된 이름의 쿠폰이 존재하는지 확인하는 메소드.
-     *
-     * @param couponName 쿠폰이름
-     * @throws AlreadyUsedException 중복된 쿠폰이름이 존재한다면 예외 발생
-     */
-    private void validDuplicatedCouponName(String couponName) {
-        if (couponRepository.existsByCouponName(couponName)) {
-            throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
-        }
     }
 }
