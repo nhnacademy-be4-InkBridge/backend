@@ -14,12 +14,15 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Objects;
 import javax.net.ssl.SSLContext;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +32,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
 /**
  * class: 키매니저 설정.
  *
@@ -36,13 +40,15 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @version 2024/02/27
  */
 
-@Configuration
+@ConstructorBinding
+@RequiredArgsConstructor
+@ConfigurationProperties(prefix = "secure-key-manager")
 public class KeyConfig {
 
-    private String password;
-    private String url;
-    private String path;
-    private String appKey;
+    private final String password;
+    private final String url;
+    private final String path;
+    private final String appKey;
 
     public String keyStore(String keyId) {
         try {
@@ -93,3 +99,4 @@ public class KeyConfig {
         }
     }
 }
+
