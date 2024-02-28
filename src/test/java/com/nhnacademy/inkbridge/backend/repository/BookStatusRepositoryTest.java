@@ -29,7 +29,6 @@ class BookStatusRepositoryTest {
 
     @Test
     void findAllBy() {
-
         List<BookStatus> statuses = bookStatusRepository.findAllBy();
 
         assertEquals(1, statuses.size());
