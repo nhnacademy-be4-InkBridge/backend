@@ -11,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BookFileRepository extends JpaRepository<BookFile, Long> {
 
+    void deleteAllByBook_BookId(Long bookId);
 }
