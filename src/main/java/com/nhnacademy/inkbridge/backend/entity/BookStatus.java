@@ -32,7 +32,8 @@ public class BookStatus {
     private String statusName;
 
     @Builder
-    public BookStatus(Long statusId) {
+    public BookStatus(Long statusId, String statusName) {
         this.statusId = statusId;
+        this.statusName = statusName;
     }
 }
