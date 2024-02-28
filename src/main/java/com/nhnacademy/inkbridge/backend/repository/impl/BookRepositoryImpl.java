@@ -38,25 +38,25 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
-        QBook qBook = QBook.book;
-        QAuthor qAuthor = QAuthor.author;
-        QBookAuthor qBookAuthor = QBookAuthor.bookAuthor;
-        QPublisher qPublisher = QPublisher.publisher;
-        QBookStatus qBookStatus = QBookStatus.bookStatus;
+        QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        List<BooksReadResponseDto> content = from(qBook)
-            .innerJoin(qPublisher)
-            .on(qBook.publisher.eq(qPublisher))
-            .innerJoin(qBookStatus)
-            .on(qBookStatus.eq(qBook.bookStatus))
-            .innerJoin(qBookAuthor)
-            .on(qBookAuthor.book.eq(qBook))
-            .innerJoin(qAuthor)
-            .on(qAuthor.eq(qBookAuthor.author))
-            .where(qBookStatus.statusId.eq(1L))
+        List<BooksReadResponseDto> content = from(book)
+            .innerJoin(publisher)
+            .on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus)
+            .on(bookStatus.eq(book.bookStatus))
+            .innerJoin(bookAuthor)
+            .on(bookAuthor.book.eq(book))
+            .innerJoin(author)
+            .on(author.eq(bookAuthor.author))
+            .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
-                qBook.bookId, qBook.bookTitle, qBook.price, qPublisher.publisherName,
-                qAuthor.authorName))
+                book.bookId, book.bookTitle, book.price, publisher.publisherName,
+                author.authorName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -95,10 +95,10 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * @return Book Count
      */
     private Long getCount() {
-        QBook qBook = QBook.book;
+        QBook book = QBook.book;
 
-        return from(qBook)
-            .select(qBook.count())
+        return from(book)
+            .select(book.count())
             .fetchOne();
     }
 
@@ -127,7 +127,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(book.bookStatus.eq(bookStatus))
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
             .orderBy(book.bookId.asc())
-            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId, book.bookTitle,
+            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
+                book.bookTitle,
                 author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -162,11 +163,12 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(bookAuthor.author.eq(author))
             .innerJoin(bookStatus)
             .on(book.bookStatus.eq(bookStatus))
-            .where(book.bookId.eq(bookId))
+            .where(book.bookId.eq(bookId).and(bookStatus.statusId.in(1L, 2L, 3L, 4L)))
             .select(Projections.constructor(BookAdminReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
-                book.regularPrice, book.price, book.discountRatio, book.stock,
-                book.isPackagable, publisher.publisherName, bookStatus.statusName))
+                book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
+                author.authorId, publisher.publisherId, bookStatus.statusId,
+                book.thumbnailFile.fileUrl))
             .fetchOne();
     }
 }
