@@ -77,6 +77,7 @@ public class DeliveryPolicyServiceImpl implements DeliveryPolicyService {
         DeliveryPolicy deliveryPolicy = DeliveryPolicy.builder()
             .deliveryPrice(deliveryPolicyCreateRequestDto.getDeliveryPrice())
             .createdAt(LocalDate.now())
+            .freeDeliveryPrice(deliveryPolicyCreateRequestDto.getFreeDeliveryPrice())
             .build();
 
         deliveryPolicyRepository.save(deliveryPolicy);

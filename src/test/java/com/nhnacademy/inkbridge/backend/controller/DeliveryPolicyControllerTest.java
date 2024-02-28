@@ -53,7 +53,7 @@ class DeliveryPolicyControllerTest {
     @DisplayName("배송비 정책 전체 조회 테스트")
     void testGetDeliveryPolicies() throws Exception {
         DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyService.getDeliveryPolicies()).willReturn(List.of(responseDto));
 
@@ -89,7 +89,7 @@ class DeliveryPolicyControllerTest {
     @DisplayName("배송비 정책 단일 조회 - 성공")
     void testGetDeliveryPolicyById_success() throws Exception {
         DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyService.getDeliveryPolicy(1L)).willReturn(responseDto);
 
@@ -108,7 +108,7 @@ class DeliveryPolicyControllerTest {
     @DisplayName("현재 적용 배송비 정책 조회")
     void testGetCurrentDeliveryPolicy() throws Exception {
         DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyService.getCurrentDeliveryPolicy()).willReturn(responseDto);
 
