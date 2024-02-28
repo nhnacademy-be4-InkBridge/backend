@@ -1,10 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 
-import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.File;
-import com.nhnacademy.inkbridge.backend.entity.Review;
 import java.util.List;
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -12,14 +11,21 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author jeongbyeonghun
  * @version 2/21/24
+ * @modifiedBy minm063
+ * @modifiedAt 2/28/24
+ *  @modificationReason - loadFile 추가
  */
 public interface FileService {
 
     File saveFile(MultipartFile file);
 
-    MultipartFile loadFIle(Long fileId);
+    Resource loadFile(String fileName);
 
-    List<File> bookFile(Book book, List<MultipartFile> files);
+    Resource loadFileById(Long fileId);
 
-    List<File> reviewFile(Review review, List<MultipartFile> files);
+    byte[] loadFileByByte(String fileName);
+
+    List<File> saveBookFile(Long bookId, List<Long> files);
+
+    List<File> saveReviewFile(Long reviewId, List<MultipartFile> files);
 }

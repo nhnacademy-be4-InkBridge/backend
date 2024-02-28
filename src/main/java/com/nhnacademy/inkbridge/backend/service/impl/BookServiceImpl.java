@@ -11,6 +11,7 @@ import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory.Pk;
+import com.nhnacademy.inkbridge.backend.entity.BookFile;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
 import com.nhnacademy.inkbridge.backend.entity.BookTag;
 import com.nhnacademy.inkbridge.backend.entity.Category;
@@ -18,6 +19,7 @@ import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
 import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookAuthorRepository;
@@ -34,6 +36,8 @@ import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -161,9 +165,10 @@ public class BookServiceImpl implements BookService {
 
         Book saved = bookRepository.save(book);
 
-        saveBookCategory(bookAdminCreateRequestDto, saved);
-        saveBookTag(bookAdminCreateRequestDto, saved);
-        saveBookAuthor(bookAdminCreateRequestDto, saved);
+        saveBookCategory(bookAdminCreateRequestDto.getCategories(), saved);
+        saveBookTag(bookAdminCreateRequestDto.getTags(), saved);
+        saveBookAuthor(bookAdminCreateRequestDto.getAuthorId(), saved);
+        saveBookFile(bookAdminCreateRequestDto.getFileIdList(), saved);
     }
 
     /**
@@ -171,7 +176,7 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional
     @Override
-    public void updateBookByAdmin(Long bookId, MultipartFile thumbnail, MultipartFile[] bookImages,
+    public void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto) {
         Book book = bookRepository.findById(bookId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
@@ -184,7 +189,8 @@ public class BookServiceImpl implements BookService {
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
 
-        File savedThumbnail = fileService.saveFile(thumbnail);
+        File savedThumbnail =
+            (thumbnail != null) ? fileService.saveFile(thumbnail) : book.getThumbnailFile();
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),
@@ -193,38 +199,65 @@ public class BookServiceImpl implements BookService {
             bookAdminUpdateRequestDto.getDiscountRatio(), bookAdminUpdateRequestDto.getStock(),
             bookAdminUpdateRequestDto.getIsPackagable(), bookStatus, publisher, savedThumbnail);
 
-        // author, file, tag, category update
-        if (bookImages != null) {
-//        bookFile.updateBookFile(bookFile.getFileId(), thumbnail, book);
-        }
-
-//        tagRepository.findById(dto)
+        updateBookAuthor(bookAdminUpdateRequestDto.getAuthorId(), bookId);
+        updateBookCategory(bookAdminUpdateRequestDto.getCategories(), book);
+        updateBookTag(bookAdminUpdateRequestDto.getTags(), book);
+        updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
     }
 
-    private void saveBookAuthor(BookAdminCreateRequestDto bookAdminCreateRequestDto, Book saved) {
-        Long authorId = bookAdminCreateRequestDto.getAuthorId();
+    /**
+     * BookFile 리스트를 저장하는 메서드입니다. File 테이블에 fileId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param fileIdList fileId list
+     * @param book       Book
+     * @throws NotFoundException 주어진 File ID로 찾을 수 없는 경우
+     */
+    private void saveBookFile(List<Long> fileIdList, Book book) {
+        List<File> fileList = fileIdList.stream()
+            .map(fileId -> fileRepository.findById(fileId).orElseThrow(() -> new NotFoundException(
+                FileMessageEnum.FILE_SAVE_ERROR.getMessage()))).collect(Collectors.toList());
+        List<BookFile> bookFileList = fileList.stream()
+            .map(file -> BookFile.builder().book(book).fileId(file.getFileId()).build()).collect(
+                Collectors.toList());
+        bookFileRepository.saveAll(bookFileList);
+    }
 
+    /**
+     * BookAuthor을 저장하는 메서드입니다. Author 테이블에 authorId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param authorId Long
+     * @param book     Book
+     * @throws NotFoundException 주어진 Author ID로 찾을 수 없는 경우
+     */
+    private void saveBookAuthor(Long authorId, Book book) {
         Author author = authorRepository.findById(authorId)
             .orElseThrow(() -> new NotFoundException(
                 BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
         BookAuthor bookAuthor = BookAuthor.builder()
-            .pk(BookAuthor.Pk.builder().bookId(saved.getBookId()).authorId(authorId).build())
+            .pk(BookAuthor.Pk.builder().bookId(book.getBookId()).authorId(authorId).build())
             .author(author)
-            .book(saved)
+            .book(book)
             .build();
         bookAuthorRepository.save(bookAuthor);
     }
 
-    private void saveBookTag(BookAdminCreateRequestDto bookAdminCreateRequestDto, Book saved) {
-        if (!bookAdminCreateRequestDto.getTags().isEmpty()) {
+    /**
+     * BookTag 리스트를 저장하는 메서드입니다. Tag 테이블에 tagId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param tags nullable, tagId list
+     * @param book Book
+     * @throws NotFoundException 주어진 Tag ID로 찾을 수 없는 경우
+     */
+    private void saveBookTag(List<Long> tags, Book book) {
+        if (!tags.isEmpty()) {
             List<BookTag> bookTagList = new ArrayList<>();
-            for (Long tagId : bookAdminCreateRequestDto.getTags()) {
+            for (Long tagId : tags) {
                 Tag tag = tagRepository.findById(tagId)
                     .orElseThrow(() -> new NotFoundException(
                         BookMessageEnum.BOOK_TAG_NOT_FOUND.getMessage()));
                 BookTag bookTag = BookTag.builder()
-                    .pk(BookTag.Pk.builder().bookId(saved.getBookId()).tagId(tagId).build())
-                    .book(saved)
+                    .pk(BookTag.Pk.builder().bookId(book.getBookId()).tagId(tagId).build())
+                    .book(book)
                     .tag(tag)
                     .build();
                 bookTagList.add(bookTag);
@@ -233,19 +266,124 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    private void saveBookCategory(BookAdminCreateRequestDto bookAdminCreateRequestDto, Book saved) {
+    /**
+     * BookCategory 리스트를 저장하는 메서드입니다. Category 테이블에 categoryId와 일치하는 데이터가 없으면 NotFoundException을
+     * 던집니다.
+     *
+     * @param categories categoryId set
+     * @param book       Book
+     * @throws NotFoundException 주어진 Category ID로 찾을 수 없는 경우
+     */
+    private void saveBookCategory(Set<Long> categories, Book book) {
         List<BookCategory> bookCategoryList = new ArrayList<>();
-        for (Long categoryId : bookAdminCreateRequestDto.getCategories()) {
+        for (Long categoryId : categories) {
             Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException(
                     BookMessageEnum.BOOK_CATEGORY_NOT_FOUND.getMessage()));
             BookCategory bookCategory = BookCategory.create()
-                .pk(Pk.builder().categoryId(categoryId).bookId(saved.getBookId()).build())
+                .pk(Pk.builder().categoryId(categoryId).bookId(book.getBookId()).build())
                 .category(category)
-                .book(saved)
+                .book(book)
                 .build();
             bookCategoryList.add(bookCategory);
         }
         bookCategoryRepository.saveAll(bookCategoryList);
+    }
+
+    /**
+     * BookFile 리스트를 수정하는 메서드입니다. File 테이블에 fileId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param newFiles fileId list
+     * @param book     Book
+     * @throws NotFoundException 주어진 File ID로 찾을 수 없는 경우
+     */
+    private void updateBookFile(List<Long> newFiles, Book book) {
+        List<File> fileIdList = newFiles.stream()
+            .map(x -> fileRepository.findById(x)
+                .orElseThrow(
+                    () -> new NotFoundException(
+                        BookMessageEnum.BOOK_FILE_NOT_FOUND.getMessage())))
+            .collect(
+                Collectors.toList());
+        bookFileRepository.deleteAllByBook_BookId(book.getBookId());
+        List<BookFile> bookFileList = fileIdList.stream()
+            .map(file -> BookFile.builder().book(book).fileId(file.getFileId()).build()).collect(
+                Collectors.toList());
+        bookFileRepository.saveAll(bookFileList);
+    }
+
+    /**
+     * BookFile 리스트를 수정하는 메서드입니다. File 테이블에 fileId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param newTags tagId list
+     * @param book    Book
+     * @throws NotFoundException 주어진 Tag ID로 찾을 수 없는 경우
+     */
+    private void updateBookTag(List<Long> newTags, Book book) {
+        if (!newTags.isEmpty()) {
+            List<Tag> tags = newTags.stream()
+                .map(x -> tagRepository.findById(x)
+                    .orElseThrow(
+                        () -> new NotFoundException(
+                            BookMessageEnum.BOOK_TAG_NOT_FOUND.getMessage())))
+                .collect(
+                    Collectors.toList());
+            bookTagRepository.deleteAllByPk_BookId(book.getBookId());
+            List<BookTag> bookTagList = new ArrayList<>();
+            for (Tag tag : tags) {
+                BookTag bookTag = BookTag.builder()
+                    .pk(BookTag.Pk.builder().bookId(book.getBookId()).tagId(tag.getTagId()).build())
+                    .book(book)
+                    .tag(tag)
+                    .build();
+                bookTagList.add(bookTag);
+            }
+            bookTagRepository.saveAll(bookTagList);
+        }
+    }
+
+    /**
+     * BookCategory 리스트를 수정하는 메서드입니다. Category 테이블에 categoryId와 일치하는 데이터가 없으면 NotFoundException을
+     * 던집니다.
+     *
+     * @param newCategories categoryId list
+     * @param book          Book
+     * @throws NotFoundException 주어진 Category ID로 찾을 수 없는 경우
+     */
+    private void updateBookCategory(Set<Long> newCategories, Book book) {
+        Set<Category> categories = newCategories.stream()
+            .map(x -> categoryRepository.findById(x)
+                .orElseThrow(
+                    () -> new NotFoundException(
+                        BookMessageEnum.BOOK_CATEGORY_NOT_FOUND.getMessage())))
+            .collect(
+                Collectors.toSet());
+        bookCategoryRepository.deleteByPk_BookId(book.getBookId()); // delete prev
+        List<BookCategory> bookCategoryList = new ArrayList<>();
+        for (Category category : categories) {
+            BookCategory bookCategory = BookCategory.create()
+                .pk(Pk.builder().categoryId(category.getCategoryId()).bookId(book.getBookId())
+                    .build())
+                .category(category)
+                .book(book)
+                .build();
+            bookCategoryList.add(bookCategory);
+        }
+        bookCategoryRepository.saveAll(bookCategoryList);
+    }
+
+    /**
+     * BookAuthor를 수정하는 메서드입니다. Author 테이블에 authorId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
+     *
+     * @param authorId Long
+     * @param bookId   Long
+     * @throws NotFoundException 주어진 Author ID로 찾을 수 없는 경우
+     */
+    private void updateBookAuthor(Long authorId, Long bookId) {
+        Author author = authorRepository.findById(authorId)
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
+        BookAuthor prevBookAuthor = bookAuthorRepository.findByPk_BookId(bookId);
+        prevBookAuthor.updateBookAuthor(author);
     }
 }

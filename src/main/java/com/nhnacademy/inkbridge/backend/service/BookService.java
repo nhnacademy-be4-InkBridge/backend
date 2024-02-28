@@ -67,6 +67,6 @@ public interface BookService {
      * @param bookId                    Long
      * @param bookAdminUpdateRequestDto BookAdminUpdateResponseDto
      */
-    void updateBookByAdmin(Long bookId, MultipartFile thumbnail, MultipartFile[] bookImages,
+    void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto);
 }

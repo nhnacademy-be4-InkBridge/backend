@@ -2,6 +2,8 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
@@ -42,6 +44,12 @@ public class BookAdminUpdateRequestDto {
 
     private Long publisherId;
 
-    private Long thumbnailId;
+    private Set<Long> categories;
+
+    private List<Long> tags;
+
+    private Long authorId;
+
+    private List<Long> fileIdList;
 
 }

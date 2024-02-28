@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 /**
  * class: BookAuthor.
  *
- * @author nhn
+ * @author minm063
  * @version 2024/02/08
  */
 
@@ -70,5 +70,9 @@ public class BookAuthor {
             this.authorId = authorId;
             this.bookId = bookId;
         }
+    }
+
+    public void updateBookAuthor(Author author) {
+        this.author = author;
     }
 }

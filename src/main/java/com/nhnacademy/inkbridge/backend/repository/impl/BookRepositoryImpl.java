@@ -10,7 +10,7 @@ import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
-import com.nhnacademy.inkbridge.backend.repository.BookRepositoryCustom;
+import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.domain.Page;

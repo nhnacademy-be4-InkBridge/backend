@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,7 +75,7 @@ public class BookAdminRestController {
      */
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
-        @RequestPart(value = "thumbnail") MultipartFile thumbnail,
+        @RequestPart(value = "image") MultipartFile thumbnail,
         @Valid @RequestPart(value = "book") BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -98,16 +97,15 @@ public class BookAdminRestController {
      */
     @PutMapping("/{bookId}")
     public ResponseEntity<HttpStatus> updateBook(@PathVariable Long bookId,
-        @RequestPart(value = "thumbnail") MultipartFile thumbnail,
-        @RequestPart(value = "bookImages", required = false) MultipartFile[] bookImages,
-        @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
+        @RequestPart(value = "image", required = false) MultipartFile thumbnail,
+        @Valid @RequestPart(value = "book") BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.updateBookByAdmin(bookId, thumbnail, bookImages, bookAdminUpdateRequestDto);
+        bookService.updateBookByAdmin(bookId, thumbnail, bookAdminUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

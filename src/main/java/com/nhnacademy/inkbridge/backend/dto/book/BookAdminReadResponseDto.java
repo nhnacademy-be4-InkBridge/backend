@@ -34,15 +34,21 @@ public class BookAdminReadResponseDto {
 
     private final Boolean isPackagable;
 
-    private final String publisherName;
+    private final Long authorId;
 
-    private final String statusName;
+    private final Long publisherId;
+
+    private final Long statusId;
+
+    private final String url;
+
 
     @Builder
     public BookAdminReadResponseDto(String bookTitle, String bookIndex, String description,
         LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
         BigDecimal discountRatio,
-        Integer stock, Boolean isPackagable, String publisherName, String statusName) {
+        Integer stock, Boolean isPackagable, Long authorId, Long publisherId, Long statusId,
+        String url) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -53,7 +59,9 @@ public class BookAdminReadResponseDto {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
-        this.publisherName = publisherName;
-        this.statusName = statusName;
+        this.authorId = authorId;
+        this.publisherId = publisherId;
+        this.statusId = statusId;
+        this.url = url;
     }
 }
