@@ -31,10 +31,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 메인 페이지 도서 목록 조회 메서드입니다.
-     *
-     * @param pageable pagination
-     * @return 메인 페이지 도서 목록 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
@@ -65,10 +62,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
-     *
-     * @param bookId Long
-     * @return 도서 상세 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public BookReadResponseDto findByBookId(Long bookId) {
@@ -103,10 +97,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * admin 도서 목록 페이지 조회 메서드입니다.
-     *
-     * @param pageable pagination
-     * @return admin 도서 목록 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable) {
@@ -140,10 +131,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * admin 도서 상세 페이지 조회 메서드입니다.
-     *
-     * @param bookId Long
-     * @return admin 도서 상세 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
