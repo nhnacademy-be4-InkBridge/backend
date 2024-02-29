@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
@@ -8,7 +11,10 @@ import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
+import com.nhnacademy.inkbridge.backend.entity.QBookCategory;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
+import com.nhnacademy.inkbridge.backend.entity.QBookTag;
+import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
@@ -53,7 +59,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName))
+                author.authorName, book.thumbnailFile.fileUrl))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -134,29 +140,47 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
+    public BookAdminSelectedReadResponseDto findBookByAdminByBookId(Long bookId) {
         QBook book = QBook.book;
         QAuthor author = QAuthor.author;
         QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-        QPublisher publisher = QPublisher.publisher;
-        QBookStatus bookStatus = QBookStatus.bookStatus;
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+        QBookTag bookTag = QBookTag.bookTag;
+        QFile file = QFile.file;
 
         return from(book)
-            .innerJoin(publisher)
-            .on(publisher.eq(book.publisher))
-            .where(book.bookId.eq(bookId))
             .innerJoin(bookAuthor)
             .on(book.eq(bookAuthor.book))
             .innerJoin(author)
             .on(bookAuthor.author.eq(author))
-            .innerJoin(bookStatus)
-            .on(book.bookStatus.eq(bookStatus))
-            .where(book.bookId.eq(bookId).and(bookStatus.statusId.in(1L, 2L, 3L, 4L)))
-            .select(Projections.constructor(BookAdminReadResponseDto.class, book.bookTitle,
+            .innerJoin(bookCategory)
+            .on(bookCategory.book.eq(book))
+            .innerJoin(bookTag)
+            .on(bookTag.book.eq(book))
+            .innerJoin(file)
+            .on(file.eq(book.thumbnailFile))
+            // category -> relation table , tag -> relation (2) , file -> relation(2)
+            .where(book.bookId.eq(bookId).and(book.bookStatus.statusId.in(1L, 2L, 3L, 4L)))
+            .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
-                author.authorId, publisher.publisherId, bookStatus.statusId,
-                book.thumbnailFile.fileUrl))
-            .fetchOne();
+                author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                book.thumbnailFile.fileUrl.as("url"),
+                list(bookCategory.pk.categoryId).as("categoryIdList"),
+                list(bookTag.pk.tagId).as("tagIdList")))
+            .transform(groupBy(book.bookId).list(
+                Projections.constructor(BookAdminSelectedReadResponseDto.class,
+                    book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                    book.regularPrice, book.price, book.discountRatio, book.stock,
+                    book.isPackagable,
+                    author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                    book.thumbnailFile.fileUrl,
+                    list(
+                        Projections.constructor(Long.class, bookCategory.pk.categoryId)
+                    ),
+                    list(
+                        Projections.constructor(Long.class, bookTag.pk.tagId)
+                    ))
+            )).get(0);
     }
 }

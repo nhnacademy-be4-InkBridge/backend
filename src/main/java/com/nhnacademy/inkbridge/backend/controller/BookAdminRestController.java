@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
@@ -61,9 +62,21 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookAdminReadResponseDto> readBook(@PathVariable Long bookId) {
-        BookAdminReadResponseDto bookDtoByAdmin = bookService.readBookByAdmin(bookId);
-        return new ResponseEntity<>(bookDtoByAdmin, HttpStatus.OK);
+    public ResponseEntity<BookAdminDetailReadResponseDto> readBook(@PathVariable Long bookId) {
+        BookAdminDetailReadResponseDto bookAdminDetailReadResponseDto = bookService.readBookByAdmin(
+            bookId);
+        return new ResponseEntity<>(bookAdminDetailReadResponseDto, HttpStatus.OK);
+    }
+
+    /**
+     * admin 도서 등록 페이지에 필요한 데이터를 조회하는 api입니다.
+     *
+     * @return BookAdminReadResponseDto
+     */
+    @GetMapping("/form")
+    public ResponseEntity<BookAdminReadResponseDto> readBook() {
+        BookAdminReadResponseDto bookAdminReadResponseDto = bookService.readBookByAdmin();
+        return new ResponseEntity<>(bookAdminReadResponseDto, HttpStatus.OK);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
@@ -43,13 +44,20 @@ public interface BookService {
     Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable);
 
     /**
-     * admin 페이지에서 필요한 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
+     * admin 페이지에서 저장된 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
      * 던진다.
      *
      * @param bookId 도서 id, 0보다 커야 한다
      * @return BookAdminReadResponseDto
      */
-    BookAdminReadResponseDto readBookByAdmin(Long bookId);
+    BookAdminDetailReadResponseDto readBookByAdmin(Long bookId);
+
+    /**
+     * admin 페이지에서 필요한 도서와 관련된 리스트를 가져오는 메서드입니다.
+     *
+     * @return BookAdminReadResponseDto
+     */
+    BookAdminReadResponseDto readBookByAdmin();
 
     /**
      * 입력값에 대해 새로운 Book을 데이터베이스에 추가하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시

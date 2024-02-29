@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
+import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 
+    List<AuthorReadResponseDto> findAllBy();
 }

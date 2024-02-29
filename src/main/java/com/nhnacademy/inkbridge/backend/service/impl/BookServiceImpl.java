@@ -1,11 +1,18 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookAuthor;
@@ -124,13 +131,49 @@ public class BookServiceImpl implements BookService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
-    public BookAdminReadResponseDto readBookByAdmin(Long bookId) {
+    @Transactional
+    public BookAdminDetailReadResponseDto readBookByAdmin(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
-        return bookRepository.findBookByAdminByBookId(bookId);
+        BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto = bookRepository.findBookByAdminByBookId(
+            bookId);
+        List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList = readAllCategory();
+        List<PublisherReadResponseDto> publisherReadResponseDtoList = getPublisherList();
+        List<AuthorReadResponseDto> authorReadResponseDtoList = getAuthorList();
+        List<BookStatusReadResponseDto> bookStatusReadResponseDtoList = getStatuses();
+        List<TagReadResponseDto> tagReadResponseDtoList = getTagList();
+
+        return BookAdminDetailReadResponseDto.builder()
+            .adminSelectedReadResponseDto(bookAdminSelectedReadResponseDto)
+            .parentCategoryReadResponseDtoList(parentCategoryReadResponseDtoList)
+            .publisherReadResponseDtoList(publisherReadResponseDtoList)
+            .authorReadResponseDtoList(authorReadResponseDtoList)
+            .bookStatusReadResponseDtoList(bookStatusReadResponseDtoList)
+            .tagReadResponseDtoList(tagReadResponseDtoList)
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public BookAdminReadResponseDto readBookByAdmin() {
+        List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList = readAllCategory();
+        List<PublisherReadResponseDto> publisherReadResponseDtoList = getPublisherList();
+        List<AuthorReadResponseDto> authorReadResponseDtoList = getAuthorList();
+        List<BookStatusReadResponseDto> bookStatusReadResponseDtoList = getStatuses();
+        List<TagReadResponseDto> tagReadResponseDtoList = getTagList();
+
+        return BookAdminReadResponseDto.builder()
+            .parentCategoryReadResponseDtoList(parentCategoryReadResponseDtoList)
+            .publisherReadResponseDtoList(publisherReadResponseDtoList)
+            .authorReadResponseDtoList(authorReadResponseDtoList)
+            .bookStatusReadResponseDtoList(bookStatusReadResponseDtoList)
+            .tagReadResponseDtoList(tagReadResponseDtoList)
+            .build();
     }
 
     /**
@@ -385,5 +428,33 @@ public class BookServiceImpl implements BookService {
                 () -> new NotFoundException(BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
         BookAuthor prevBookAuthor = bookAuthorRepository.findByPk_BookId(bookId);
         prevBookAuthor.updateBookAuthor(author);
+    }
+
+    private List<ParentCategoryReadResponseDto> readAllCategory() {
+        List<Category> parentCategory = categoryRepository.findAllByCategoryParentIsNull();
+        return parentCategory.stream()
+            .map(ParentCategoryReadResponseDto::new)
+            .collect(Collectors.toList());
+    }
+
+    private List<PublisherReadResponseDto> getPublisherList() {
+        return publisherRepository.findAllBy();
+    }
+
+    private List<AuthorReadResponseDto> getAuthorList() {
+        return authorRepository.findAllBy();
+    }
+
+    private List<BookStatusReadResponseDto> getStatuses() {
+        List<BookStatus> statuses = bookStatusRepository.findAllBy();
+        return statuses.stream().map(
+                x -> BookStatusReadResponseDto.builder().statusId(x.getStatusId())
+                    .statusName(x.getStatusName()).build())
+            .collect(Collectors.toList());
+    }
+
+    private List<TagReadResponseDto> getTagList() {
+        return tagRepository.findAll().stream().map(TagReadResponseDto::new)
+            .collect(Collectors.toList());
     }
 }

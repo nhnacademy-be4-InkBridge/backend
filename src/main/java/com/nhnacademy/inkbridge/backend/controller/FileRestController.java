@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 2024/02/25
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin/images")
 public class FileRestController {
 
     private final FileService fileService;
@@ -35,7 +35,7 @@ public class FileRestController {
      * @param image MultipartFile
      * @return FileCreateResponseDto
      */
-    @PostMapping("/image-upload")
+    @PostMapping
     public ResponseEntity<FileCreateResponseDto> uploadBookImages(
         @RequestPart MultipartFile image) {
         File file = fileService.saveFile(image);
@@ -53,7 +53,7 @@ public class FileRestController {
      * @param fileName RequestParam, String
      * @return byte[]
      */
-    @GetMapping("/image-load")
+    @GetMapping
     public ResponseEntity<byte[]> loadBookImage(@RequestParam String fileName) {
         return new ResponseEntity<>(fileService.loadFileByByte(fileName), HttpStatus.OK);
     }

@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
-import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
@@ -47,6 +47,6 @@ public interface BookRepositoryCustom {
      * @param bookId Long
      * @return admin 도서 상세 조회 데이터
      */
-    BookAdminReadResponseDto findBookByAdminByBookId(Long bookId);
+    BookAdminSelectedReadResponseDto findBookByAdminByBookId(Long bookId);
 
 }
