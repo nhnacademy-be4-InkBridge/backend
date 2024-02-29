@@ -39,7 +39,8 @@ public class File {
     private String fileExtension;
 
     @Builder
-    public File(String fileUrl, String fileName, String fileExtension) {
+    public File(Long fileId, String fileUrl, String fileName, String fileExtension) {
+        this.fileId = fileId;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
         this.fileExtension = fileExtension;
