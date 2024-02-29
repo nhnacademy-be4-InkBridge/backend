@@ -15,7 +15,6 @@ import com.nhnacademy.inkbridge.backend.service.MemberService;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final MemberAuthRepository memberAuthRepository;
     private final MemberStatusRepository memberStatusRepository;
     private final MemberGradeRepository memberGradeRepository;
@@ -61,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
                 .memberGrade(memberGrade)
                 .memberName(memberCreateRequestDto.getMemberName())
                 .birthday(memberCreateRequestDto.getBirthday())
-                .password(passwordEncoder.encode(memberCreateRequestDto.getPassword()))
+                .password(memberCreateRequestDto.getPassword())
                 .phoneNumber(memberCreateRequestDto.getPhoneNumber())
                 .memberStatus(memberStatus)
                 .email(memberCreateRequestDto.getEmail())
