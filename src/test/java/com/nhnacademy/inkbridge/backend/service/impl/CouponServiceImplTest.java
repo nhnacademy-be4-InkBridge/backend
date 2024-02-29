@@ -33,12 +33,6 @@ class CouponServiceImplTest {
     private MemberCouponRepository memberCouponRepository;
     private CouponCreateRequestDto couponCreateRequestDto;
 
-    @BeforeEach
-    void setUp() {
-        couponCreateRequestDto = new CouponCreateRequestDto("쿠폰이름", 0L, 5000L, 20L, LocalDate.now(),
-            LocalDate.now(), 1, 1, false,
-            Set.of(1L, 2L, 3L), Set.of(1L, 2L, 3L));
-    }
 
     @Test
     void createCoupon() {
