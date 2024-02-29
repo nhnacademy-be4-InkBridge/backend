@@ -34,7 +34,8 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
                 deliveryPolicy.deliveryPolicyId,
                 deliveryPolicy.deliveryPrice,
-                deliveryPolicy.createdAt))
+                deliveryPolicy.createdAt,
+                deliveryPolicy.freeDeliveryPrice))
             .fetch();
     }
 
@@ -52,7 +53,8 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
                 deliveryPolicy.deliveryPolicyId,
                 deliveryPolicy.deliveryPrice,
-                deliveryPolicy.createdAt))
+                deliveryPolicy.createdAt,
+                deliveryPolicy.freeDeliveryPrice))
             .where(deliveryPolicy.deliveryPolicyId.eq(deliveryPolicyId))
             .fetchOne();
     }
@@ -70,7 +72,8 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
                 deliveryPolicy.deliveryPolicyId,
                 deliveryPolicy.deliveryPrice,
-                deliveryPolicy.createdAt))
+                deliveryPolicy.createdAt,
+                deliveryPolicy.freeDeliveryPrice))
             .orderBy(deliveryPolicy.createdAt.desc())
             .limit(1)
             .fetchOne();

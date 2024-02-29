@@ -40,6 +40,7 @@ class DeliveryPolicyRepositoryTest {
         deliveryPolicy = DeliveryPolicy.builder()
             .deliveryPrice(1000L)
             .createdAt(LocalDate.of(2024, 1, 1))
+            .freeDeliveryPrice(50000L)
             .build();
 
         deliveryPolicy = entityManager.persist(deliveryPolicy);
@@ -56,7 +57,8 @@ class DeliveryPolicyRepositoryTest {
             () -> assertEquals(deliveryPolicy.getDeliveryPolicyId(),
                 result.get(0).getDeliveryPolicyId()),
             () -> assertEquals(deliveryPolicy.getDeliveryPrice(), result.get(0).getDeliveryPrice()),
-            () -> assertEquals(deliveryPolicy.getCreatedAt(), result.get(0).getCreatedAt())
+            () -> assertEquals(deliveryPolicy.getCreatedAt(), result.get(0).getCreatedAt()),
+            () -> assertEquals(deliveryPolicy.getFreeDeliveryPrice(), result.get(0).getFreeDeliveryPrice())
         );
     }
 
@@ -70,7 +72,8 @@ class DeliveryPolicyRepositoryTest {
         assertAll(
             () -> assertEquals(deliveryPolicy.getDeliveryPolicyId(), result.getDeliveryPolicyId()),
             () -> assertEquals(deliveryPolicy.getDeliveryPrice(), result.getDeliveryPrice()),
-            () -> assertEquals(deliveryPolicy.getCreatedAt(), result.getCreatedAt())
+            () -> assertEquals(deliveryPolicy.getCreatedAt(), result.getCreatedAt()),
+            () -> assertEquals(deliveryPolicy.getFreeDeliveryPrice(), result.getFreeDeliveryPrice())
         );
     }
 
@@ -81,6 +84,7 @@ class DeliveryPolicyRepositoryTest {
         DeliveryPolicy currentPolicy = DeliveryPolicy.builder()
             .deliveryPrice(1500L)
             .createdAt(LocalDate.of(2024, 1, 2))
+            .freeDeliveryPrice(60000L)
             .build();
 
         entityManager.persist(currentPolicy);
@@ -90,7 +94,8 @@ class DeliveryPolicyRepositoryTest {
         assertAll(
             () -> assertEquals(currentPolicy.getDeliveryPolicyId(), result.getDeliveryPolicyId()),
             () -> assertEquals(currentPolicy.getDeliveryPrice(), result.getDeliveryPrice()),
-            () -> assertEquals(currentPolicy.getCreatedAt(), result.getCreatedAt())
+            () -> assertEquals(currentPolicy.getCreatedAt(), result.getCreatedAt()),
+            () -> assertEquals(currentPolicy.getFreeDeliveryPrice(), result.getFreeDeliveryPrice())
         );
     }
 }
