@@ -4,7 +4,7 @@ package com.nhnacademy.inkbridge.backend.enums;
  * class: CategoryMessageEnum.
  *
  * @author choijaehun
- * @version 2/16/24
+ * @version 2024/02/29
  */
 public enum CategoryMessageEnum {
     CATEGORY_NOT_FOUND("존재하지 않는 카테고리입니다."),

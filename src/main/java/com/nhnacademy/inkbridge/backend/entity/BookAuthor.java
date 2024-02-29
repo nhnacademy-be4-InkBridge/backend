@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 /**
  * class: BookAuthor.
  *
- * @author nhn
+ * @author minm063
  * @version 2024/02/08
  */
 
@@ -40,6 +40,13 @@ public class BookAuthor {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Builder
+    public BookAuthor(Pk pk, Author author, Book book) {
+        this.pk = pk;
+        this.author = author;
+        this.book = book;
+    }
 
     /**
      * class: BookAuthor.Pk.
@@ -63,5 +70,9 @@ public class BookAuthor {
             this.authorId = authorId;
             this.bookId = bookId;
         }
+    }
+
+    public void updateBookAuthor(Author author) {
+        this.author = author;
     }
 }

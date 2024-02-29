@@ -18,14 +18,14 @@ import org.springframework.context.annotation.Configuration;
 public class JpaConfig {
 
     private JpaProperty jpaProperty;
-
+    private KeyConfig keyConfig;
     @Bean
     public DataSource getDataSource() {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setUrl(jpaProperty.getUrl());
-        dataSource.setUsername(jpaProperty.getUsername());
-        dataSource.setPassword(jpaProperty.getPassword());
+        dataSource.setUrl(keyConfig.keyStore(jpaProperty.getUrl()));
+        dataSource.setUsername(keyConfig.keyStore(jpaProperty.getUsername()));
+        dataSource.setPassword(keyConfig.keyStore(jpaProperty.getPassword()));
 
         dataSource.setInitialSize(20);
         dataSource.setMaxIdle(20);

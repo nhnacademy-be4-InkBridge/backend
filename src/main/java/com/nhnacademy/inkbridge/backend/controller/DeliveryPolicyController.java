@@ -55,6 +55,17 @@ public class DeliveryPolicyController {
     }
 
     /**
+     * 현재 적용 배송비 정책을 조회하는 메소드입니다.
+     *
+     * @return DeliveryPolicyReadResponseDto
+     */
+    @GetMapping("/current")
+    public ResponseEntity<DeliveryPolicyReadResponseDto> getCurrentDeliveryPolicy() {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(deliveryPolicyService.getCurrentDeliveryPolicy());
+    }
+
+    /**
      * 배송비 정책을 등록하는 메소드 입니다. <br/> 생성 성공시 201, 유효성 검사 실패 시 422의 상태코드가 전송됩니다.
      *
      * @param deliveryPolicyCreateRequestDto DeliveryPolicyCreateRequestDto

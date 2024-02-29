@@ -11,15 +11,16 @@ import lombok.Getter;
  */
 @Getter
 public class BooksAdminReadResponseDto {
-
+    private final Long bookId;
     private final String bookTitle;
     private final String authorName;
     private final String publisherName;
     private final String statusName;
 
     @Builder
-    public BooksAdminReadResponseDto(String bookTitle, String authorName, String publisherName,
+    public BooksAdminReadResponseDto(Long bookId, String bookTitle, String authorName, String publisherName,
         String statusName) {
+        this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.authorName = authorName;
         this.publisherName = publisherName;

@@ -53,7 +53,7 @@ class DeliveryPolicyControllerTest {
     @DisplayName("배송비 정책 전체 조회 테스트")
     void testGetDeliveryPolicies() throws Exception {
         DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyService.getDeliveryPolicies()).willReturn(List.of(responseDto));
 
@@ -89,7 +89,7 @@ class DeliveryPolicyControllerTest {
     @DisplayName("배송비 정책 단일 조회 - 성공")
     void testGetDeliveryPolicyById_success() throws Exception {
         DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
-            LocalDate.of(2024, 1, 1));
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyService.getDeliveryPolicy(1L)).willReturn(responseDto);
 
@@ -101,6 +101,25 @@ class DeliveryPolicyControllerTest {
             .andExpect(jsonPath("$.createdAt", equalTo("2024-01-01")));
 
         verify(deliveryPolicyService, times(1)).getDeliveryPolicy(1L);
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("현재 적용 배송비 정책 조회")
+    void testGetCurrentDeliveryPolicy() throws Exception {
+        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
+            LocalDate.of(2024, 1, 1), 50000L);
+
+        given(deliveryPolicyService.getCurrentDeliveryPolicy()).willReturn(responseDto);
+
+        mockMvc.perform(get("/api/delivery-policies/current", 1L)
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.deliveryPolicyId", equalTo(1)))
+            .andExpect(jsonPath("$.deliveryPrice", equalTo(1000)))
+            .andExpect(jsonPath("$.createdAt", equalTo("2024-01-01")));
+
+        verify(deliveryPolicyService, times(1)).getCurrentDeliveryPolicy();
     }
 
     @Test
@@ -127,9 +146,9 @@ class DeliveryPolicyControllerTest {
         requestDto.setDeliveryPrice(1000L);
 
         mockMvc.perform(post("/api/delivery-policies")
-            .with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(requestDto)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated());
 
         verify(deliveryPolicyService, times(1)).createDeliveryPolicy(any());
