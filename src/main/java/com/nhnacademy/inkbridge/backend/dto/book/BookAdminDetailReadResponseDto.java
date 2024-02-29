@@ -8,27 +8,32 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * class: BookAdminReadResponseDto.
+ * class: BookAdminReadResponse.
  *
  * @author minm063
  * @version 2024/02/29
  */
 @Getter
-public class BookAdminReadResponseDto {
+public class BookAdminDetailReadResponseDto {
 
+    BookAdminSelectedReadResponseDto adminSelectedReadResponseDto;
     List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList;
     List<PublisherReadResponseDto> publisherReadResponseDtoList;
     List<AuthorReadResponseDto> authorReadResponseDtoList;
     List<BookStatusReadResponseDto> bookStatusReadResponseDtoList;
     List<TagReadResponseDto> tagReadResponseDtoList;
 
+    // builder
+
     @Builder
-    public BookAdminReadResponseDto(
+    public BookAdminDetailReadResponseDto(
+        BookAdminSelectedReadResponseDto adminSelectedReadResponseDto,
         List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList,
         List<PublisherReadResponseDto> publisherReadResponseDtoList,
         List<AuthorReadResponseDto> authorReadResponseDtoList,
         List<BookStatusReadResponseDto> bookStatusReadResponseDtoList,
         List<TagReadResponseDto> tagReadResponseDtoList) {
+        this.adminSelectedReadResponseDto = adminSelectedReadResponseDto;
         this.parentCategoryReadResponseDtoList = parentCategoryReadResponseDtoList;
         this.publisherReadResponseDtoList = publisherReadResponseDtoList;
         this.authorReadResponseDtoList = authorReadResponseDtoList;

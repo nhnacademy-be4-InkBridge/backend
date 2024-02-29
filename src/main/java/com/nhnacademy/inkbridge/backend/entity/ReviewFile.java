@@ -9,6 +9,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,5 +37,11 @@ public class ReviewFile {
 
     @ManyToOne
     @JoinColumn(name = "review_id")
-    private Book book;
+    private Review review;
+
+    @Builder
+    public ReviewFile(Long fileId, Review review) {
+        this.fileId = fileId;
+        this.review = review;
+    }
 }

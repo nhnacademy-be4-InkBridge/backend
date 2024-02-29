@@ -12,17 +12,19 @@ import lombok.Getter;
 @Getter
 public class BooksReadResponseDto {
 
+    private final Long bookId;
     private final String bookTitle;
-
     private final Long price;
-
     private final String publisherName;
-
+    private final String authorName;
 
     @Builder
-    public BooksReadResponseDto(String bookTitle, Long price, String publisherName) {
+    public BooksReadResponseDto(Long bookId, String bookTitle, Long price, String publisherName,
+        String authorName) {
+        this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.price = price;
         this.publisherName = publisherName;
+        this.authorName = authorName;
     }
 }
