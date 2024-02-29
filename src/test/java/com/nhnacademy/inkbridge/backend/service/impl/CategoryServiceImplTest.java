@@ -64,6 +64,7 @@ class CategoryServiceImplTest {
         ReflectionTestUtils.setField(request,"categoryName","IT");
         ReflectionTestUtils.setField(request,"parentId",1L);
 
+        when(categoryRepository.findById(any())).thenReturn(Optional.of(Category.create().build()));
         when(categoryRepository.save(any())).thenReturn(Category.create().build());
 
         categoryService.createCategory(request);
