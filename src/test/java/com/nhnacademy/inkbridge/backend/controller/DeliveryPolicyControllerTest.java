@@ -144,6 +144,7 @@ class DeliveryPolicyControllerTest {
     void testCreateDeliveryPolicy_success() throws Exception {
         DeliveryPolicyCreateRequestDto requestDto = new DeliveryPolicyCreateRequestDto();
         requestDto.setDeliveryPrice(1000L);
+        requestDto.setFreeDeliveryPrice(50000L);
 
         mockMvc.perform(post("/api/delivery-policies")
                 .with(csrf())
