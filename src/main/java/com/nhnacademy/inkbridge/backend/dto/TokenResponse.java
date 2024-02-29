@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * class: TokenResponse.
@@ -9,27 +11,45 @@ import lombok.Data;
  * @version 2/28/24
  */
 
-@Data
+@Setter
+@NoArgsConstructor
 public class TokenResponse {
 
     private Access access;
 
-    @Data
 
-    private static class Access {
+    @Setter
+    @NoArgsConstructor
+    public static class Access {
 
         private Token token;
 
-
-        @Data
-        private static class Token {
-
-            public String id;
-            public String expires;
-            public String issued_at;
-
+        @Builder
+        public Access(Token token) {
+            this.token = token;
         }
 
+        @Setter
+        @NoArgsConstructor
+        public static class Token {
+
+            private String id;
+            private String expires;
+            private String issuedAt;
+
+            @Builder
+            public Token(String id, String expires, String issuedAt) {
+                this.id = id;
+                this.expires = expires;
+                this.issuedAt = issuedAt;
+            }
+        }
+
+    }
+
+    @Builder
+    public TokenResponse(Access access) {
+        this.access = access;
     }
 
     public String getTokenId() {

@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,4 +58,11 @@ public class FileController {
     public ResponseEntity<byte[]> loadBookImage(@RequestParam String fileName) {
         return fileService.loadFile(fileName);
     }
+
+    @GetMapping("/image-load/{fileId}")
+    public ResponseEntity<byte[]> loadBookImageById(@PathVariable(name = "fileId") Long fileId) {
+        return fileService.loadFileById(fileId);
+    }
+
+
 }

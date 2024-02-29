@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import com.nhnacademy.inkbridge.backend.dto.TokenRequest;
 import com.nhnacademy.inkbridge.backend.dto.TokenResponse;
 import com.nhnacademy.inkbridge.backend.service.AuthService;
+import java.util.Objects;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,10 +29,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String requestToken() {
-        this.tokenRequest = new TokenRequest();
-        this.tokenRequest.getAuth().setTenantId(tenantId);
-        this.tokenRequest.getAuth().getPasswordCredentials().setUsername(username);
-        this.tokenRequest.getAuth().getPasswordCredentials().setPassword(password);
+        this.tokenRequest = TokenRequest.builder().tenantId(tenantId).username(username).password(password).build();
+
         RestTemplate restTemplate = new RestTemplate();
         String identityUrl = this.authUrl + "/tokens";
 
@@ -46,6 +45,6 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<TokenResponse> response
             = restTemplate.exchange(identityUrl, HttpMethod.POST, httpEntity, TokenResponse.class);
 
-        return response.getBody().getTokenId();
+        return Objects.requireNonNull(response.getBody()).getTokenId();
     }
 }

@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * class: TokenRequest.
@@ -8,23 +10,44 @@ import lombok.Data;
  * @author jeongbyeonghun
  * @version 2/28/24
  */
-@Data
+@Getter
 public class TokenRequest {
 
-    private Auth auth = new Auth();
+    private final Auth auth;
 
-    @Data
+    @Getter
     public static class Auth {
 
-        private String tenantId;
-        private PasswordCredentials passwordCredentials = new PasswordCredentials();
+        private final String tenantId;
+        private final PasswordCredentials passwordCredentials;
 
+        @Builder
+        public Auth(String tenantId, PasswordCredentials passwordCredentials) {
+            this.tenantId = tenantId;
+            this.passwordCredentials = passwordCredentials;
+        }
     }
 
-    @Data
+    @Getter
     public static class PasswordCredentials {
 
-        private String username;
-        private String password;
+        private final String username;
+        private final String password;
+
+        @Builder
+        public PasswordCredentials(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
     }
+
+    @Builder
+    public TokenRequest(String tenantId, String username, String password) {
+        PasswordCredentials passwordCredentials = PasswordCredentials.builder().username(username)
+            .password(password).build();
+        this.auth = Auth.builder().tenantId(tenantId).passwordCredentials(passwordCredentials)
+            .build();
+    }
+
+
 }

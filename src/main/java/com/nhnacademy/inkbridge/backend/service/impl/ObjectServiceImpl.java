@@ -1,12 +1,14 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthService;
 import com.nhnacademy.inkbridge.backend.service.ObjectService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,14 +31,14 @@ import org.springframework.web.multipart.MultipartFile;
  */
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ObjectServiceImpl implements ObjectService {
 
+    private final AuthService authService;
     private String tokenId;
     String storageUrl = "https://kr1-api-object-storage.nhncloudservice.com/v1/AUTH_e805e9a72d2f47338a0a463196c36314";
     String containerName = "inkbridge";
 
-    AuthService authService;
 
     @Override
     public ResponseEntity<byte[]> downloadObject(String objectName) {
@@ -60,7 +62,7 @@ public class ObjectServiceImpl implements ObjectService {
         try {
             inputStream = multipartFile.getInputStream();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ValidationException(FileMessageEnum.FILE_VALID_FAIL.getMessage());
         }
         String url = this.getUrl(fileName);
         final RequestCallback requestCallback = new RequestCallback() {
@@ -82,8 +84,8 @@ public class ObjectServiceImpl implements ObjectService {
         return fileName;
     }
 
-    /** 새토큰을 가져와 세팅하는 메소드.
-     *
+    /**
+     * 새토큰을 가져와 세팅하는 메소드.
      */
     void setTokenId() {
         tokenId = authService.requestToken();
