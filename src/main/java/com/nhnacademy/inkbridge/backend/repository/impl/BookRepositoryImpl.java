@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
@@ -8,9 +11,12 @@ import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
+import com.nhnacademy.inkbridge.backend.entity.QBookCategory;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
+import com.nhnacademy.inkbridge.backend.entity.QBookTag;
+import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
-import com.nhnacademy.inkbridge.backend.repository.BookRepositoryCustom;
+import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -31,14 +37,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 메인 페이지 도서 목록 조회 메서드입니다.
-     *
-     * @param pageable pagination
-     * @return 메인 페이지 도서 목록 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
         QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
 
@@ -47,9 +52,14 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(book.publisher.eq(publisher))
             .innerJoin(bookStatus)
             .on(bookStatus.eq(book.bookStatus))
+            .innerJoin(bookAuthor)
+            .on(bookAuthor.book.eq(book))
+            .innerJoin(author)
+            .on(author.eq(bookAuthor.author))
             .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
-                book.bookTitle, book.price, publisher.publisherName))
+                book.bookId, book.bookTitle, book.price, publisher.publisherName,
+                author.authorName, book.thumbnailFile.fileUrl))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -58,10 +68,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
-     *
-     * @param bookId Long
-     * @return 도서 상세 조회 데이터
+     * {@inheritDoc}
      */
     @Override
     public BookReadResponseDto findByBookId(Long bookId) {
@@ -83,10 +90,20 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * admin 도서 목록 페이지 조회 메서드입니다.
+     * 도서 개수를 조회하는 메서드입니다.
      *
-     * @param pageable pagination
-     * @return admin 도서 목록 조회 데이터
+     * @return Book Count
+     */
+    private Long getCount() {
+        QBook book = QBook.book;
+
+        return from(book)
+            .select(book.count())
+            .fetchOne();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable) {
@@ -106,44 +123,64 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookStatus)
             .on(book.bookStatus.eq(bookStatus))
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
-            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookTitle,
+            .orderBy(book.bookId.asc())
+            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
+                book.bookTitle,
                 author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = getCount();
+
+        return new PageImpl<>(content, pageable, count);
     }
 
     /**
-     * admin 도서 상세 페이지 조회 메서드입니다.
-     *
-     * @param bookId Long
-     * @return admin 도서 상세 조회 데이터
+     * {@inheritDoc}
      */
     @Override
-    public BookAdminReadResponseDto findBookByAdminByBookId(Long bookId) {
+    public BookAdminSelectedReadResponseDto findBookByAdminByBookId(Long bookId) {
         QBook book = QBook.book;
         QAuthor author = QAuthor.author;
         QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-        QPublisher publisher = QPublisher.publisher;
-        QBookStatus bookStatus = QBookStatus.bookStatus;
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+        QBookTag bookTag = QBookTag.bookTag;
+        QFile file = QFile.file;
 
         return from(book)
-            .innerJoin(publisher)
-            .on(publisher.eq(book.publisher))
-            .where(book.bookId.eq(bookId))
             .innerJoin(bookAuthor)
             .on(book.eq(bookAuthor.book))
             .innerJoin(author)
             .on(bookAuthor.author.eq(author))
-            .innerJoin(bookStatus)
-            .on(book.bookStatus.eq(bookStatus))
-            .where(book.bookId.eq(bookId))
-            .select(Projections.constructor(BookAdminReadResponseDto.class, book.bookTitle,
+            .innerJoin(bookCategory)
+            .on(bookCategory.book.eq(book))
+            .innerJoin(bookTag)
+            .on(bookTag.book.eq(book))
+            .innerJoin(file)
+            .on(file.eq(book.thumbnailFile))
+            // category -> relation table , tag -> relation (2) , file -> relation(2)
+            .where(book.bookId.eq(bookId).and(book.bookStatus.statusId.in(1L, 2L, 3L, 4L)))
+            .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
-                book.regularPrice, book.price, book.discountRatio, book.stock,
-                book.isPackagable, publisher.publisherName, bookStatus.statusName))
-            .fetchOne();
+                book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
+                author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                book.thumbnailFile.fileUrl.as("url"),
+                list(bookCategory.pk.categoryId).as("categoryIdList"),
+                list(bookTag.pk.tagId).as("tagIdList")))
+            .transform(groupBy(book.bookId).list(
+                Projections.constructor(BookAdminSelectedReadResponseDto.class,
+                    book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                    book.regularPrice, book.price, book.discountRatio, book.stock,
+                    book.isPackagable,
+                    author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                    book.thumbnailFile.fileUrl,
+                    list(
+                        Projections.constructor(Long.class, bookCategory.pk.categoryId)
+                    ),
+                    list(
+                        Projections.constructor(Long.class, bookTag.pk.tagId)
+                    ))
+            )).get(0);
     }
 }

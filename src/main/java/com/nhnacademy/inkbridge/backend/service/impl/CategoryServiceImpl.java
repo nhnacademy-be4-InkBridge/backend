@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (request.getParentId() == null) {
             parentCategory = null;
         } else {
-            parentCategory = categoryRepository.findById(request.getParentId()).orElse(null);
+            parentCategory = categoryRepository.findById(request.getParentId()).orElseThrow(()-> new NotFoundException(CategoryMessageEnum.PARENT_CATEGORY_NOT_FOUND.getMessage()));
         }
 
         Category newCategory = Category.create()
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public CategoryReadResponseDto readCategory(Long categoryId) {
         Category currentCategory = categoryRepository.findById(categoryId).orElseThrow(
-            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString()));
+            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.getMessage()));
 
         return CategoryReadResponseDto.builder()
             .categoryId(currentCategory.getCategoryId())
@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryUpdateResponseDto updateCategory(Long categoryId,
         CategoryUpdateRequestDto request) {
         Category currentCategory = categoryRepository.findById(categoryId).orElseThrow(
-            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.toString()));
+            () -> new NotFoundException(CategoryMessageEnum.CATEGORY_NOT_FOUND.getMessage()));
         currentCategory.updateCategory(request.getCategoryName());
 
         return CategoryUpdateResponseDto.builder().categoryName(request.getCategoryName()).build();

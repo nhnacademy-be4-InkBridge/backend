@@ -44,7 +44,7 @@ class DeliveryPolicyServiceImplTest {
 
         DeliveryPolicyReadResponseDto responseDto1 = ReflectionUtils.newInstance(
             DeliveryPolicyReadResponseDto.class,
-            1L, 1000L, LocalDate.of(2024, 1,1));
+            1L, 1000L, LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyRepository.findAllDeliveryPolicyBy()).willReturn(List.of(responseDto1));
 
@@ -64,14 +64,15 @@ class DeliveryPolicyServiceImplTest {
         given(deliveryPolicyRepository.existsById(1L)).willReturn(false);
 
         assertThrows(NotFoundException.class, () -> deliveryPolicyService.getDeliveryPolicy(1L));
-        
+
         verify(deliveryPolicyRepository, times(1)).existsById(1L);
     }
 
     @Test
     @DisplayName("배송비 정책 id로 조회 - 조회 성공")
     void testGetDeliveryPolicy_found() {
-        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L, LocalDate.of(2024, 1,1 ));
+        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyRepository.existsById(1L)).willReturn(true);
         given(deliveryPolicyRepository.findDeliveryPolicyById(1L)).willReturn(responseDto);
@@ -87,7 +88,8 @@ class DeliveryPolicyServiceImplTest {
     @Test
     @DisplayName("현재 배송비 정책 조회")
     void testGetCurrentDeliveryPolicy() {
-        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L, LocalDate.of(2024, 1,1 ));
+        DeliveryPolicyReadResponseDto responseDto = new DeliveryPolicyReadResponseDto(1L, 1000L,
+            LocalDate.of(2024, 1, 1), 50000L);
 
         given(deliveryPolicyRepository.findCurrentPolicy()).willReturn(responseDto);
 

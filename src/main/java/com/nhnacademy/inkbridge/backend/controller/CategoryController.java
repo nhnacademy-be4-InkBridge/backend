@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/category")
+@RequestMapping("api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -41,7 +40,7 @@ public class CategoryController {
     public ResponseEntity<HttpStatus> createCategory(
         @Valid @RequestBody CategoryCreateRequestDto request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
+            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.getMessage());
         }
         categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -64,7 +63,7 @@ public class CategoryController {
         @Valid @RequestBody
         CategoryUpdateRequestDto request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.toString());
+            throw new ValidationException(CategoryMessageEnum.CATEGORY_VALID_FAIL.getMessage());
         }
         CategoryUpdateResponseDto categoryUpdateResponseDto = categoryService.updateCategory(
             categoryId, request);
