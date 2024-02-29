@@ -53,7 +53,7 @@ class CategoryControllerTest {
     @DisplayName("Category 데이터 생성 테스트 - 성공")
     void When_CreateCategory_Expect_Success() throws Exception {
         CategoryCreateRequestDto request = new CategoryCreateRequestDto();
-        mockMvc.perform(post("/api/category")
+        mockMvc.perform(post("/api/categories")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -69,7 +69,7 @@ class CategoryControllerTest {
         CategoryCreateRequestDto request = new CategoryCreateRequestDto();
         ReflectionTestUtils.setField(request, "categoryName", "길이가 10이 넘는 카테고리");
 
-        mockMvc.perform(post("/api/category")
+        mockMvc.perform(post("/api/categories")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -87,7 +87,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(response, "categoryName", "한국도서");
         when(categoryService.readCategory(response.getCategoryId())).thenReturn(response);
 
-        mockMvc.perform(get("/api/category/1"))
+        mockMvc.perform(get("/api/categories/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.categoryId").value(response.getCategoryId()))
             .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()));
@@ -111,7 +111,7 @@ class CategoryControllerTest {
         ParentCategoryReadResponseDto response = new ParentCategoryReadResponseDto(IT);
         when(categoryService.readAllCategory()).thenReturn(List.of(response));
 
-        mockMvc.perform(get("/api/category")
+        mockMvc.perform(get("/api/categories")
                 .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.*.categoryId").value(1))
@@ -139,7 +139,7 @@ class CategoryControllerTest {
 
         when(categoryService.updateCategory(categoryId, request)).thenReturn(response);
 
-        mockMvc.perform(put("/api/category/1")
+        mockMvc.perform(put("/api/categories/1")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -160,7 +160,7 @@ class CategoryControllerTest {
         CategoryUpdateRequestDto request = new CategoryUpdateRequestDto();
         ReflectionTestUtils.setField(request, "categoryName", categoryName);
 
-        mockMvc.perform(put("/api/category/1")
+        mockMvc.perform(put("/api/categories/1")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
