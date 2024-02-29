@@ -27,5 +27,5 @@ public interface FileService {
 
     List<File> saveBookFile(Long bookId, List<Long> files);
 
-    List<File> saveReviewFile(Long reviewId, List<MultipartFile> files);
+//    List<File> saveReviewFile(Long reviewId, List<MultipartFile> files);
 }
