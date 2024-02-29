@@ -5,9 +5,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -51,7 +52,28 @@ public class Coupon {
     @Column(name = "is_birth")
     private Boolean isBirth;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "coupon_type_id")
     private CouponType couponType;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_status_id")
+    private CouponStatus couponStatus;
+
+    @Builder
+    public Coupon(String couponId, String couponName, Long minPrice, Long maxDiscountPrice,
+        Long discountPrice, LocalDate basicIssuedDate, LocalDate basicExpiredDate, Integer validity,
+        Boolean isBirth, CouponType couponType, CouponStatus couponStatus) {
+        this.couponId = couponId;
+        this.couponName = couponName;
+        this.minPrice = minPrice;
+        this.maxDiscountPrice = maxDiscountPrice;
+        this.discountPrice = discountPrice;
+        this.basicIssuedDate = basicIssuedDate;
+        this.basicExpiredDate = basicExpiredDate;
+        this.validity = validity;
+        this.isBirth = isBirth;
+        this.couponType = couponType;
+        this.couponStatus = couponStatus;
+    }
 }

@@ -40,6 +40,13 @@ public class CategoryCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @Builder
+    public CategoryCoupon(Pk pk, Category category, Coupon coupon) {
+        this.pk = pk;
+        this.category = category;
+        this.coupon = coupon;
+    }
+
     /**
      * class: CategoryCoupon.Pk.
      *
