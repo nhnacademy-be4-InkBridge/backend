@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
     public void createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
         if (memberRepository.existsByEmail(memberCreateRequestDto.getEmail())) {
-            throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.toString());
+            throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
         }
 
         MemberAuth memberAuth = memberAuthRepository.findById(1).orElse(null);
