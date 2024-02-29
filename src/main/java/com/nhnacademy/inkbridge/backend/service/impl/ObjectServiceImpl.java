@@ -53,10 +53,15 @@ public class ObjectServiceImpl implements ObjectService {
     }
 
     @Override
-    public String uploadObject(MultipartFile multipartFile) throws IOException {
+    public String uploadObject(MultipartFile multipartFile) {
         setTokenId();
         String fileName = LocalDateTime.now() + multipartFile.getOriginalFilename();
-        InputStream inputStream = multipartFile.getInputStream();
+        InputStream inputStream;
+        try {
+            inputStream = multipartFile.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         String url = this.getUrl(fileName);
         final RequestCallback requestCallback = new RequestCallback() {
             public void doWithRequest(final ClientHttpRequest request) throws IOException {

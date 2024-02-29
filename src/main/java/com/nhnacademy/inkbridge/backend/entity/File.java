@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,11 @@ public class File {
 
     @Column(name = "file_extension")
     private String fileExtension;
+
+    @Builder
+    public File(String fileUrl, String fileName, String fileExtension) {
+        this.fileUrl = fileUrl;
+        this.fileName = fileName;
+        this.fileExtension = fileExtension;
+    }
 }

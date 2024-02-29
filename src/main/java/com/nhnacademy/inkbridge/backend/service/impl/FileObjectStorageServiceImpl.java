@@ -6,7 +6,6 @@ import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import com.nhnacademy.inkbridge.backend.service.ObjectService;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,9 +23,13 @@ public class FileObjectStorageServiceImpl implements FileService {
     private FileRepository fileRepository;
     private ObjectService objectService;
 
+
     @Override
     public File saveFile(MultipartFile file) {
-        return null;
+        String fileName = objectService.uploadObject(file);
+        String url = "https://inkbridge.store/image/";
+        return fileRepository.save(
+            File.builder().fileName(fileName).fileUrl(url + fileName).build());
     }
 
     @Override
@@ -41,13 +44,4 @@ public class FileObjectStorageServiceImpl implements FileService {
         return objectService.downloadObject(file.getFileName());
     }
 
-    @Override
-    public List<File> saveBookFile(Long bookId, List<MultipartFile> files) {
-        return null;
-    }
-
-    @Override
-    public List<File> saveReviewFile(Long reviewId, List<MultipartFile> files) {
-        return null;
-    }
 }

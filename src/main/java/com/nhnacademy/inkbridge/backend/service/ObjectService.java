@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,5 +13,5 @@ public interface ObjectService {
 
     ResponseEntity<byte[]> downloadObject(String objectName);
 
-    String uploadObject(MultipartFile multipartFile) throws IOException;
+    String uploadObject(MultipartFile multipartFile);
 }
