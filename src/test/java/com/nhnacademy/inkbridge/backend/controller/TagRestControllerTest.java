@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,7 +35,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -77,7 +75,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void createTag() throws Exception {
         TagCreateRequestDto tagCreateRequestDto = new TagCreateRequestDto();
         tagCreateRequestDto.setTagName("testTag");
@@ -85,7 +82,6 @@ class TagRestControllerTest {
             Tag.builder().tagName(tagCreateRequestDto.getTagName()).build());
         given(tagService.createTag(any())).willReturn(tagCreateResponseDto);
         mvc.perform(post("/api/tags")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
@@ -95,12 +91,10 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void createTagWhenValidationFailed() throws Exception {
         TagCreateRequestDto tagCreateRequestDto = new TagCreateRequestDto();
         tagCreateRequestDto.setTagName("");
         mvc.perform(post("/api/tags")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
@@ -111,7 +105,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void createTagWhenAlreadyExist() throws Exception {
         TagCreateRequestDto newTestTag = new TagCreateRequestDto();
         newTestTag.setTagName(testTagName1);
@@ -119,7 +112,6 @@ class TagRestControllerTest {
         doThrow(new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.name()))
             .when(tagService).createTag(any());
         mvc.perform(post("/api/tags")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newTestTag)))
@@ -129,7 +121,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void getTagList() throws Exception {
         List<Tag> tagList = new ArrayList<>();
         tagList.add(testTag1);
@@ -138,7 +129,6 @@ class TagRestControllerTest {
             .collect(Collectors.toList());
         when(tagService.getTagList()).thenReturn(result);
         mvc.perform(get("/api/tags")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].tagName", equalTo(tagList.get(0).getTagName())))
@@ -149,7 +139,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void updateTag() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName2);
@@ -158,7 +147,6 @@ class TagRestControllerTest {
         when(tagService.updateTag(any(), any())).thenReturn(
             tagUpdateResponseDto);
         mvc.perform(put("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
@@ -170,12 +158,10 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void updateTagWhenValidationFailed() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
 
         mvc.perform(put("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
@@ -186,7 +172,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void updateTagWhenNotFoundTag() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName2);
@@ -194,7 +179,6 @@ class TagRestControllerTest {
             new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.getMessage()));
 
         mvc.perform(put("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
@@ -204,7 +188,6 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void updateTagWhenAlreadyExist() throws Exception {
         TagUpdateRequestDto tagUpdateRequestDto = new TagUpdateRequestDto();
         tagUpdateRequestDto.setTagName(testTagName1);
@@ -212,7 +195,6 @@ class TagRestControllerTest {
             new AlreadyExistException(TagMessageEnum.TAG_ALREADY_EXIST.getMessage()));
 
         mvc.perform(put("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
@@ -222,12 +204,10 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void deleteTag() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenReturn(
             new TagDeleteResponseDto(testTag1 + " is deleted"));
         mvc.perform(delete("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("message", equalTo(testTag1 + " is deleted")))
@@ -235,12 +215,10 @@ class TagRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void deleteTagWhenNotFound() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenThrow(
             new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.name()));
         mvc.perform(delete("/api/tags/{tagId}", testTagId1)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("message", equalTo(TagMessageEnum.TAG_NOT_FOUND.name())))
