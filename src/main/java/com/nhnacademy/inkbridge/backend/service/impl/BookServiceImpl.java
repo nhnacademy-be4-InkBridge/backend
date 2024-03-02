@@ -438,19 +438,24 @@ public class BookServiceImpl implements BookService {
     }
 
     private List<PublisherReadResponseDto> getPublisherList() {
-        return publisherRepository.findAllBy();
+        return publisherRepository.findAll().stream().map(
+            publisher -> PublisherReadResponseDto.builder().publisherId(publisher.getPublisherId())
+                .publisherName(publisher.getPublisherName()).build()).collect(
+            Collectors.toList());
     }
 
     private List<AuthorReadResponseDto> getAuthorList() {
-        return authorRepository.findAllBy();
+        return authorRepository.findAll().stream().map(
+            author -> AuthorReadResponseDto.builder().authorId(author.getAuthorId())
+                .authorName(author.getAuthorName()).build()).collect(
+            Collectors.toList());
     }
 
     private List<BookStatusReadResponseDto> getStatuses() {
-        List<BookStatus> statuses = bookStatusRepository.findAllBy();
-        return statuses.stream().map(
-                x -> BookStatusReadResponseDto.builder().statusId(x.getStatusId())
-                    .statusName(x.getStatusName()).build())
-            .collect(Collectors.toList());
+        return bookStatusRepository.findAll().stream().map(
+            status -> BookStatusReadResponseDto.builder().statusId(status.getStatusId())
+                .statusName(status.getStatusName()).build()).collect(
+            Collectors.toList());
     }
 
     private List<TagReadResponseDto> getTagList() {

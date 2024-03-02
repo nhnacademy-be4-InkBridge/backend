@@ -1,7 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,5 +11,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BookStatusRepository extends JpaRepository<BookStatus, Long> {
 
-    List<BookStatus> findAllBy();
 }
