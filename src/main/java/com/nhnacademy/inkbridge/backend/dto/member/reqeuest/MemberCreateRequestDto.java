@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto.member;
+package com.nhnacademy.inkbridge.backend.dto.member.reqeuest;
 
 import java.time.LocalDate;
 import javax.validation.constraints.Email;

@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberAuth;
 import com.nhnacademy.inkbridge.backend.entity.MemberGrade;
@@ -69,4 +72,15 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
 
     }
+
+    @Override
+    public MemberAuthLoginResponseDto loginInfoMember(MemberAuthLoginRequestDto memberAuthLoginRequestDto) {
+        return memberRepository.findByMemberAuth(memberAuthLoginRequestDto.getEmail());
+    }
+
+    @Override
+    public MemberInfoResponseDto getMemberInfo(Long memberId) {
+        return memberRepository.findByMemberInfo(memberId).orElse(null);
+    }
+
 }
