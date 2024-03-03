@@ -80,18 +80,39 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QBook book = QBook.book;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QFile file = QFile.file;
+        QBookFile bookFile = QBookFile.bookFile;
 
         return from(book)
             .innerJoin(publisher)
             .on(publisher.eq(book.publisher))
             .innerJoin(bookStatus)
             .on(bookStatus.eq(book.bookStatus))
+            .innerJoin(bookAuthor)
+            .on(bookAuthor.book.eq(book))
+            .innerJoin(author)
+            .on(bookAuthor.author.eq(author))
+            .innerJoin(bookFile)
+            .on(bookFile.book.eq(book))
+            .innerJoin(file)
+            .on(file.eq(bookFile.file))
+            .innerJoin(file)
+            .on(file.fileId.eq(book.thumbnailFile.fileId))
             .where(bookStatus.statusId.eq(1L).and(book.bookId.eq(bookId)))
             .select(
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice,
-                    book.price, book.discountRatio, book.isPackagable, publisher.publisherName))
-            .fetchOne();
+                    book.price, book.discountRatio, book.isPackagable, book.thumbnailFile.fileUrl,
+                    publisher.publisherId, publisher.publisherName, author.authorId,
+                    author.authorName, list(file.fileUrl)))
+            .transform(groupBy(book.bookId).list(Projections.constructor(BookReadResponseDto.class,
+                book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                book.regularPrice, book.price, book.discountRatio, book.isPackagable,
+                book.thumbnailFile.fileUrl, publisher.publisherId, publisher.publisherName,
+                author.authorId, author.authorName,
+                list(Projections.constructor(String.class, file.fileUrl))))).get(0);
     }
 
     /**
@@ -130,8 +151,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
             .orderBy(book.bookId.asc())
             .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
-                book.bookTitle,
-                author.authorName, publisher.publisherName, bookStatus.statusName))
+                book.bookTitle, author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
