@@ -26,6 +26,12 @@ public class FileObjectStorageServiceImpl implements FileService {
     private final ObjectService objectService;
 
 
+    /**
+     * 업로드된 파일을 서버에 저장하고, 파일 정보를 데이터베이스에 기록합니다.
+     *
+     * @param file 저장할 파일
+     * @return 저장된 파일의 정보를 담은 {@link File} 객체
+     */
     @Override
     public File saveFile(MultipartFile file) {
         String fileName = objectService.uploadObject(file);
@@ -34,11 +40,25 @@ public class FileObjectStorageServiceImpl implements FileService {
             File.builder().fileName(fileName).fileUrl(url + fileName).build());
     }
 
+
+    /**
+     * 지정된 파일 이름으로 저장된 파일을 로드합니다. 파일이 존재하지 않을 경우, 대체 이미지를 반환합니다.
+     *
+     * @param fileName 로드할 파일의 이름
+     * @return 파일 리소스
+     */
     @Override
     public ResponseEntity<byte[]> loadFile(String fileName) {
         return objectService.downloadObject(fileName);
     }
 
+
+    /**
+     * 지정된 파일 이름으로 저장된 파일을 로드합니다. 파일이 존재하지 않을 경우, 대체 이미지를 반환합니다.
+     *
+     * @param fileId 로드할 파일의 이름
+     * @return 파일 리소스
+     */
     @Override
     public ResponseEntity<byte[]> loadFileById(Long fileId) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new NotFoundException(

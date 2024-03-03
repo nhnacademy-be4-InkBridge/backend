@@ -58,6 +58,12 @@ public class FileController {
         return fileService.loadFile(fileName);
     }
 
+    /**
+     * 이미지를 클라이언트에 보여주는 api 입니다.
+     *
+     * @param fileId RequestParam, Long
+     * @return byte[]
+     */
     @GetMapping("/images/{fileId}")
     public ResponseEntity<byte[]> loadBookImageById(@PathVariable(name = "fileId") Long fileId) {
         return fileService.loadFileById(fileId);
