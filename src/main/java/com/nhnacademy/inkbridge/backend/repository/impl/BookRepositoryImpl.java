@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBookCategory;
+import com.nhnacademy.inkbridge.backend.entity.QBookFile;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
 import com.nhnacademy.inkbridge.backend.entity.QBookTag;
 import com.nhnacademy.inkbridge.backend.entity.QFile;
@@ -46,6 +47,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
+        QFile file = QFile.file;
 
         List<BooksReadResponseDto> content = from(book)
             .innerJoin(publisher)
@@ -56,10 +58,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(bookAuthor.book.eq(book))
             .innerJoin(author)
             .on(author.eq(bookAuthor.author))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
             .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName, book.thumbnailFile.fileUrl))
+                author.authorName, file.fileUrl))
+            .orderBy(book.bookId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -159,7 +164,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(bookTag.book.eq(book))
             .innerJoin(file)
             .on(file.eq(book.thumbnailFile))
-            // category -> relation table , tag -> relation (2) , file -> relation(2)
             .where(book.bookId.eq(bookId).and(book.bookStatus.statusId.in(1L, 2L, 3L, 4L)))
             .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
@@ -174,7 +178,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                     book.regularPrice, book.price, book.discountRatio, book.stock,
                     book.isPackagable,
                     author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
-                    book.thumbnailFile.fileUrl,
+                    file.fileUrl,
                     list(
                         Projections.constructor(Long.class, bookCategory.pk.categoryId)
                     ),

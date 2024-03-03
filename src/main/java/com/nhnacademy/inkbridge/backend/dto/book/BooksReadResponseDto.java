@@ -17,14 +17,16 @@ public class BooksReadResponseDto {
     private final Long price;
     private final String publisherName;
     private final String authorName;
+    private final String fileUrl;
 
     @Builder
     public BooksReadResponseDto(Long bookId, String bookTitle, Long price, String publisherName,
-        String authorName) {
+        String authorName, String fileUrl) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.price = price;
         this.publisherName = publisherName;
         this.authorName = authorName;
+        this.fileUrl = fileUrl;
     }
 }
