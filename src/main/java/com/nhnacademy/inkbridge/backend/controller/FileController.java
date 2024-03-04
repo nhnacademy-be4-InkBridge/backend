@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 2/28/24
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/images")
 @RequiredArgsConstructor
 public class FileController {
 
@@ -34,7 +34,7 @@ public class FileController {
      * @param image MultipartFile
      * @return FileCreateResponseDto
      */
-    @PostMapping(name = "/images")
+    @PostMapping
     public ResponseEntity<FileCreateResponseDto> uploadBookImages(
         @RequestPart MultipartFile image) {
         File file = fileService.saveFile(image);
@@ -52,7 +52,7 @@ public class FileController {
      * @param fileName RequestParam, String
      * @return byte[]
      */
-    @GetMapping("/images/{fileName}")
+    @GetMapping("/{fileName}")
     public ResponseEntity<byte[]> loadBookImage(@PathVariable String fileName) {
         return fileService.loadFile(fileName);
     }
@@ -63,7 +63,7 @@ public class FileController {
      * @param fileId RequestParam, Long
      * @return byte[]
      */
-    @GetMapping("/images/{fileId}")
+    @GetMapping("/id/{fileId}")
     public ResponseEntity<byte[]> loadBookImageById(@PathVariable(name = "fileId") Long fileId) {
         return fileService.loadFileById(fileId);
     }
