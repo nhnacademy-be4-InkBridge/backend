@@ -34,7 +34,7 @@ public class MemberController {
 
     private final MemberServiceImpl memberService;
 
-    @PostMapping("/member/create")
+    @PostMapping("/members")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -46,24 +46,22 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/member/login")
+    @PostMapping("/members/login")
     public ResponseEntity<MemberAuthLoginResponseDto> authLogin(
             @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
-        log.info("login start");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
                 memberService.loginInfoMember(memberAuthLoginRequestDto);
-        log.info("email -> {}", memberAuthLoginRequestDto.getEmail());
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
     }
 
     @GetMapping("/auth/info")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(HttpServletRequest request) {
-        log.info("info start");
+
         Long memberId = Long.parseLong(request.getHeader("Authorization-Id"));
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.getMemberInfo(memberId));
