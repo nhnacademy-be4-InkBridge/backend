@@ -3,7 +3,6 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,7 +43,6 @@ class BookCategoryControllerTest {
     private BookCategoryService bookCategoryService;
 
     @Test
-    @WithMockUser
     @DisplayName("book-category 생성 테스트 - 성공")
     void When_CreateBookCategory_Expect_Success() throws Exception {
         BookCategoryCreateRequestDto request = new BookCategoryCreateRequestDto();
@@ -53,7 +50,6 @@ class BookCategoryControllerTest {
         ReflectionTestUtils.setField(request, "bookId", 1L);
         mockMvc.perform(
                 post("/api/book-category")
-                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated());
@@ -62,7 +58,6 @@ class BookCategoryControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("book-category 조회 테스트 - 성공")
     void When_ReadBookCategory_Expect_Success() throws Exception {
         Long bookId = 1L;
@@ -70,13 +65,11 @@ class BookCategoryControllerTest {
             new BookCategoryReadResponseDto()));
 
         mockMvc.perform(get("/api/book-category/{bookId}", bookId)
-                .with(csrf())
                 .content(objectMapper.writeValueAsString(bookCategoryService.readBookCategory(bookId))))
             .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser
     @DisplayName("book-category 삭제 테스트 - 성공")
     void When_DeleteBookCategory_Expect_Success() throws Exception {
         Long bookId = 1L;
@@ -85,7 +78,6 @@ class BookCategoryControllerTest {
         ReflectionTestUtils.setField(request, "categoryId", categoryId);
 
         mockMvc.perform(delete("/api/book-category/{bookId}", bookId)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk());
