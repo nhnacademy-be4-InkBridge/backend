@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 
 /**
  * class: MemberService.
@@ -10,5 +13,9 @@ import com.nhnacademy.inkbridge.backend.dto.member.MemberCreateRequestDto;
  */
 public interface MemberService {
 
-    public void createMember(MemberCreateRequestDto memberCreateRequestDto);
+    void createMember(MemberCreateRequestDto memberCreateRequestDto);
+
+    MemberAuthLoginResponseDto loginInfoMember(MemberAuthLoginRequestDto memberAuthLoginRequestDto);
+
+    MemberInfoResponseDto getMemberInfo(Long memberId);
 }

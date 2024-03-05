@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyReadResponseDto;
 import java.util.List;
 
@@ -17,15 +18,7 @@ public interface DeliveryPolicyService {
      *
      * @return List - DeliveryPolicyReadResponseDto
      */
-    List<DeliveryPolicyReadResponseDto> getDeliveryPolicies();
-
-    /**
-     * 배송비 정책 id로 배송비 정책을 조회하는 메소드입니다.
-     *
-     * @param deliveryPolicyId Long
-     * @return DeliveryPolicyReadResponseDto
-     */
-    DeliveryPolicyReadResponseDto getDeliveryPolicy(Long deliveryPolicyId);
+    List<DeliveryPolicyAdminReadResponseDto> getDeliveryPolicies();
 
     /**
      * 현재 사용중인 배송비 정책을 조회하는 메소드입니다.

@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.DeliveryPolicy;
 import com.nhnacademy.inkbridge.backend.entity.QDeliveryPolicy;
@@ -27,36 +28,16 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
      * @return List - DeliveryPolicyReadResponseDto
      */
     @Override
-    public List<DeliveryPolicyReadResponseDto> findAllDeliveryPolicyBy() {
+    public List<DeliveryPolicyAdminReadResponseDto> findAllDeliveryPolicyBy() {
         QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
 
         return from(deliveryPolicy)
-            .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
+            .select(Projections.constructor(DeliveryPolicyAdminReadResponseDto.class,
                 deliveryPolicy.deliveryPolicyId,
                 deliveryPolicy.deliveryPrice,
                 deliveryPolicy.createdAt,
                 deliveryPolicy.freeDeliveryPrice))
             .fetch();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param deliveryPolicyId Long
-     * @return DeliveryPolicyReadResponseDto
-     */
-    @Override
-    public DeliveryPolicyReadResponseDto findDeliveryPolicyById(Long deliveryPolicyId) {
-        QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
-
-        return from(deliveryPolicy)
-            .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
-                deliveryPolicy.deliveryPolicyId,
-                deliveryPolicy.deliveryPrice,
-                deliveryPolicy.createdAt,
-                deliveryPolicy.freeDeliveryPrice))
-            .where(deliveryPolicy.deliveryPolicyId.eq(deliveryPolicyId))
-            .fetchOne();
     }
 
     /**
@@ -72,9 +53,8 @@ public class DeliveryPolicyRepositoryImpl extends QuerydslRepositorySupport impl
             .select(Projections.constructor(DeliveryPolicyReadResponseDto.class,
                 deliveryPolicy.deliveryPolicyId,
                 deliveryPolicy.deliveryPrice,
-                deliveryPolicy.createdAt,
                 deliveryPolicy.freeDeliveryPrice))
-            .orderBy(deliveryPolicy.createdAt.desc())
+            .orderBy(deliveryPolicy.deliveryPolicyId.desc())
             .limit(1)
             .fetchOne();
     }
