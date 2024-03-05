@@ -10,6 +10,7 @@ import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.TagMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.TagService;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
+    private final BookTagRepository bookTagRepository;
 
     /**
      * {@inheritDoc}
@@ -96,7 +98,8 @@ public class TagServiceImpl implements TagService {
         if (!tagRepository.existsById(tagId)) {
             throw new NotFoundException(TagMessageEnum.TAG_NOT_FOUND.getMessage());
         }
-        tagRepository.deleteTag(tagId);
+        bookTagRepository.deleteAllByPk_TagId(tagId);
+        tagRepository.deleteById(tagId);
         return TagDeleteResponseDto.builder().message(tagId + " is deleted").build();
     }
 }
