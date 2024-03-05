@@ -115,7 +115,8 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
-        return bookRepository.findByBookId(bookId);
+        return bookRepository.findByBookId(bookId)
+            .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
     }
 
     /**
@@ -137,8 +138,10 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
-        BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto = bookRepository.findBookByAdminByBookId(
-            bookId);
+        BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto =
+            bookRepository.findBookByAdminByBookId(bookId)
+                .orElseThrow(
+                    () -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
         List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList = readAllCategory();
         List<PublisherReadResponseDto> publisherReadResponseDtoList = getPublisherList();
         List<AuthorReadResponseDto> authorReadResponseDtoList = getAuthorList();
