@@ -54,9 +54,12 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
+
+        log.info("start");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
                 memberService.loginInfoMember(memberAuthLoginRequestDto);
 
+        log.info("end");
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
     }
 
