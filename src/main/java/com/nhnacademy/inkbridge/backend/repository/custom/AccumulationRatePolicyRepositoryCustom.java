@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
 import java.util.List;
 
@@ -13,9 +14,9 @@ public interface AccumulationRatePolicyRepositoryCustom {
     /**
      * 적립율 정책 전체 내역을 조회하는 메소드입니다.
      *
-     * @return List - AccumulationRatePolicyReadResponseDto
+     * @return List - AccumulationRatePolicyAdminReadResponseDto
      */
-    List<AccumulationRatePolicyReadResponseDto> findAllAccumulationRatePolicies();
+    List<AccumulationRatePolicyAdminReadResponseDto> findAllAccumulationRatePolicies();
 
     /**
      * 적립율 정책 id로 정책 내역을 조회하는 메소드입니다.

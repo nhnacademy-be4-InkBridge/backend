@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AccumulationRatePolicyRepository;
@@ -37,13 +38,13 @@ class AccumulationRatePolicyServiceImplTest {
     @Test
     @DisplayName("적립율 정책 전체 내역 조회")
     void testGetAccumulationRatePolicies() {
-        AccumulationRatePolicyReadResponseDto responseDto = new AccumulationRatePolicyReadResponseDto(
+        AccumulationRatePolicyAdminReadResponseDto responseDto = new AccumulationRatePolicyAdminReadResponseDto(
             1L, 5, LocalDate.of(2024, 1, 1));
 
         given(accumulationRatePolicyRepository.findAllAccumulationRatePolicies()).willReturn(
             List.of(responseDto));
 
-        List<AccumulationRatePolicyReadResponseDto> result = accumulationRatePolicyService.getAccumulationRatePolicies();
+        List<AccumulationRatePolicyAdminReadResponseDto> result = accumulationRatePolicyService.getAccumulationRatePolicies();
 
         assertAll(
             () -> assertEquals(1, result.size()),
@@ -64,8 +65,7 @@ class AccumulationRatePolicyServiceImplTest {
     @Test
     @DisplayName("적립율 정책 id 조회 - 조회 성공")
     void testGetAccumulationRatePolicy_success() {
-        AccumulationRatePolicyReadResponseDto responseDto = new AccumulationRatePolicyReadResponseDto(
-            1L, 5, LocalDate.of(2024, 1, 1));
+        AccumulationRatePolicyReadResponseDto responseDto = new AccumulationRatePolicyReadResponseDto(1L, 5);
 
         given(accumulationRatePolicyRepository.existsById(1L)).willReturn(true);
         given(accumulationRatePolicyRepository.findAccumulationRatePolicy(1L)).willReturn(responseDto);
@@ -82,7 +82,7 @@ class AccumulationRatePolicyServiceImplTest {
     @DisplayName("현재 적용되는 적립율 정책 조회")
     void testGetCurrentAccumulationRatePolicy() {
         AccumulationRatePolicyReadResponseDto responseDto = new AccumulationRatePolicyReadResponseDto(
-            1L, 5, LocalDate.of(2024, 1, 1));
+            1L, 5);
 
         given(accumulationRatePolicyRepository.findCurrentAccumulationRatePolicy()).willReturn(responseDto);
 

@@ -11,3 +11,7 @@ include::deliverypolicy/delivery-policy-admin.adoc[]
 
 == 배송비 정책
 include::deliverypolicy/delivery-policy.adoc[]
+
+== 적립률 정책
+include::accumulationratepolicy/accumulation-rate-policy.adoc[]
+include::accumulationratepolicy/accumulation-rate-policy-admin.adoc[]

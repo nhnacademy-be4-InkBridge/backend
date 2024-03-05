@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.AccumulationRatePolicy;
 import com.nhnacademy.inkbridge.backend.entity.QAccumulationRatePolicy;
@@ -27,15 +28,15 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
      * @return List - AccumulationRatePolicyReadResponseDto
      */
     @Override
-    public List<AccumulationRatePolicyReadResponseDto> findAllAccumulationRatePolicies() {
+    public List<AccumulationRatePolicyAdminReadResponseDto> findAllAccumulationRatePolicies() {
         QAccumulationRatePolicy accumulationRatePolicy = QAccumulationRatePolicy.accumulationRatePolicy;
 
         return from(accumulationRatePolicy)
-            .select(Projections.constructor(AccumulationRatePolicyReadResponseDto.class,
+            .select(Projections.constructor(AccumulationRatePolicyAdminReadResponseDto.class,
                 accumulationRatePolicy.accumulationRatePolicyId,
                 accumulationRatePolicy.accumulationRate,
                 accumulationRatePolicy.createdAt))
-            .orderBy(accumulationRatePolicy.accumulationRatePolicyId.desc())
+            .orderBy(accumulationRatePolicy.accumulationRatePolicyId.asc())
             .fetch();
     }
 
@@ -53,8 +54,7 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
         return from(accumulationRatePolicy)
             .select(Projections.constructor(AccumulationRatePolicyReadResponseDto.class,
                 accumulationRatePolicy.accumulationRatePolicyId,
-                accumulationRatePolicy.accumulationRate,
-                accumulationRatePolicy.createdAt))
+                accumulationRatePolicy.accumulationRate))
             .where(accumulationRatePolicy.accumulationRatePolicyId.eq(accumulationRatePolicyId))
             .fetchOne();
     }
@@ -71,8 +71,7 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
         return from(accumulationRatePolicy)
             .select(Projections.constructor(AccumulationRatePolicyReadResponseDto.class,
                 accumulationRatePolicy.accumulationRatePolicyId,
-                accumulationRatePolicy.accumulationRate,
-                accumulationRatePolicy.createdAt))
+                accumulationRatePolicy.accumulationRate))
             .orderBy(accumulationRatePolicy.accumulationRatePolicyId.desc())
             .limit(1)
             .fetchOne();
