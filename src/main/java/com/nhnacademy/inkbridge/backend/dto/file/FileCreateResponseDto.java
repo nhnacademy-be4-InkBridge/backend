@@ -28,4 +28,6 @@ public class FileCreateResponseDto {
         this.fileId = fileId;
         this.fileName = fileName;
     }
+
 }
+

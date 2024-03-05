@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -46,7 +45,6 @@ class BookRestControllerTest {
     Pageable pageable;
 
     @Test
-    @WithMockUser
     void whenReadBooks_thenReturnDtoList() throws Exception {
         BooksReadResponseDto booksReadResponseDto = BooksReadResponseDto.builder()
             .bookTitle("title")
@@ -67,7 +65,6 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser
     void whenReadBook_thenReturnDto() throws Exception {
         BookReadResponseDto bookReadResponseDto = BookReadResponseDto.builder().build();
         when(bookService.readBook(anyLong())).thenReturn(bookReadResponseDto);

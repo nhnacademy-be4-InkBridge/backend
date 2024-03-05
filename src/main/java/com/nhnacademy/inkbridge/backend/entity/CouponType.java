@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,10 @@ public class CouponType {
 
     @Column(name = "type_name")
     private String typeName;
+
+    @Builder
+    public CouponType(Integer couponTypeId,String typeName) {
+        this.couponTypeId = couponTypeId;
+        this.typeName=typeName;
+    }
 }

@@ -40,6 +40,13 @@ public class BookCoupon {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @Builder
+    public BookCoupon(Pk pk, Coupon coupon, Book book) {
+        this.pk = pk;
+        this.coupon = coupon;
+        this.book = book;
+    }
+
     /**
      * class: BookCoupon.Pk.
      *

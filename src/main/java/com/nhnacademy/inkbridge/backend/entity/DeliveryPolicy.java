@@ -35,17 +35,23 @@ public class DeliveryPolicy {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
+    @Column(name = "free_delivery_price")
+    private Long freeDeliveryPrice;
+
     /**
      * 배송지 정책 생성자 입니다.
      *
      * @param deliveryPolicyId Long
      * @param deliveryPrice    Long
      * @param createdAt        LocalDate
+     * @param freeDeliveryPrice Long
      */
     @Builder
-    public DeliveryPolicy(Long deliveryPolicyId, Long deliveryPrice, LocalDate createdAt) {
+    public DeliveryPolicy(Long deliveryPolicyId, Long deliveryPrice, LocalDate createdAt,
+        Long freeDeliveryPrice) {
         this.deliveryPolicyId = deliveryPolicyId;
         this.deliveryPrice = deliveryPrice;
         this.createdAt = createdAt;
+        this.freeDeliveryPrice = freeDeliveryPrice;
     }
 }

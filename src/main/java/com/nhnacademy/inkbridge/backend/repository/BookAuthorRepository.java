@@ -12,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BookAuthorRepository extends JpaRepository<BookAuthor, Pk> {
 
+    BookAuthor findByPk_BookId(Long bookId);
 }

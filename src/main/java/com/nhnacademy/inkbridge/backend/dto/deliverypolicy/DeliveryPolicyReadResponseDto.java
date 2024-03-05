@@ -5,15 +5,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * class: DeliveryPolicyReadRequestDto.
+ * class: DeliveryPolicyReadResponseDto.
  *
  * @author jangjaehun
- * @version 2024/02/19
+ * @version 2024/03/01
  */
 @Getter
 @RequiredArgsConstructor
 public class DeliveryPolicyReadResponseDto {
+
     private final Long deliveryPolicyId;
     private final Long deliveryPrice;
-    private final LocalDate createdAt;
+    private final Long freeDeliveryPrice;
 }

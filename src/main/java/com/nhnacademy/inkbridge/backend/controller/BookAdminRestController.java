@@ -1,26 +1,28 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import java.util.List;
-import java.util.Objects;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookAdminRestController.
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/15
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/api/admin/books")
 public class BookAdminRestController {
@@ -46,9 +49,9 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
-        List<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(pageable)
-            .getContent();
+    public ResponseEntity<Page<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
+        Page<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(
+            pageable);
         return new ResponseEntity<>(booksDtoByAdmin, HttpStatus.OK);
     }
 
@@ -59,9 +62,21 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookAdminReadResponseDto> readBook(@PathVariable Long bookId) {
-        BookAdminReadResponseDto bookDtoByAdmin = bookService.readBookByAdmin(bookId);
-        return new ResponseEntity<>(bookDtoByAdmin, HttpStatus.OK);
+    public ResponseEntity<BookAdminDetailReadResponseDto> readBook(@PathVariable Long bookId) {
+        BookAdminDetailReadResponseDto bookAdminDetailReadResponseDto = bookService.readBookByAdmin(
+            bookId);
+        return new ResponseEntity<>(bookAdminDetailReadResponseDto, HttpStatus.OK);
+    }
+
+    /**
+     * admin 도서 등록 페이지에 필요한 데이터를 조회하는 api입니다.
+     *
+     * @return BookAdminReadResponseDto
+     */
+    @GetMapping("/form")
+    public ResponseEntity<BookAdminReadResponseDto> readBook() {
+        BookAdminReadResponseDto bookAdminReadResponseDto = bookService.readBookByAdmin();
+        return new ResponseEntity<>(bookAdminReadResponseDto, HttpStatus.OK);
     }
 
     /**
@@ -73,13 +88,15 @@ public class BookAdminRestController {
      */
     @PostMapping
     public ResponseEntity<HttpStatus> createBook(
-        @Valid @RequestBody BookAdminCreateRequestDto bookAdminCreateRequestDto,
+        @RequestPart(value = "image") MultipartFile thumbnail,
+        @Valid @RequestPart(value = "book") BookAdminCreateRequestDto bookAdminCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(
-                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.createBook(bookAdminCreateRequestDto);
+        bookService.createBook(thumbnail, bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -92,16 +109,16 @@ public class BookAdminRestController {
      * @return ResponseEntity
      */
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookAdminUpdateResponseDto> updateBook(@PathVariable Long bookId,
-        @Valid @RequestBody BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
+    public ResponseEntity<HttpStatus> updateBook(@PathVariable Long bookId,
+        @RequestPart(value = "image", required = false) MultipartFile thumbnail,
+        @Valid @RequestPart(value = "book") BookAdminUpdateRequestDto bookAdminUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(
-                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
-
-        BookAdminUpdateResponseDto bookAdminUpdateResponseDto = bookService.updateBookByAdmin(
-            bookId, bookAdminUpdateRequestDto);
-        return new ResponseEntity<>(bookAdminUpdateResponseDto, HttpStatus.OK);
+        bookService.updateBookByAdmin(bookId, thumbnail, bookAdminUpdateRequestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

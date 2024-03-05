@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -47,7 +45,6 @@ class AccumulationRatePolicyControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @WithMockUser
     @DisplayName("기본 적립율 전체 내역 조회 테스트")
     void testGetAccumulationRatePolicies() throws Exception {
         AccumulationRatePolicyReadResponseDto responseDto =
@@ -57,7 +54,6 @@ class AccumulationRatePolicyControllerTest {
             List.of(responseDto));
 
         mockMvc.perform(get("/api/accumulation-rate-policies")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -69,14 +65,12 @@ class AccumulationRatePolicyControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("적립율 정책 id로 내역 조회 - 존재하지 않는 적립율 정책")
     void testGetAccumulationRatePolicy_not_found() throws Exception {
         given(accumulationRatePolicyService.getAccumulationRatePolicy(1L)).willThrow(
             NotFoundException.class);
 
         mockMvc.perform(get("/api/accumulation-rate-policies/{accumulationRatePolicy}", 1L)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
@@ -87,7 +81,6 @@ class AccumulationRatePolicyControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("적립율 정책 id로 내역 조회 - 조회 성공")
     void testGetAccumulationRatePolicy_success() throws Exception {
         AccumulationRatePolicyReadResponseDto responseDto =
@@ -96,7 +89,6 @@ class AccumulationRatePolicyControllerTest {
         given(accumulationRatePolicyService.getAccumulationRatePolicy(1L)).willReturn(responseDto);
 
         mockMvc.perform(get("/api/accumulation-rate-policies/{accumulationRatePolicy}", 1L)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -108,7 +100,6 @@ class AccumulationRatePolicyControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("현재 적용중인 적립율 정책 조회")
     void testGetCurrentAccumulationRatePolicy() throws Exception {
         AccumulationRatePolicyReadResponseDto responseDto =
@@ -118,7 +109,6 @@ class AccumulationRatePolicyControllerTest {
             responseDto);
 
         mockMvc.perform(get("/api/accumulation-rate-policies/current", 1L)
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -130,14 +120,12 @@ class AccumulationRatePolicyControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("적립율 정책 생성 - 유효성 검사 실패")
     void testCreateAccumulationRatePolicy_valid_failed() throws Exception {
         AccumulationRatePolicyCreateRequestDto requestDto = new AccumulationRatePolicyCreateRequestDto();
         requestDto.setAccumulationRate(-5);
 
         mockMvc.perform(post("/api/accumulation-rate-policies")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
@@ -147,14 +135,12 @@ class AccumulationRatePolicyControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("적립율 정책 생성 - 생성 성공")
     void testCreateAccumulationRatePolicy_success() throws Exception {
         AccumulationRatePolicyCreateRequestDto requestDto = new AccumulationRatePolicyCreateRequestDto();
         requestDto.setAccumulationRate(5);
 
         mockMvc.perform(post("/api/accumulation-rate-policies")
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))

@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+
 import com.nhnacademy.inkbridge.backend.entity.File;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,3 +39,4 @@ public interface FileService {
     ResponseEntity<byte[]> loadFileById(Long fileId);
 
 }
+
