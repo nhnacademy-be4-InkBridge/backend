@@ -6,6 +6,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,10 +27,14 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -32,7 +43,9 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author jangjaehun
  * @version 2024/02/19
  */
+@AutoConfigureRestDocs
 @WebMvcTest(DeliveryPolicyAdminController.class)
+@ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
 class DeliveryPolicyAdminControllerTest {
 
     @Autowired
@@ -54,9 +67,19 @@ class DeliveryPolicyAdminControllerTest {
 
         mockMvc.perform(get("/api/admin/delivery-policies"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].deliveryPolicyId", equalTo(1)))
-            .andExpect(jsonPath("$[0].deliveryPrice", equalTo(1000)))
-            .andExpect(jsonPath("$[0].createdAt", equalTo("2024-01-01")));
+            .andExpect(jsonPath("$[0].deliveryPolicyId").value(1L))
+            .andExpect(jsonPath("$[0].deliveryPrice").value(1000L))
+            .andExpect(jsonPath("$[0].freeDeliveryPrice").value(50000L))
+            .andExpect(jsonPath("$[0].createdAt", equalTo("2024-01-01")))
+            .andDo(document("delivery-policy-admin-get",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("[].deliveryPolicyId").description("배송비 정책 번호"),
+                    fieldWithPath("[].deliveryPrice").description("배송비"),
+                    fieldWithPath("[].freeDeliveryPrice").description("무료 배송 기준 금액"),
+                    fieldWithPath("[].createdAt").description("변경일자")
+                )));
 
         verify(deliveryPolicyService, times(1)).getDeliveryPolicies();
     }
@@ -66,13 +89,21 @@ class DeliveryPolicyAdminControllerTest {
     void testCreateDeliveryPolicy_valid_failed() throws Exception {
         DeliveryPolicyCreateRequestDto requestDto = new DeliveryPolicyCreateRequestDto();
         requestDto.setDeliveryPrice(-1000L);
+        requestDto.setFreeDeliveryPrice(50000L);
 
         mockMvc.perform(post("/api/admin/delivery-policies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(exception -> assertThat(exception.getResolvedException())
-                .isInstanceOf(ValidationException.class));
+                .isInstanceOf(ValidationException.class))
+            .andDo(document("delivery-policy-admin-post-422",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("deliveryPrice").description("배송비"),
+                    fieldWithPath("freeDeliveryPrice").description("무료 배송 기준 금액")
+                )));
     }
 
     @Test
@@ -85,7 +116,14 @@ class DeliveryPolicyAdminControllerTest {
         mockMvc.perform(post("/api/admin/delivery-policies")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andDo(document("delivery-policy-admin-post",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("deliveryPrice").description("배송비"),
+                    fieldWithPath("freeDeliveryPrice").description("무료 배송 기준 금액")
+                )));
 
         verify(deliveryPolicyService, times(1)).createDeliveryPolicy(any());
     }
