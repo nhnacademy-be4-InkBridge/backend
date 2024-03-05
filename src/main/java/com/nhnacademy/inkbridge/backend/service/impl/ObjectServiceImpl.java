@@ -57,7 +57,7 @@ public class ObjectServiceImpl implements ObjectService {
     @Override
     public String uploadObject(MultipartFile multipartFile) {
         setTokenId();
-        String fileName = LocalDateTime.now() + multipartFile.getOriginalFilename();
+        String fileName = (LocalDateTime.now() + multipartFile.getOriginalFilename()).trim();
         InputStream inputStream;
         try {
             inputStream = multipartFile.getInputStream();
