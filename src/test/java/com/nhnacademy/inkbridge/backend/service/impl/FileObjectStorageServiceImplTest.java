@@ -56,7 +56,8 @@ class FileObjectStorageServiceImplTest {
     void saveFile() {
         when(objectService.uploadObject(any())).thenReturn(fileName);
         when(fileRepository.save(any())).thenReturn(file);
-        assertEquals(file, fileObjectStorageService.saveFile(any()));
+        assertEquals(fileId, fileObjectStorageService.saveFile(any()).getFileId());
+        assertEquals(fileName, fileObjectStorageService.saveFile(any()).getFileName());
     }
 
     @Test
