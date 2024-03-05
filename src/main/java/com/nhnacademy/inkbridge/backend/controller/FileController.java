@@ -1,7 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.file.FileCreateResponseDto;
-import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,13 +36,8 @@ public class FileController {
     @PostMapping
     public ResponseEntity<FileCreateResponseDto> uploadBookImages(
         @RequestPart MultipartFile image) {
-        File file = fileService.saveFile(image);
-        FileCreateResponseDto fileCreateResponseDto = FileCreateResponseDto.builder()
-            .fileId(file.getFileId())
-            .fileName(file.getFileName())
-            .build();
 
-        return new ResponseEntity<>(fileCreateResponseDto, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.saveFile(image));
     }
 
     /**

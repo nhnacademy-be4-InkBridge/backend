@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 
+import com.nhnacademy.inkbridge.backend.dto.file.FileCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,9 @@ public interface FileService {
      * @param file 저장할 파일
      * @return 저장된 파일의 정보를 담은 {@link File} 객체
      */
-    File saveFile(MultipartFile file);
+    FileCreateResponseDto saveFile(MultipartFile file);
+
+    File saveThumbnail(MultipartFile file);
 
 
     /**

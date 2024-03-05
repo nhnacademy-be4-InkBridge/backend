@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.file.FileCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileObjectStorageServiceImpl implements FileService {
 
+
     private final FileRepository fileRepository;
     private final ObjectService objectService;
 
@@ -33,9 +35,21 @@ public class FileObjectStorageServiceImpl implements FileService {
      * @return 저장된 파일의 정보를 담은 {@link File} 객체
      */
     @Override
-    public File saveFile(MultipartFile file) {
+    public FileCreateResponseDto saveFile(MultipartFile file) {
         String fileName = objectService.uploadObject(file);
         String url = "https://inkbridge.store/image-load/";
+        File newFile = fileRepository.save(
+            File.builder().fileName(fileName).fileUrl(url + fileName).build());
+
+        return FileCreateResponseDto.builder().fileId(newFile.getFileId())
+            .fileName(newFile.getFileName()).build();
+    }
+
+    @Override
+    public File saveThumbnail(MultipartFile file) {
+        String fileName = objectService.uploadObject(file);
+        String url = "https://inkbridge.store/image-load/";
+
         return fileRepository.save(
             File.builder().fileName(fileName).fileUrl(url + fileName).build());
     }

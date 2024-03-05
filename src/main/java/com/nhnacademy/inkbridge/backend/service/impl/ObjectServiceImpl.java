@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -36,8 +35,8 @@ public class ObjectServiceImpl implements ObjectService {
 
     private final AuthService authService;
     private String tokenId;
-    String storageUrl = "https://kr1-api-object-storage.nhncloudservice.com/v1/AUTH_e805e9a72d2f47338a0a463196c36314";
-    String containerName = "inkbridge";
+    private static final String STORAGE_URL = "https://kr1-api-object-storage.nhncloudservice.com/v1/AUTH_e805e9a72d2f47338a0a463196c36314";
+    private static final String CONTAINER_NAME = "inkbridge";
 
 
     @Override
@@ -65,11 +64,9 @@ public class ObjectServiceImpl implements ObjectService {
             throw new ValidationException(FileMessageEnum.FILE_VALID_FAIL.getMessage());
         }
         String url = this.getUrl(fileName);
-        final RequestCallback requestCallback = new RequestCallback() {
-            public void doWithRequest(final ClientHttpRequest request) throws IOException {
-                request.getHeaders().add("X-Auth-Token", tokenId);
-                IOUtils.copy(inputStream, request.getBody());
-            }
+        final RequestCallback requestCallback = request -> {
+            request.getHeaders().add("X-Auth-Token", tokenId);
+            IOUtils.copy(inputStream, request.getBody());
         };
 
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
@@ -92,6 +89,6 @@ public class ObjectServiceImpl implements ObjectService {
     }
 
     private String getUrl(String objectName) {
-        return storageUrl + "/" + containerName + "/" + objectName;
+        return STORAGE_URL + "/" + CONTAINER_NAME + "/" + objectName;
     }
 }
