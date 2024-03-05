@@ -1,0 +1,13 @@
+= Inkbridge API 명세서
+:doctype: book
+:source-highlighter: highlights
+:toc: left
+:toc-title: Content
+:toclevels: 4
+:seclinks:
+
+== 배송비 정책 관리자
+include::deliverypolicy/delivery-policy-admin.adoc[]
+
+== 배송비 정책
+include::deliverypolicy/delivery-policy.adoc[]
