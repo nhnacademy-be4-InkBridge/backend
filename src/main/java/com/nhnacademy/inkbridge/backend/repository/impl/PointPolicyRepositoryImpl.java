@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.QPointPolicy;
@@ -30,14 +31,14 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
      * @return List - PointPolicyReadResponseDto
      */
     @Override
-    public List<PointPolicyReadResponseDto> findAllPointPolicyBy() {
+    public List<PointPolicyAdminReadResponseDto> findAllPointPolicyBy() {
         QPointPolicy pointPolicy = QPointPolicy.pointPolicy;
         QPointPolicyType pointPolicyType = QPointPolicyType.pointPolicyType;
 
         return from(pointPolicy)
             .innerJoin(pointPolicyType)
             .on(pointPolicy.pointPolicyType.eq(pointPolicyType))
-            .select(Projections.constructor(PointPolicyReadResponseDto.class,
+            .select(Projections.constructor(PointPolicyAdminReadResponseDto.class,
                 pointPolicy.pointPolicyId,
                 pointPolicyType.policyType,
                 pointPolicy.accumulatePoint,
@@ -53,14 +54,15 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
      * @return PointPolicyReadResponseDto
      */
     @Override
-    public List<PointPolicyReadResponseDto> findAllPointPolicyByTypeId(Integer pointPolicyTypeId) {
+    public List<PointPolicyAdminReadResponseDto> findAllPointPolicyByTypeId(
+        Integer pointPolicyTypeId) {
         QPointPolicy pointPolicy = QPointPolicy.pointPolicy;
         QPointPolicyType pointPolicyType = QPointPolicyType.pointPolicyType;
 
         return from(pointPolicy)
             .innerJoin(pointPolicyType)
             .on(pointPolicy.pointPolicyType.eq(pointPolicyType))
-            .select(Projections.constructor(PointPolicyReadResponseDto.class,
+            .select(Projections.constructor(PointPolicyAdminReadResponseDto.class,
                 pointPolicy.pointPolicyId,
                 pointPolicyType.policyType,
                 pointPolicy.accumulatePoint,
@@ -76,13 +78,13 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
      * @return List - PointPolicyReadResponseDto
      */
     @Override
-    public List<PointPolicyReadResponseDto> findAllCurrentPointPolicies() {
+    public List<PointPolicyAdminReadResponseDto> findAllCurrentPointPolicies() {
         QPointPolicy pointPolicy = QPointPolicy.pointPolicy;
         QPointPolicy subPointPolicy = new QPointPolicy("subPointPolicy");
         QPointPolicyType pointPolicyType = QPointPolicyType.pointPolicyType;
 
         return from(pointPolicy)
-            .select(Projections.constructor(PointPolicyReadResponseDto.class,
+            .select(Projections.constructor(PointPolicyAdminReadResponseDto.class,
                 pointPolicy.pointPolicyId,
                 pointPolicyType.policyType,
                 pointPolicy.accumulatePoint,
@@ -114,8 +116,7 @@ public class PointPolicyRepositoryImpl extends QuerydslRepositorySupport impleme
             .select(Projections.constructor(PointPolicyReadResponseDto.class,
                 pointPolicy.pointPolicyId,
                 pointPolicyType.policyType,
-                pointPolicy.accumulatePoint,
-                pointPolicy.createdAt))
+                pointPolicy.accumulatePoint))
             .innerJoin(pointPolicyType)
             .on(pointPolicy.pointPolicyType.eq(pointPolicyType))
             .where(pointPolicyType.pointPolicyTypeId.eq(pointPolicyTypeId))
