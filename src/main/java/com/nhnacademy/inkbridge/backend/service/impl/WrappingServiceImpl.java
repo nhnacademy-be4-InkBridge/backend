@@ -44,6 +44,6 @@ public class WrappingServiceImpl implements WrappingService {
     public WrappingResponseDto getWrapping(Long wrappingId) {
         return wrappingRepository.findByWrappingId(wrappingId)
             .orElseThrow(() -> new NotFoundException(
-                OrderMessageEnum.Wrapping_NOT_FOUND.getMessage()));
+                OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage()));
     }
 }

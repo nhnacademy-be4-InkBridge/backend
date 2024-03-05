@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum OrderMessageEnum {
-    Wrapping_NOT_FOUND("포장지가 없습니다.");
+    WRAPPING_NOT_FOUND("포장지가 없습니다.");
     private String message;
 
     OrderMessageEnum(String message) {
