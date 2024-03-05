@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginReque
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.impl.MemberServiceImpl;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class MemberController {
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.toString());
+            throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
 
         memberService.createMember(memberCreateRequestDto);
