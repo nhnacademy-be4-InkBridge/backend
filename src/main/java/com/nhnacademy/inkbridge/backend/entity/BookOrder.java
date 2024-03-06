@@ -73,12 +73,4 @@ public class BookOrder {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "delivery_policy_id")
-    private DeliveryPolicy deliveryPolicy;
-
-    @ManyToOne
-    @JoinColumn(name = "accumulation_rate_policy_id")
-    private AccumulationRatePolicy accumulationRatePolicy;
 }
