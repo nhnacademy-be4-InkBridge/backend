@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.times;
 import static org.mockito.BDDMockito.verify;
 import static org.mockito.BDDMockito.when;
+import static org.mockito.Mockito.doNothing;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
@@ -33,13 +34,16 @@ import com.nhnacademy.inkbridge.backend.repository.BookCategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookFileRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookStatusRepository;
+import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
+import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +55,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookServiceImplTest.
@@ -75,13 +80,17 @@ class BookServiceImplTest {
     @Mock
     TagRepository tagRepository;
     @Mock
+    BookFileRepository bookFileRepository;
+    @Mock
+    CategoryRepository categoryRepository;
+    @Mock
+    FileRepository fileRepository;
+    @Mock
     BookCategoryRepository bookCategoryRepository;
     @Mock
     BookAuthorRepository bookAuthorRepository;
     @Mock
-    BookFileRepository bookFileRepository;
-    @Mock
-    CategoryRepository categoryRepository;
+    BookTagRepository bookTagRepository;
     @Mock
     FileService fileService;
     @Mock
@@ -107,7 +116,8 @@ class BookServiceImplTest {
         BookReadResponseDto bookReadResponseDto = mock(BookReadResponseDto.class);
 
         when(bookRepository.existsById(anyLong())).thenReturn(true);
-        when(bookRepository.findByBookId(anyLong())).thenReturn(bookReadResponseDto);
+        when(bookRepository.findByBookId(anyLong())).thenReturn(
+            Optional.ofNullable(bookReadResponseDto));
 
         BookReadResponseDto book = bookService.readBook(1L);
 
@@ -128,7 +138,7 @@ class BookServiceImplTest {
     void whenReadBooksByAdmin_thenReturnPageDtoList() {
         BooksAdminReadResponseDto booksAdminReadResponseDto = mock(BooksAdminReadResponseDto.class);
         Page<BooksAdminReadResponseDto> resultPage = new PageImpl<>(
-            List.of(booksAdminReadResponseDto), pageable, 0);
+            List.of(booksAdminReadResponseDto));
 
         when(bookRepository.findAllBooksByAdmin(any(Pageable.class))).thenReturn(resultPage);
 
@@ -146,14 +156,14 @@ class BookServiceImplTest {
             BookAdminSelectedReadResponseDto.class);
 
         when(bookRepository.existsById(anyLong())).thenReturn(true);
+        when(bookRepository.findBookByAdminByBookId(anyLong())).thenReturn(
+            Optional.of(bookAdminSelectedReadResponseDto));
         when(categoryRepository.findAllByCategoryParentIsNull()).thenReturn(
             List.of(mock(Category.class)));
         when(publisherRepository.findAll()).thenReturn(List.of(mock(Publisher.class)));
         when(authorRepository.findAll()).thenReturn(List.of(mock(Author.class)));
         when(bookStatusRepository.findAll()).thenReturn(List.of(mock(BookStatus.class)));
         when(tagRepository.findAll()).thenReturn(List.of(mock(Tag.class)));
-        when(bookRepository.findBookByAdminByBookId(anyLong())).thenReturn(
-            bookAdminSelectedReadResponseDto);
 
         BookAdminDetailReadResponseDto bookAdminDetailReadResponseDto = bookService.readBookByAdmin(
             1L);
@@ -174,6 +184,16 @@ class BookServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> bookService.readBookByAdmin(1L));
         verify(bookRepository, times(1)).existsById(anyLong());
+    }
+
+    @Test
+    void givenNotFound_whenReadBookByAdmin_thenThrowNotFoundException() {
+        when(bookRepository.existsById(anyLong())).thenReturn(true);
+        when(bookRepository.findBookByAdminByBookId(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.readBookByAdmin(1L));
+        verify(bookRepository, times(1)).existsById(anyLong());
+        verify(bookRepository, times(1)).findBookByAdminByBookId(anyLong());
     }
 
     @Test
@@ -198,16 +218,29 @@ class BookServiceImplTest {
 
     @Test
     void whenCreateBook() {
-        BookAdminCreateRequestDto bookAdminCreateRequestDto = mock(BookAdminCreateRequestDto.class);
         Book book = Book.builder().build();
-        Author author = mock(Author.class);
-        Publisher publisher = mock(Publisher.class);
+
+        BookAdminCreateRequestDto bookAdminCreateRequestDto = mock(BookAdminCreateRequestDto.class);
+
+        when(bookAdminCreateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminCreateRequestDto.getTags()).thenReturn(List.of(1L));
+        when(bookAdminCreateRequestDto.getFileIdList()).thenReturn(List.of(1L));
+        when(bookAdminCreateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminCreateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.save(any(Book.class))).thenReturn(book);
-        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(author));
-        when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(publisher));
-        when(bookFileRepository.saveAll(any())).thenReturn(Collections.emptyList());
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Category.class)));
         when(bookCategoryRepository.saveAll(any())).thenReturn(Collections.emptyList());
+        when(tagRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Tag.class)));
+        when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
+        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(mock(Author.class)));
+        when(bookAuthorRepository.save(any())).thenReturn(null);
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(fileRepository.findById(anyLong())).thenReturn(Optional.of(mock(File.class)));
+        when(bookFileRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
@@ -215,12 +248,16 @@ class BookServiceImplTest {
         bookService.createBook(thumbnail, bookAdminCreateRequestDto);
 
         verify(bookRepository, times(1)).save(any(Book.class));
-
+        verify(categoryRepository, times(1)).findById(anyLong());
+        verify(tagRepository, times(1)).findById(anyLong());
+        verify(fileRepository, times(1)).findById(anyLong());
         verify(publisherRepository, times(1)).findById(anyLong());
         verify(authorRepository, times(1)).findById(anyLong());
 
-        verify(bookFileRepository).saveAll(any());
-        verify(bookCategoryRepository).saveAll(any());
+        verify(bookFileRepository, times(1)).saveAll(any());
+        verify(bookTagRepository, times(1)).saveAll(any());
+        verify(bookAuthorRepository, times(1)).save(any());
+        verify(bookCategoryRepository, times(1)).saveAll(any());
     }
 
     @Test
@@ -234,6 +271,7 @@ class BookServiceImplTest {
 
         assertThrows(NotFoundException.class,
             () -> bookService.createBook(thumbnail, bookAdminCreateRequestDto));
+
         verify(publisherRepository, times(1)).findById(anyLong());
     }
 
@@ -253,33 +291,105 @@ class BookServiceImplTest {
 
         verify(bookRepository, times(1)).save(any());
         verify(publisherRepository, times(1)).findById(anyLong());
+        verify(authorRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidCategory_whenCreateBook_thenThrowNotFoundException() {
+        BookAdminCreateRequestDto bookAdminCreateRequestDto = mock(BookAdminCreateRequestDto.class);
+        Book book = Book.builder().build();
+
+        when(bookAdminCreateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminCreateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.empty());
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+
+        MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.createBook(thumbnail, bookAdminCreateRequestDto));
+
+        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(categoryRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidTag_whenCreateBook_thenThrowNotFoundException() {
+        BookAdminCreateRequestDto bookAdminCreateRequestDto = mock(BookAdminCreateRequestDto.class);
+        Book book = Book.builder().build();
+
+        when(bookAdminCreateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminCreateRequestDto.getTags()).thenReturn(List.of(1L));
+        when(bookAdminCreateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Category.class)));
+        when(bookCategoryRepository.saveAll(any())).thenReturn(Collections.emptyList());
+        when(tagRepository.findById(anyLong())).thenReturn(
+            Optional.empty());
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+
+        MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.createBook(thumbnail, bookAdminCreateRequestDto));
+
+        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(categoryRepository, times(1)).findById(anyLong());
+        verify(tagRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+
+        verify(bookCategoryRepository, times(1)).saveAll(any());
     }
 
     @Test
     void whenUpdateBookByAdmin() {
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
-        Long bookId = 1L;
-        Book book = mock(Book.class);
-        Publisher publisher = mock(Publisher.class);
-        BookStatus bookStatus = mock(BookStatus.class);
-        File file = mock(File.class);
-        Author author = mock(Author.class);
-        BookAuthor bookAuthor = mock(BookAuthor.class);
 
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(publisher));
-        when(bookStatusRepository.findById(anyLong())).thenReturn(Optional.of(bookStatus));
-        when(fileService.saveFile(any())).thenReturn(file);
-        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(bookAuthor);
+        when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
+        when(bookAdminUpdateRequestDto.getFileIdList()).thenReturn(List.of(1L));
+        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
-        when(authorRepository.findById(anyLong())).thenReturn(Optional.of(author));
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(bookStatusRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(BookStatus.class)));
+
+        when(authorRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Author.class)));
+        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+
+        when(fileRepository.findById(anyLong())).thenReturn(Optional.of(mock(File.class)));
+        doNothing().when(bookFileRepository).deleteAllByBook_BookId(anyLong());
         when(bookFileRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Category.class)));
+        doNothing().when(bookCategoryRepository).deleteByPk_BookId(anyLong());
         when(bookCategoryRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.of(mock(Tag.class)));
+        doNothing().when(bookTagRepository).deleteAllByPk_BookId(anyLong());
+        when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
 
-        bookService.updateBookByAdmin(bookId, thumbnail, bookAdminUpdateRequestDto);
+        bookService.updateBookByAdmin(1L, thumbnail, bookAdminUpdateRequestDto);
 
         verify(authorRepository, times(1)).findById(anyLong());
 
@@ -326,6 +436,148 @@ class BookServiceImplTest {
         when(publisherRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Publisher.class)));
         when(bookStatusRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.updateBookByAdmin(1L, thumbnail, bookAdminUpdateRequestDto));
+        verify(bookRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+        verify(bookStatusRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidBookFile_whenUpdateBook_thenThrowNotFoundException() {
+        BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
+
+        when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
+        when(bookAdminUpdateRequestDto.getFileIdList()).thenReturn(List.of(1L));
+        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(bookStatusRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(BookStatus.class)));
+
+        when(authorRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Author.class)));
+        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+
+        when(fileRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Category.class)));
+        doNothing().when(bookCategoryRepository).deleteByPk_BookId(anyLong());
+        when(bookCategoryRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.of(mock(Tag.class)));
+        doNothing().when(bookTagRepository).deleteAllByPk_BookId(anyLong());
+        when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.updateBookByAdmin(1L, thumbnail, bookAdminUpdateRequestDto));
+        verify(bookRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+        verify(bookStatusRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidBookTag_whenUpdateBook_thenThrowNotFoundException() {
+        BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
+
+        when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
+        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(bookStatusRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(BookStatus.class)));
+
+        when(authorRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Author.class)));
+        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Category.class)));
+        doNothing().when(bookCategoryRepository).deleteByPk_BookId(anyLong());
+        when(bookCategoryRepository.saveAll(any())).thenReturn(Collections.emptyList());
+
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.updateBookByAdmin(1L, thumbnail, bookAdminUpdateRequestDto));
+        verify(bookRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+        verify(bookStatusRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidBookCategory_whenUpdateBook_thenThrowNotFoundException() {
+        BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
+
+        when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
+        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(bookStatusRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(BookStatus.class)));
+
+        when(authorRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Author.class)));
+        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+
+        when(categoryRepository.findById(anyLong())).thenReturn(
+            Optional.empty());
+
+        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
+            MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
+
+        assertThrows(NotFoundException.class,
+            () -> bookService.updateBookByAdmin(1L, thumbnail, bookAdminUpdateRequestDto));
+        verify(bookRepository, times(1)).findById(anyLong());
+        verify(publisherRepository, times(1)).findById(anyLong());
+        verify(bookStatusRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void givenInvalidBookAuthor_whenUpdateBook_thenThrowNotFoundException() {
+        BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
+
+        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
+        when(publisherRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(Publisher.class)));
+        when(bookStatusRepository.findById(anyLong())).thenReturn(
+            Optional.of(mock(BookStatus.class)));
+
+        when(authorRepository.findById(anyLong())).thenReturn(
+            Optional.empty());
+
+        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
