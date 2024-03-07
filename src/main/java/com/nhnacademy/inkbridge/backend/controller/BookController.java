@@ -50,7 +50,8 @@ public class BookController {
     @GetMapping("/{bookId}")
     public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
         HttpServletRequest request) {
-        Long memberId = Long.parseLong(request.getHeader("Authorization-Id"));
+        Long memberId = request.getHeader("Authorization-Id") == null ? 0L
+            : Long.parseLong(request.getHeader("Authorization-Id"));
         BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }
