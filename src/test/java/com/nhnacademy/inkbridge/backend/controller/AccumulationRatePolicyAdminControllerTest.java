@@ -19,10 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
-import com.nhnacademy.inkbridge.backend.service.DeliveryPolicyService;
+import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -38,93 +38,87 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * class: DeliveryPolicyControllerTest.
+ * class: AccumulationRatePolicyAdminControllerTest.
  *
  * @author jangjaehun
- * @version 2024/02/19
+ * @version 2024/03/05
  */
 @AutoConfigureRestDocs
-@WebMvcTest(DeliveryPolicyAdminController.class)
+@WebMvcTest(AccumulationRatePolicyAdminController.class)
 @ExtendWith({RestDocumentationExtension.class, MockitoExtension.class})
-class DeliveryPolicyAdminControllerTest {
+class AccumulationRatePolicyAdminControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    DeliveryPolicyService deliveryPolicyService;
+    AccumulationRatePolicyService accumulationRatePolicyService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @DisplayName("배송비 정책 전체 조회 테스트")
-    void testGetDeliveryPolicies() throws Exception {
-        DeliveryPolicyAdminReadResponseDto responseDto = new DeliveryPolicyAdminReadResponseDto(1L,
-            1000L,
-            LocalDate.of(2024, 1, 1), 50000L);
+    @DisplayName("기본 적립율 전체 내역 조회 테스트")
+    void testGetAccumulationRatePolicies() throws Exception {
+        AccumulationRatePolicyAdminReadResponseDto responseDto =
+            new AccumulationRatePolicyAdminReadResponseDto(1L, 1, LocalDate.of(2024, 1, 1));
 
-        given(deliveryPolicyService.getDeliveryPolicies()).willReturn(List.of(responseDto));
+        given(accumulationRatePolicyService.getAccumulationRatePolicies()).willReturn(
+            List.of(responseDto));
 
-        mockMvc.perform(get("/api/admin/delivery-policies"))
+        mockMvc.perform(get("/api/admin/accumulation-rate-policies")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].deliveryPolicyId").value(1L))
-            .andExpect(jsonPath("$[0].deliveryPrice").value(1000L))
-            .andExpect(jsonPath("$[0].freeDeliveryPrice").value(50000L))
+            .andExpect(jsonPath("$[0].accumulationRatePolicyId").value(1L))
+            .andExpect(jsonPath("$[0].accumulationRate", equalTo(1)))
             .andExpect(jsonPath("$[0].createdAt", equalTo("2024-01-01")))
-            .andDo(document("deliverypolicy/delivery-policy-admin-get",
-                preprocessRequest(prettyPrint()),
+            .andDo(document("accumulationratepolicy/accumulation-rate-policy-admin-get",
                 preprocessResponse(prettyPrint()),
                 responseFields(
-                    fieldWithPath("[].deliveryPolicyId").description("배송비 정책 번호"),
-                    fieldWithPath("[].deliveryPrice").description("배송비"),
-                    fieldWithPath("[].freeDeliveryPrice").description("무료 배송 기준 금액"),
+                    fieldWithPath("[].accumulationRatePolicyId").description("적립률 정책 번호"),
+                    fieldWithPath("[].accumulationRate").description("적립률"),
                     fieldWithPath("[].createdAt").description("변경일자")
                 )));
 
-        verify(deliveryPolicyService, times(1)).getDeliveryPolicies();
+        verify(accumulationRatePolicyService, times(1)).getAccumulationRatePolicies();
     }
 
     @Test
-    @DisplayName("배송비 정책 생성 - 유효성 검사 실패")
-    void testCreateDeliveryPolicy_valid_failed() throws Exception {
-        DeliveryPolicyCreateRequestDto requestDto = new DeliveryPolicyCreateRequestDto();
-        requestDto.setDeliveryPrice(-1000L);
-        requestDto.setFreeDeliveryPrice(50000L);
+    @DisplayName("적립율 정책 생성 - 유효성 검사 실패")
+    void testCreateAccumulationRatePolicy_valid_failed() throws Exception {
+        AccumulationRatePolicyCreateRequestDto requestDto = new AccumulationRatePolicyCreateRequestDto();
+        requestDto.setAccumulationRate(-5);
 
-        mockMvc.perform(post("/api/admin/delivery-policies")
+        mockMvc.perform(post("/api/admin/accumulation-rate-policies")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(exception -> assertThat(exception.getResolvedException())
                 .isInstanceOf(ValidationException.class))
-            .andDo(document("deliverypolicy/delivery-policy-admin-post-422",
+            .andDo(document("accumulationratepolicy/accumulation-rate-policy-admin-post-422",
                 preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestFields(
-                    fieldWithPath("deliveryPrice").description("배송비"),
-                    fieldWithPath("freeDeliveryPrice").description("무료 배송 기준 금액")
-                )));
+                preprocessResponse(prettyPrint())));
     }
 
     @Test
-    @DisplayName("배송비 정책 생성 - 성공")
-    void testCreateDeliveryPolicy_success() throws Exception {
-        DeliveryPolicyCreateRequestDto requestDto = new DeliveryPolicyCreateRequestDto();
-        requestDto.setDeliveryPrice(1000L);
-        requestDto.setFreeDeliveryPrice(50000L);
+    @DisplayName("적립율 정책 생성 - 생성 성공")
+    void testCreateAccumulationRatePolicy_success() throws Exception {
+        AccumulationRatePolicyCreateRequestDto requestDto = new AccumulationRatePolicyCreateRequestDto();
+        requestDto.setAccumulationRate(5);
 
-        mockMvc.perform(post("/api/admin/delivery-policies")
+        mockMvc.perform(post("/api/admin/accumulation-rate-policies")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated())
-            .andDo(document("deliverypolicy/delivery-policy-admin-post",
+            .andDo(document("accumulationratepolicy/accumulation-rate-policy-admin-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestFields(
-                    fieldWithPath("deliveryPrice").description("배송비"),
-                    fieldWithPath("freeDeliveryPrice").description("무료 배송 기준 금액")
+                    fieldWithPath("accumulationRate").description("적립률")
                 )));
 
-        verify(deliveryPolicyService, times(1)).createDeliveryPolicy(any());
+        verify(accumulationRatePolicyService, times(1)).createAccumulationRatePolicy(any());
     }
 }

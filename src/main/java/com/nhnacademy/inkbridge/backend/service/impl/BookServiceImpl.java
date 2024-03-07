@@ -188,7 +188,7 @@ public class BookServiceImpl implements BookService {
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
 
-        File savedThumbnail = fileService.saveFile(thumbnail);
+        File savedThumbnail = fileService.saveThumbnail(thumbnail);
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
@@ -233,7 +233,7 @@ public class BookServiceImpl implements BookService {
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
 
         File savedThumbnail =
-            (thumbnail != null) ? fileService.saveFile(thumbnail) : book.getThumbnailFile();
+            (thumbnail != null) ? fileService.saveThumbnail(thumbnail) : book.getThumbnailFile();
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),
@@ -258,7 +258,7 @@ public class BookServiceImpl implements BookService {
     private void saveBookFile(List<Long> fileIdList, Book book) {
         List<File> fileList = fileIdList.stream()
             .map(fileId -> fileRepository.findById(fileId).orElseThrow(() -> new NotFoundException(
-                FileMessageEnum.FILE_SAVE_ERROR.getMessage()))).collect(Collectors.toList());
+                FileMessageEnum.FILE_VALID_FAIL.getMessage()))).collect(Collectors.toList());
         List<BookFile> bookFileList = fileList.stream()
             .map(file -> BookFile.builder().book(book).fileId(file.getFileId()).build()).collect(
                 Collectors.toList());

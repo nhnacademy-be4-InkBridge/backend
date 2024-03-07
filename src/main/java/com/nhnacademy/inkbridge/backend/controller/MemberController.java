@@ -54,9 +54,10 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
+        log.info("login info start ->");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
                 memberService.loginInfoMember(memberAuthLoginRequestDto);
-
+        log.info("login info end -> {}",memberAuthLoginResponseDto.getEmail());
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
     }
 
