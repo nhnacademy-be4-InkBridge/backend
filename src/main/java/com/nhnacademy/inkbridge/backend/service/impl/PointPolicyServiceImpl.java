@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
@@ -35,7 +36,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<PointPolicyReadResponseDto> getPointPolicies() {
+    public List<PointPolicyAdminReadResponseDto> getPointPolicies() {
         return pointPolicyRepository.findAllPointPolicyBy();
     }
 
@@ -69,7 +70,8 @@ public class PointPolicyServiceImpl implements PointPolicyService {
      */
     @Transactional(readOnly = true)
     @Override
-    public List<PointPolicyReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId) {
+    public List<PointPolicyAdminReadResponseDto> getPointPoliciesByTypeId(
+        Integer pointPolicyTypeId) {
         if (!pointPolicyTypeRepository.existsById(pointPolicyTypeId)) {
             throw new NotFoundException(
                 PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage());
@@ -85,7 +87,7 @@ public class PointPolicyServiceImpl implements PointPolicyService {
      */
     @Transactional(readOnly = true)
     @Override
-    public List<PointPolicyReadResponseDto> getCurrentPointPolicies() {
+    public List<PointPolicyAdminReadResponseDto> getCurrentPointPolicies() {
         return pointPolicyRepository.findAllCurrentPointPolicies();
     }
 
