@@ -7,13 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * class: Publisher.
  *
- * @author nhn
+ * @author minm063
  * @version 2024/02/08
  */
 
@@ -30,4 +31,10 @@ public class Publisher {
 
     @Column(name = "publisher_name")
     private String publisherName;
+
+    @Builder
+    public Publisher(Long publisherId, String publisherName) {
+        this.publisherId = publisherId;
+        this.publisherName = publisherName;
+    }
 }

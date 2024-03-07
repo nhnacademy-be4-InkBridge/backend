@@ -1,0 +1,173 @@
+= 도서 (admin)
+
+== /api/admin/books
+
+=== 요청
+
+==== HTTP 요청
+
+include::{snippets}/book/get-books/http-request.adoc[]
+
+=== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/get-books/response-fields.adoc[]
+
+==== HTTP 응답
+
+include::{snippets}/book/get-books/http-response.adoc[]
+
+== /api/admin/books/{bookId}
+
+=== 요청
+
+==== 요청 필드
+
+include::{snippets}/book/get-book/path-parameters.adoc[]
+
+==== HTTP 요청
+
+include::{snippets}/book/get-book/http-request.adoc[]
+
+=== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/get-book/response-fields.adoc[]
+
+==== HTTP 응답
+
+include::{snippets}/book/get-book/http-response.adoc[]
+
+== /api/admin/books/form
+
+=== 요청
+
+=== HTTP 요청
+
+include::{snippets}/book/get-book-form/http-request.adoc[]
+
+=== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/get-book-form/response-fields.adoc[]
+
+==== HTTP 응답
+
+include::{snippets}/book/get-book-form/http-response.adoc[]
+
+== POST /api/admin/books
+
+=== 요청
+
+==== HTTP 요청
+
+include::{snippets}/book/book-create/http-request.adoc[]
+
+=== 응답
+
+==== HTTP 응답
+
+include::{snippets}/book/book-create/http-response.adoc[]
+
+== POST invalid /api/admin/books/form
+
+=== 요청
+
+==== HTTP 요청
+
+include::{snippets}/book/book-create-fail/http-request.adoc[]
+
+=== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/book-create-fail/response-fields.adoc[]
+
+==== HTTP 응답
+
+include::{snippets}/book/book-create-fail/http-response.adoc[]
+
+== PUT /api/admin/books/{bookId}
+
+=== 요청
+
+==== 요청 필드
+
+include::{snippets}/book/book-update/path-parameters.adoc[]
+
+==== HTTP 요청
+
+include::{snippets}/book/book-update/http-request.adoc[]
+
+=== 응답
+
+==== HTTP 응답
+
+include::{snippets}/book/book-update/http-response.adoc[]
+
+== PUT invalid /api/admin/books/{bookId}
+
+=== 요청
+
+==== 요청 필드
+
+include::{snippets}/book/book-update-fail/path-parameters.adoc[]
+
+==== HTTP 요청
+
+include::{snippets}/book/book-update-fail/http-request.adoc[]
+
+=== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/book-update-fail/response-body.adoc[]
+
+==== HTTP 응답
+
+include::{snippets}/book/book-update-fail/http-response.adoc[]
+
+== 도서(member)
+
+=== /api/books
+
+==== 요청
+
+===== HTTP 요청
+
+include::{snippets}/book/member-get-books/http-request.adoc[]
+
+==== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/member-get-books/response-fields.adoc[]
+
+===== HTTP 응답
+
+include::{snippets}/book/member-get-books/response-body.adoc[]
+
+=== /api/books/{bookId}
+
+==== 요청
+
+===== 요청 필드
+
+include::{snippets}/book/member-get-book/path-parameters.adoc[]
+
+===== HTTP 요청
+
+include::{snippets}/book/member-get-book/http-request.adoc[]
+
+==== 응답
+
+==== 응답 필드
+
+include::{snippets}/book/member-get-book/response-fields.adoc[]
+
+===== HTTP 응답
+
+include::{snippets}/book/member-get-book/response-body.adoc[]
