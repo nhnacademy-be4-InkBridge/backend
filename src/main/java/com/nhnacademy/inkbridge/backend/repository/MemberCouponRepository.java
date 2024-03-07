@@ -3,6 +3,8 @@ package com.nhnacademy.inkbridge.backend.repository;
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,7 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author JBum
  * @version 2024/02/19
  */
-public interface MemberCouponRepository extends JpaRepository<MemberCoupon,String> {
+public interface MemberCouponRepository extends JpaRepository<MemberCoupon, String> {
 
     /**
      * 특정 쿠폰이 특정 회원에게 이미 발급되었는지 확인합니다.
@@ -22,4 +24,33 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon,Strin
      */
     boolean existsByCouponAndMember(Coupon coupon, Member member);
 
+//    /**
+//     * 주문시 적용할 수 있는 쿠폰들 모음.
+//     *
+//     * @param memberId 조회할 회원 Id
+//     * @return 현재 사용가능한 쿠폰들
+//     */
+//    List<OrderCouponReadResponseDto> findByMember_MemberIdAndUsedAtIsNull(
+//        Long memberId);
+
+    /**
+     * 사용자가 가진 쿠폰들중 사용이 가능한것들만 보여준다.
+     *
+     * @param memberId 조회할 회원 Id
+     * @return 현재 사용자가 가진 사용가능한 쿠폰
+     */
+    List<MemberCoupon> findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+        Long memberId, LocalDate now, LocalDate now2);
+
+    /**
+     * 사용자가 가진 쿠폰들중 사용이 블가능한것들만 보여준다.
+     *
+     * @param memberId 조회할 회원 Id
+     * @return 현재 사용자가 가진 사용불가능한 쿠폰
+     */
+    List<MemberCoupon> findByMember_MemberIdAndUsedAtIsNotNull(
+        Long memberId);
+
+    List<MemberCoupon> findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(Long memberId,
+        LocalDate now);
 }

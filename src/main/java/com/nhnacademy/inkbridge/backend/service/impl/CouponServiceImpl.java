@@ -19,6 +19,8 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDt
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon.Pk;
@@ -30,6 +32,7 @@ import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
@@ -45,8 +48,10 @@ import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -327,5 +332,36 @@ public class CouponServiceImpl implements CouponService {
         if (couponRepository.existsByCouponName(couponName)) {
             throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrderCouponReadResponseDto> getOrderCouponList(Long[] bookId, Long memberId) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum statusEnum) {
+        LocalDate now = LocalDate.now();
+        List<MemberCoupon> coupons = null;
+
+        if (statusEnum == MemberCouponStatusEnum.USED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId);
+        } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+                memberId, now, now);
+        } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
+                memberId, now);
+        }
+        return coupons.stream()
+            .map(MemberCoupon::toResponseDto)
+            .collect(Collectors.toList());
     }
 }
