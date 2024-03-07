@@ -384,7 +384,7 @@ class BookServiceImplTest {
         doNothing().when(bookTagRepository).deleteAllByPk_BookId(anyLong());
         when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
-        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
@@ -478,7 +478,7 @@ class BookServiceImplTest {
         doNothing().when(bookTagRepository).deleteAllByPk_BookId(anyLong());
         when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
-        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
@@ -516,7 +516,7 @@ class BookServiceImplTest {
 
         when(tagRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
@@ -549,7 +549,7 @@ class BookServiceImplTest {
         when(categoryRepository.findById(anyLong())).thenReturn(
             Optional.empty());
 
-        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
@@ -577,7 +577,7 @@ class BookServiceImplTest {
         when(authorRepository.findById(anyLong())).thenReturn(
             Optional.empty());
 
-        when(fileService.saveFile(any(MultipartFile.class))).thenReturn(mock(File.class));
+        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
 
         MockMultipartFile thumbnail = new MockMultipartFile("image", "thumbnail",
             MediaType.IMAGE_PNG_VALUE, "thumbnail".getBytes());
