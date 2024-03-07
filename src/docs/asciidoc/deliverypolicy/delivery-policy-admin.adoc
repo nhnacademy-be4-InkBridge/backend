@@ -4,17 +4,17 @@
 
 ===== HTTP 요청
 
-include::{snippets}/delivery-policy-admin-get/http-request.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-get/http-request.adoc[]
 
 ==== 응답
 
 ===== 응답 필드
 
-include::{snippets}/delivery-policy-admin-get/response-fields.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-get/response-fields.adoc[]
 
 ===== HTTP 응답
 
-include::{snippets}/delivery-policy-admin-get/http-response.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-get/http-response.adoc[]
 
 === 생성
 
@@ -22,24 +22,24 @@ include::{snippets}/delivery-policy-admin-get/http-response.adoc[]
 
 ===== 요청 필드
 
-include::{snippets}/delivery-policy-admin-post/request-fields.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-post/request-fields.adoc[]
 
 ===== HTTP 요청
 
-include::{snippets}/delivery-policy-admin-post/http-request.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-post/http-request.adoc[]
 
 ==== 응답
 
 ===== HTTP 응답
 
-include::{snippets}/delivery-policy-admin-post/http-response.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-post/http-response.adoc[]
 
 ==== 예외
 
 ===== HTTP 요청
 
-include::{snippets}/delivery-policy-admin-post-422/http-request.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-post-422/http-request.adoc[]
 
 ===== HTTP 응답
 
-include::{snippets}/delivery-policy-admin-post-422/http-response.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-admin-post-422/http-response.adoc[]

@@ -4,14 +4,14 @@
 
 ===== HTTP 요청
 
-include::{snippets}/delivery-policy-get/http-request.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-get/http-request.adoc[]
 
 ==== 응답
 
 ===== 응답 필드
 
-include::{snippets}/delivery-policy-get/response-fields.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-get/response-fields.adoc[]
 
 ===== HTTP 응답
 
-include::{snippets}/delivery-policy-get/http-response.adoc[]
+include::{snippets}/deliverypolicy/delivery-policy-get/http-response.adoc[]

@@ -71,7 +71,7 @@ class DeliveryPolicyAdminControllerTest {
             .andExpect(jsonPath("$[0].deliveryPrice").value(1000L))
             .andExpect(jsonPath("$[0].freeDeliveryPrice").value(50000L))
             .andExpect(jsonPath("$[0].createdAt", equalTo("2024-01-01")))
-            .andDo(document("delivery-policy-admin-get",
+            .andDo(document("deliverypolicy/delivery-policy-admin-get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
@@ -97,7 +97,7 @@ class DeliveryPolicyAdminControllerTest {
             .andExpect(status().isUnprocessableEntity())
             .andExpect(exception -> assertThat(exception.getResolvedException())
                 .isInstanceOf(ValidationException.class))
-            .andDo(document("delivery-policy-admin-post-422",
+            .andDo(document("deliverypolicy/delivery-policy-admin-post-422",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestFields(
@@ -117,7 +117,7 @@ class DeliveryPolicyAdminControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isCreated())
-            .andDo(document("delivery-policy-admin-post",
+            .andDo(document("deliverypolicy/delivery-policy-admin-post",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestFields(

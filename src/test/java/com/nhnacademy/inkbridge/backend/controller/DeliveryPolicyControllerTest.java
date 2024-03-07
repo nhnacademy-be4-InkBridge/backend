@@ -54,7 +54,7 @@ class DeliveryPolicyControllerTest {
             .andExpect(jsonPath("$.deliveryPolicyId").value(responseDto.getDeliveryPolicyId()))
             .andExpect(jsonPath("$.deliveryPrice").value(responseDto.getDeliveryPrice()))
             .andExpect(jsonPath("$.freeDeliveryPrice").value(responseDto.getFreeDeliveryPrice()))
-            .andDo(document("delivery-policy-get",
+            .andDo(document("deliverypolicy/delivery-policy-get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
