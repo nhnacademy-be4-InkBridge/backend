@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.repository;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
@@ -53,7 +54,7 @@ class PointPolicyRepositoryTest {
     @Test
     @DisplayName("포인트 정책 전체 조회 테스트")
     void testFindAllPointPolicyBy() {
-        List<PointPolicyReadResponseDto> responseDtoList = pointPolicyRepository.findAllPointPolicyBy();
+        List<PointPolicyAdminReadResponseDto> responseDtoList = pointPolicyRepository.findAllPointPolicyBy();
 
         assertAll(
             () -> assertEquals(1, responseDtoList.size()),
@@ -93,7 +94,7 @@ class PointPolicyRepositoryTest {
 
         entityManager.persist(reviewPointPolicy);
 
-        List<PointPolicyReadResponseDto> result = pointPolicyRepository.findAllPointPolicyByTypeId(1);
+        List<PointPolicyAdminReadResponseDto> result = pointPolicyRepository.findAllPointPolicyByTypeId(1);
 
         assertEquals(2, result.size());
     }
@@ -124,7 +125,7 @@ class PointPolicyRepositoryTest {
 
         entityManager.persist(reviewPointPolicy);
 
-        List<PointPolicyReadResponseDto> result = pointPolicyRepository.findAllCurrentPointPolicies();
+        List<PointPolicyAdminReadResponseDto> result = pointPolicyRepository.findAllCurrentPointPolicies();
 
         assertAll(
             () -> assertEquals(2, result.size()),
@@ -148,8 +149,7 @@ class PointPolicyRepositoryTest {
 
         assertAll(
             () -> assertEquals(1500L, result.getAccumulatePoint()),
-            () -> assertEquals("REGISTER", result.getPolicyType()),
-            () -> assertEquals("2024-01-02", result.getCreatedAt().toString())
+            () -> assertEquals("REGISTER", result.getPolicyType())
         );
     }
 }

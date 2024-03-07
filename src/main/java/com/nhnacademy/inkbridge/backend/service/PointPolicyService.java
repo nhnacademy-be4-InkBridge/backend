@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface PointPolicyService {
      *
      * @return List - PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> getPointPolicies();
+    List<PointPolicyAdminReadResponseDto> getPointPolicies();
 
     /**
      * 포인트 정책 생성 메서드 입니다.
@@ -32,14 +33,14 @@ public interface PointPolicyService {
      * @param pointPolicyTypeId Integer
      * @return List - PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId);
+    List<PointPolicyAdminReadResponseDto> getPointPoliciesByTypeId(Integer pointPolicyTypeId);
 
     /**
      * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다.
      *
      * @return List - PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> getCurrentPointPolicies();
+    List<PointPolicyAdminReadResponseDto> getCurrentPointPolicies();
 
     /**
      * 포인트 정책 유형의 현재 적용중인 정책을 조회하는 메소드입니다.

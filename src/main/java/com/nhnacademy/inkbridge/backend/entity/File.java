@@ -38,8 +38,17 @@ public class File {
     @Column(name = "file_extension")
     private String fileExtension;
 
+    /**
+     * 파일 정보를 초기화하는 생성자입니다.
+     *
+     * @param fileId 파일의 고유 식별자
+     * @param fileUrl 파일이 저장된 URL
+     * @param fileName 파일의 이름
+     * @param fileExtension 파일의 확장자
+     */
     @Builder
-    public File(String fileUrl, String fileName, String fileExtension) {
+    public File(Long fileId, String fileUrl, String fileName, String fileExtension) {
+        this.fileId = fileId;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
         this.fileExtension = fileExtension;
