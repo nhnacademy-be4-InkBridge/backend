@@ -30,9 +30,10 @@ public interface BookRepositoryCustom {
      * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
      *
      * @param bookId Long
+     * @param memberId Long
      * @return 도서 상세 조회 데이터
      */
-    Optional<BookReadResponseDto> findByBookId(Long bookId);
+    Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId);
 
     /**
      * admin 도서 목록 페이지 조회 메서드입니다.

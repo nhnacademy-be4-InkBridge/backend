@@ -110,9 +110,10 @@ class BookControllerTest {
             .authorId(1L)
             .authorName("author").wish(1L).fileUrl(Set.of("url")).tagName(Set.of("tag"))
             .categoryName(Set.of("category")).build();
-        when(bookService.readBook(anyLong())).thenReturn(bookReadResponseDto);
+        when(bookService.readBook(anyLong(), anyLong())).thenReturn(bookReadResponseDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/books/{bookId}", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/books/{bookId}", 1L)
+                .header("Authorization-Id", "1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.bookTitle", equalTo("title")))

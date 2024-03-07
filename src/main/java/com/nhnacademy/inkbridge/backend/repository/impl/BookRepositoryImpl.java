@@ -81,9 +81,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public Optional<BookReadResponseDto> findByBookId(Long bookId) {
-        Long memberId = 0L;
-
+    public Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId) {
         QBook book = QBook.book;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;

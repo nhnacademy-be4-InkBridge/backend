@@ -116,21 +116,21 @@ class BookServiceImplTest {
         BookReadResponseDto bookReadResponseDto = mock(BookReadResponseDto.class);
 
         when(bookRepository.existsById(anyLong())).thenReturn(true);
-        when(bookRepository.findByBookId(anyLong())).thenReturn(
+        when(bookRepository.findByBookId(anyLong(), anyLong())).thenReturn(
             Optional.ofNullable(bookReadResponseDto));
 
-        BookReadResponseDto book = bookService.readBook(1L);
+        BookReadResponseDto book = bookService.readBook(1L, 1L);
 
         assertNotNull(book);
         verify(bookRepository, times(1)).existsById(anyLong());
-        verify(bookRepository, times(1)).findByBookId(anyLong());
+        verify(bookRepository, times(1)).findByBookId(anyLong(), anyLong());
     }
 
     @Test
     void givenInvalidParameter_whenReadBook_thenThrowNotFoundException() {
         when(bookRepository.existsById(anyLong())).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> bookService.readBook(1L));
+        assertThrows(NotFoundException.class, () -> bookService.readBook(1L, 1L));
         verify(bookRepository, times(1)).existsById(anyLong());
     }
 
