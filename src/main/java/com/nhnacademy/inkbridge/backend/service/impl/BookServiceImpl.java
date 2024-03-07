@@ -110,12 +110,12 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional(readOnly = true)
-    public BookReadResponseDto readBook(Long bookId) {
+    public BookReadResponseDto readBook(Long bookId, Long memberId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
-        return bookRepository.findByBookId(bookId)
+        return bookRepository.findByBookId(bookId, memberId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
     }
 
@@ -433,6 +433,11 @@ public class BookServiceImpl implements BookService {
         prevBookAuthor.updateBookAuthor(author);
     }
 
+    /**
+     * 전체 카테고리를 조회하는 메서드입니다.
+     *
+     * @return ParentCategoryReadResponseDto
+     */
     private List<ParentCategoryReadResponseDto> readAllCategory() {
         List<Category> parentCategory = categoryRepository.findAllByCategoryParentIsNull();
         return parentCategory.stream()
@@ -440,6 +445,11 @@ public class BookServiceImpl implements BookService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * 전체 출판사를 조회하는 메서드입니다.
+     *
+     * @return PublisherReadResponseDto
+     */
     private List<PublisherReadResponseDto> getPublisherList() {
         return publisherRepository.findAll().stream().map(
             publisher -> PublisherReadResponseDto.builder().publisherId(publisher.getPublisherId())
@@ -447,6 +457,11 @@ public class BookServiceImpl implements BookService {
             Collectors.toList());
     }
 
+    /**
+     * 전체 작가를 조회하는 메서드입니다.
+     *
+     * @return AuthorReadResponseDto
+     */
     private List<AuthorReadResponseDto> getAuthorList() {
         return authorRepository.findAll().stream().map(
             author -> AuthorReadResponseDto.builder().authorId(author.getAuthorId())
@@ -454,6 +469,11 @@ public class BookServiceImpl implements BookService {
             Collectors.toList());
     }
 
+    /**
+     * 전체 도서 상태를 조회하는 메서드입니다.
+     *
+     * @return BookStatusReadResponseDto
+     */
     private List<BookStatusReadResponseDto> getStatuses() {
         return bookStatusRepository.findAll().stream().map(
             status -> BookStatusReadResponseDto.builder().statusId(status.getStatusId())
@@ -461,6 +481,11 @@ public class BookServiceImpl implements BookService {
             Collectors.toList());
     }
 
+    /**
+     * 전체 태그를 조회하는 메서드입니다.
+     *
+     * @return TagReadResponseDto
+     */
     private List<TagReadResponseDto> getTagList() {
         return tagRepository.findAll().stream().map(TagReadResponseDto::new)
             .collect(Collectors.toList());

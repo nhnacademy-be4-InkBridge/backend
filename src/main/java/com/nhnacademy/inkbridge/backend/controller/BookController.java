@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,8 +48,10 @@ public class BookController {
      * @return BookReadResponseDto
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId) {
-        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId);
+    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
+        HttpServletRequest request) {
+        Long memberId = Long.parseLong(request.getHeader("Authorization-Id"));
+        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }
 }
