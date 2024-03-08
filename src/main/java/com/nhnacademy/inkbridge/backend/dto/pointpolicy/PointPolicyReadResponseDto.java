@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.dto.pointpolicy;
 
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,5 +16,4 @@ public class PointPolicyReadResponseDto {
     private final Long pointPolicyId;
     private final String policyType;
     private final Long accumulatePoint;
-    private final LocalDate createdAt;
 }

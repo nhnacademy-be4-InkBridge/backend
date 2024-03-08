@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.AccumulationRatePolicy;
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ class AccumulationRatePolicyRepositoryTest {
     @DisplayName("전체 적립율 정책 조회")
     @Order(2)
     void testFindAllAccumulationRatePolicy() {
-        List<AccumulationRatePolicyReadResponseDto> result =
+        List<AccumulationRatePolicyAdminReadResponseDto> result =
             accumulationRatePolicyRepository.findAllAccumulationRatePolicies();
 
         assertAll(
@@ -68,8 +69,7 @@ class AccumulationRatePolicyRepositoryTest {
 
         assertAll(
             () -> assertEquals(accumulationRatePolicy.getAccumulationRatePolicyId(), result.getAccumulationRatePolicyId()),
-            () -> assertEquals(accumulationRatePolicy.getAccumulationRate(), result.getAccumulationRate()),
-            () -> assertEquals(accumulationRatePolicy.getCreatedAt(), result.getCreatedAt())
+            () -> assertEquals(accumulationRatePolicy.getAccumulationRate(), result.getAccumulationRate())
         );
     }
 
@@ -82,8 +82,7 @@ class AccumulationRatePolicyRepositoryTest {
 
         assertAll(
             () -> assertEquals(accumulationRatePolicy.getAccumulationRatePolicyId(), result.getAccumulationRatePolicyId()),
-            () -> assertEquals(accumulationRatePolicy.getAccumulationRate(), result.getAccumulationRate()),
-            () -> assertEquals(accumulationRatePolicy.getCreatedAt(), result.getCreatedAt())
+            () -> assertEquals(accumulationRatePolicy.getAccumulationRate(), result.getAccumulationRate())
         );
     }
 }

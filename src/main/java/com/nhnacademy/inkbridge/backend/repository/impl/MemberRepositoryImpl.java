@@ -6,6 +6,8 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDt
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.QMember;
 import com.nhnacademy.inkbridge.backend.entity.QMemberAuth;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.custom.MemberCustomRepository;
 import com.querydsl.core.types.Projections;
 import java.util.List;
@@ -36,6 +38,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
                                 member.memberAuth.memberAuthName))
                         .where(member.email.eq(email))
                         .fetchOne());
+        if (memberResult.isEmpty()) {
+            throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
+        }
 
         return new MemberAuthLoginResponseDto(memberResult.get().getMemberId(), memberResult.get().getEmail(),
                 memberResult.get()

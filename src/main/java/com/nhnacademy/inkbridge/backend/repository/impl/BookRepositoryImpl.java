@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
@@ -12,13 +13,18 @@ import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBookCategory;
+import com.nhnacademy.inkbridge.backend.entity.QBookFile;
 import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
 import com.nhnacademy.inkbridge.backend.entity.QBookTag;
+import com.nhnacademy.inkbridge.backend.entity.QCategory;
 import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
+import com.nhnacademy.inkbridge.backend.entity.QTag;
+import com.nhnacademy.inkbridge.backend.entity.QWish;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +52,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
+        QFile file = QFile.file;
 
         List<BooksReadResponseDto> content = from(book)
             .innerJoin(publisher)
@@ -56,10 +63,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(bookAuthor.book.eq(book))
             .innerJoin(author)
             .on(author.eq(bookAuthor.author))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
             .where(bookStatus.statusId.eq(1L))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName, book.thumbnailFile.fileUrl))
+                author.authorName, file.fileUrl))
+            .orderBy(book.bookId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -71,22 +81,57 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public BookReadResponseDto findByBookId(Long bookId) {
+    public Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId) {
         QBook book = QBook.book;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QFile thumbnail = new QFile("thumbnail");
+        QFile bookImage = new QFile("bookImage");
+        QBookFile bookFile = QBookFile.bookFile;
+        QCategory category = QCategory.category;
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+        QTag tag = QTag.tag;
+        QBookTag bookTag = QBookTag.bookTag;
+        QWish wish = QWish.wish;
 
-        return from(book)
-            .innerJoin(publisher)
-            .on(publisher.eq(book.publisher))
-            .innerJoin(bookStatus)
-            .on(bookStatus.eq(book.bookStatus))
+        List<BookReadResponseDto> result = from(book)
+            .innerJoin(publisher).on(publisher.publisherId.eq(book.publisher.publisherId))
+            .innerJoin(bookStatus).on(bookStatus.statusId.eq(book.bookStatus.statusId))
+            .innerJoin(bookAuthor).on(bookAuthor.book.bookId.eq(book.bookId))
+            .innerJoin(author).on(bookAuthor.author.authorId.eq(author.authorId))
+            .innerJoin(thumbnail).on(thumbnail.fileId.eq(book.thumbnailFile.fileId))
+            .leftJoin(bookFile).on(bookFile.book.bookId.eq(book.bookId))
+            .leftJoin(bookImage).on(bookImage.fileId.eq(bookFile.file.fileId))
+            .leftJoin(bookTag).on(bookTag.pk.bookId.eq(book.bookId))
+            .leftJoin(tag).on(tag.tagId.eq(bookTag.tag.tagId))
+            .innerJoin(bookCategory).on(bookCategory.pk.bookId.eq(book.bookId))
+            .innerJoin(category).on(category.categoryId.eq(bookCategory.category.categoryId))
+            .leftJoin(wish).on(wish.pk.bookId.eq(book.bookId).and(wish.pk.memberId.eq(memberId)))
             .where(bookStatus.statusId.eq(1L).and(book.bookId.eq(bookId)))
             .select(
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
-                    book.description, book.publicatedAt, book.isbn, book.regularPrice,
-                    book.price, book.discountRatio, book.isPackagable, publisher.publisherName))
-            .fetchOne();
+                    book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,
+                    book.discountRatio, book.isPackagable, thumbnail.fileUrl,
+                    publisher.publisherId, publisher.publisherName, author.authorId,
+                    author.authorName, wish.pk.memberId.coalesce(0L),
+                    set(bookImage.fileUrl.coalesce("")),
+                    set(tag.tagName.coalesce("")),
+                    set(category.categoryName)))
+            .transform(groupBy(book.bookId).list(Projections.constructor(BookReadResponseDto.class,
+                book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                book.regularPrice, book.price, book.discountRatio, book.isPackagable,
+                thumbnail.fileUrl, publisher.publisherId, publisher.publisherName,
+                author.authorId, author.authorName, wish.pk.memberId.coalesce(0L),
+                set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
+                set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
+                set(Projections.constructor(String.class, category.categoryName)))));
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(result.get(0));
     }
 
     /**
@@ -125,8 +170,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
             .orderBy(book.bookId.asc())
             .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
-                book.bookTitle,
-                author.authorName, publisher.publisherName, bookStatus.statusName))
+                book.bookTitle, author.authorName, publisher.publisherName, bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -140,7 +184,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public BookAdminSelectedReadResponseDto findBookByAdminByBookId(Long bookId) {
+    public Optional<BookAdminSelectedReadResponseDto> findBookByAdminByBookId(Long bookId) {
         QBook book = QBook.book;
         QAuthor author = QAuthor.author;
         QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
@@ -148,39 +192,33 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QBookTag bookTag = QBookTag.bookTag;
         QFile file = QFile.file;
 
-        return from(book)
-            .innerJoin(bookAuthor)
-            .on(book.eq(bookAuthor.book))
-            .innerJoin(author)
-            .on(bookAuthor.author.eq(author))
-            .innerJoin(bookCategory)
-            .on(bookCategory.book.eq(book))
-            .innerJoin(bookTag)
-            .on(bookTag.book.eq(book))
-            .innerJoin(file)
-            .on(file.eq(book.thumbnailFile))
-            // category -> relation table , tag -> relation (2) , file -> relation(2)
+        List<BookAdminSelectedReadResponseDto> result = from(book)
+            .innerJoin(bookAuthor).on(book.eq(bookAuthor.book))
+            .innerJoin(author).on(bookAuthor.author.eq(author))
+            .innerJoin(bookCategory).on(bookCategory.book.eq(book))
+            .leftJoin(bookTag).on(bookTag.book.eq(book))
+            .innerJoin(file).on(file.eq(book.thumbnailFile))
             .where(book.bookId.eq(bookId).and(book.bookStatus.statusId.in(1L, 2L, 3L, 4L)))
             .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
                 author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
-                book.thumbnailFile.fileUrl.as("url"),
-                list(bookCategory.pk.categoryId).as("categoryIdList"),
-                list(bookTag.pk.tagId).as("tagIdList")))
+                file.fileUrl,
+                list(bookCategory.pk.categoryId),
+                list(bookTag.pk.tagId)))
             .transform(groupBy(book.bookId).list(
                 Projections.constructor(BookAdminSelectedReadResponseDto.class,
                     book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                     book.regularPrice, book.price, book.discountRatio, book.stock,
                     book.isPackagable,
                     author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
-                    book.thumbnailFile.fileUrl,
-                    list(
-                        Projections.constructor(Long.class, bookCategory.pk.categoryId)
-                    ),
-                    list(
-                        Projections.constructor(Long.class, bookTag.pk.tagId)
-                    ))
-            )).get(0);
+                    file.fileUrl,
+                    list(Projections.constructor(Long.class, bookCategory.pk.categoryId)),
+                    list(Projections.constructor(Long.class, bookTag.pk.tagId)))
+            ));
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result.get(0));
     }
 }
