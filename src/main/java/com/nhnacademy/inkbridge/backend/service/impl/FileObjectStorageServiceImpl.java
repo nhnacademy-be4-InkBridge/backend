@@ -10,6 +10,7 @@ import com.nhnacademy.inkbridge.backend.service.ObjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -35,6 +36,7 @@ public class FileObjectStorageServiceImpl implements FileService {
      * @return 저장된 파일의 정보를 담은 {@link File} 객체
      */
     @Override
+    @Transactional
     public FileCreateResponseDto saveFile(MultipartFile file) {
         String fileName = objectService.uploadObject(file);
         String url = "https://inkbridge.store/image-load/";
@@ -46,6 +48,7 @@ public class FileObjectStorageServiceImpl implements FileService {
     }
 
     @Override
+    @Transactional
     public File saveThumbnail(MultipartFile file) {
         String fileName = objectService.uploadObject(file);
         String url = "https://inkbridge.store/image-load/";
@@ -62,6 +65,7 @@ public class FileObjectStorageServiceImpl implements FileService {
      * @return 파일 리소스
      */
     @Override
+    @Transactional
     public ResponseEntity<byte[]> loadFile(String fileName) {
         return objectService.downloadObject(fileName);
     }
@@ -74,6 +78,7 @@ public class FileObjectStorageServiceImpl implements FileService {
      * @return 파일 리소스
      */
     @Override
+    @Transactional
     public ResponseEntity<byte[]> loadFileById(Long fileId) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new NotFoundException(
             FileMessageEnum.FILE_NOT_FOUND_ERROR.getMessage()));
