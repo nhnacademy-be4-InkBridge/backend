@@ -22,4 +22,5 @@ public interface BookCategoryRepository extends JpaRepository<BookCategory, Book
     void deleteByPk(BookCategory.Pk pk);
 
     void deleteByPk_BookId(Long bookId);
+    
 }
