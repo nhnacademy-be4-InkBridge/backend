@@ -5,6 +5,7 @@ import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * class: MemberCouponReadResponseDto.
@@ -13,6 +14,7 @@ import lombok.Getter;
  * @version 2024/03/07
  */
 @Getter
+@NoArgsConstructor
 public class MemberCouponReadResponseDto {
 
     private String memberCouponId;

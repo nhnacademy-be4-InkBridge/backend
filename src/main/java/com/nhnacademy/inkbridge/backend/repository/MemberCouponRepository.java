@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.repository;
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
+import com.nhnacademy.inkbridge.backend.repository.custom.MemberCouponCustomRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author JBum
  * @version 2024/02/19
  */
-public interface MemberCouponRepository extends JpaRepository<MemberCoupon, String> {
+public interface MemberCouponRepository extends JpaRepository<MemberCoupon, String>,
+    MemberCouponCustomRepository {
 
     /**
      * 특정 쿠폰이 특정 회원에게 이미 발급되었는지 확인합니다.

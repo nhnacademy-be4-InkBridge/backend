@@ -86,17 +86,16 @@ public class MemberController {
             .body(memberService.getMemberInfo(memberId));
     }
 
-    @GetMapping("/members/coupons")
+    @GetMapping("/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
-        @RequestParam("book-id") Long[] bookId, HttpServletRequest request) {
-        Long memberId = Long.parseLong(request.getHeader("Authorization-Id"));
+        @PathVariable("memberId") Long memberId, @RequestParam("book-id") Long[] bookId) {
         return ResponseEntity.ok(couponService.getOrderCouponList(bookId, memberId));
     }
 
-    @GetMapping("/members/{member-id}/coupons")
+    @GetMapping("/members/{memberId}/coupons")
     public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
-        @RequestParam(value = "status", defaultValue = "ACTIVE") String status,
-        @PathVariable("member-id") Long memberId) {
+        @PathVariable("memberId") Long memberId,
+        @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
         MemberCouponStatusEnum statusEnum;
         try {
             statusEnum = MemberCouponStatusEnum.valueOf(status.toUpperCase());
