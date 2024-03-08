@@ -3,7 +3,8 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/books")
-public class BookRestController {
+public class BookController {
 
     private final BookService bookService;
 
-    public BookRestController(BookService bookService) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
@@ -35,9 +36,8 @@ public class BookRestController {
      * @return BooksReadResponseDto List
      */
     @GetMapping
-    public ResponseEntity<List<BooksReadResponseDto>> readBooks(Pageable pageable) {
-        List<BooksReadResponseDto> content = bookService.readBooks(pageable)
-            .getContent();
+    public ResponseEntity<Page<BooksReadResponseDto>> readBooks(Pageable pageable) {
+        Page<BooksReadResponseDto> content = bookService.readBooks(pageable);
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
@@ -48,8 +48,11 @@ public class BookRestController {
      * @return BookReadResponseDto
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId) {
-        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId);
+    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
+        HttpServletRequest request) {
+        Long memberId = request.getHeader("Authorization-Id") == null ? 0L
+            : Long.parseLong(request.getHeader("Authorization-Id"));
+        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }
 }

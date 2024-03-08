@@ -33,7 +33,7 @@ public interface BookService {
      *
      * @return BookReadResponseDto
      */
-    BookReadResponseDto readBook(Long bookId);
+    BookReadResponseDto readBook(Long bookId, Long memberId);
 
     /**
      * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드입니다.

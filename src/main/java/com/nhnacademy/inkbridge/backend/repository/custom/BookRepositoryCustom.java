@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDt
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -29,9 +30,10 @@ public interface BookRepositoryCustom {
      * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
      *
      * @param bookId Long
+     * @param memberId Long
      * @return 도서 상세 조회 데이터
      */
-    BookReadResponseDto findByBookId(Long bookId);
+    Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId);
 
     /**
      * admin 도서 목록 페이지 조회 메서드입니다.
@@ -47,6 +49,6 @@ public interface BookRepositoryCustom {
      * @param bookId Long
      * @return admin 도서 상세 조회 데이터
      */
-    BookAdminSelectedReadResponseDto findBookByAdminByBookId(Long bookId);
+    Optional<BookAdminSelectedReadResponseDto> findBookByAdminByBookId(Long bookId);
 
 }

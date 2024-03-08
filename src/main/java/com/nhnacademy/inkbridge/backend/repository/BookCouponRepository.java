@@ -11,5 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version 2024/02/20
  */
 public interface BookCouponRepository extends JpaRepository<BookCoupon, Pk> {
-
+    
 }

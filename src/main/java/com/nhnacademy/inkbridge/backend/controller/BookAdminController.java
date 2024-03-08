@@ -34,11 +34,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequestMapping("/api/admin/books")
-public class BookAdminRestController {
+public class BookAdminController {
 
     private final BookService bookService;
 
-    public BookAdminRestController(BookService bookService) {
+    public BookAdminController(BookService bookService) {
         this.bookService = bookService;
     }
 

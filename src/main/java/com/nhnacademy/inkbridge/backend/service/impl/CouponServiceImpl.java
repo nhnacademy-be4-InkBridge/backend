@@ -14,12 +14,16 @@ import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TY
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID;
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_NOT_FOUND;
 
+import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
+import com.nhnacademy.inkbridge.backend.entity.BookCategory;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon.Pk;
 import com.nhnacademy.inkbridge.backend.entity.Category;
@@ -30,10 +34,12 @@ import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookCategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryCouponRepository;
@@ -45,8 +51,12 @@ import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -73,6 +83,7 @@ public class CouponServiceImpl implements CouponService {
     private final BookRepository bookRepository;
     private final BookCouponRepository bookCouponRepository;
     private final CouponStatusRepository couponStatusRepository;
+    private final BookCategoryRepository bookCategoryRepository;
 
     /**
      * couponService에 필요한 Repository들 주입.
@@ -86,12 +97,14 @@ public class CouponServiceImpl implements CouponService {
      * @param bookRepository           책
      * @param bookCouponRepository     책전용 쿠폰
      * @param couponStatusRepository   쿠폰상태
+     * @param bookCategoryRepository
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
         MemberCouponRepository memberCouponRepository, CategoryRepository categoryRepository,
         CategoryCouponRepository categoryCouponRepository, BookRepository bookRepository,
-        BookCouponRepository bookCouponRepository, CouponStatusRepository couponStatusRepository) {
+        BookCouponRepository bookCouponRepository, CouponStatusRepository couponStatusRepository,
+        BookCategoryRepository bookCategoryRepository) {
         this.couponRepository = couponRepository;
         this.couponTypeRepository = couponTypeRepository;
         this.memberRepository = memberRepository;
@@ -101,6 +114,7 @@ public class CouponServiceImpl implements CouponService {
         this.bookRepository = bookRepository;
         this.bookCouponRepository = bookCouponRepository;
         this.couponStatusRepository = couponStatusRepository;
+        this.bookCategoryRepository = bookCategoryRepository;
     }
 
     /**
@@ -327,5 +341,63 @@ public class CouponServiceImpl implements CouponService {
         if (couponRepository.existsByCouponName(couponName)) {
             throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrderCouponReadResponseDto> getOrderCouponList(Long[] bookIds, Long memberId) {
+        bookCheck(bookIds);
+        List<BookCategoriesDto> bookCategoriesDtoList = new ArrayList<>();
+        List<OrderCouponReadResponseDto> orderCouponReadResponseDtoList = new ArrayList<>();
+        for (Long bookId : bookIds) {
+            List<BookCategory> bookCategory = bookCategoryRepository.findByPk_BookId(bookId);
+            bookCategoriesDtoList.add(
+                BookCategoriesDto.builder().bookId(bookId).categoryIds(bookCategory.stream()
+                    .map(bookCategoryItem -> bookCategoryItem.getCategory().getCategoryId())
+                    .collect(Collectors.toList())).build());
+        }
+        for (BookCategoriesDto bookCategoriesDto : bookCategoriesDtoList) {
+
+            orderCouponReadResponseDtoList.add(
+                OrderCouponReadResponseDto.builder().bookId(bookCategoriesDto.getBookId())
+                    .memberCouponReadResponseDtos(
+                        memberCouponRepository.findOrderCoupons(memberId, bookCategoriesDto))
+                    .build());
+        }
+        return orderCouponReadResponseDtoList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum statusEnum) {
+        LocalDate now = LocalDate.now();
+        List<MemberCoupon> coupons = null;
+
+        if (statusEnum == MemberCouponStatusEnum.USED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId);
+        } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+                memberId, now, now);
+        } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
+                memberId, now);
+        }
+        return coupons.stream()
+            .map(MemberCoupon::toResponseDto)
+            .collect(Collectors.toList());
+    }
+
+    public void bookCheck(Long[] bookIds) {
+        Arrays.stream(bookIds)
+            .filter(bookId -> !bookRepository.existsById(bookId))
+            .findFirst()
+            .ifPresent(id -> {
+                throw new NotFoundException(BOOK_NOT_FOUND.getMessage());
+            });
     }
 }

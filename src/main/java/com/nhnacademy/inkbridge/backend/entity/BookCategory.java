@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * class: BookCategory.
@@ -57,6 +58,7 @@ public class BookCategory {
     @Getter
     @EqualsAndHashCode
     @Embeddable
+    @ToString
     public static class Pk implements Serializable {
 
         @Column(name = "category_id")

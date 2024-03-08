@@ -13,6 +13,7 @@ import com.nhnacademy.inkbridge.backend.dto.tag.TagUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ class TagServiceImplTest {
 
     @Mock
     private TagRepository tagRepository;
+
+    @Mock
+    private BookTagRepository bookTagRepository;
 
     @InjectMocks
     private TagServiceImpl tagService;

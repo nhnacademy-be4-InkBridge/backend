@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.membergrade.MemberGradeUpdateRequestDto;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,5 +43,10 @@ public class MemberGrade {
         this.grade = grade;
         this.pointRate = pointRate;
         this.standardAmount = standardAmount;
+    }
+
+    public void updateGrade(MemberGradeUpdateRequestDto memberGradeUpdateRequestDto) {
+        this.pointRate = memberGradeUpdateRequestDto.getPointRate();
+        this.standardAmount = memberGradeUpdateRequestDto.getStandardAmount();
     }
 }
