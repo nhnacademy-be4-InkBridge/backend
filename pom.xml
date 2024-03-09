@@ -18,6 +18,11 @@
     <java.version>11</java.version>
     <jacoco.version>0.8.8</jacoco.version>
     <spring-cloud.version>2021.0.8</spring-cloud.version>
+    <sonar.issue.ignore.multicriteria>e3</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria.e3.ruleKey>java:S1068</sonar.issue.ignore.multicriteria.e3.ruleKey>
+    <sonar.issue.ignore.multicriteria.e3.resourceKey>
+      **/*ResponseDto.java
+    </sonar.issue.ignore.multicriteria.e3.resourceKey>
   </properties>
 
   <dependencyManagement>
