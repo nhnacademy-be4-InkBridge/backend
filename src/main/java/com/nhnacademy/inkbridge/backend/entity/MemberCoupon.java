@@ -59,12 +59,15 @@ public class MemberCoupon {
 
     public MemberCouponReadResponseDto toResponseDto() {
         return MemberCouponReadResponseDto.builder().couponName(this.getCoupon().getCouponName())
-            .couponStatus(this.coupon.getCouponStatus()).couponType(this.getCoupon()
-                .getCouponType()).memberCouponId(this.getMemberCouponId())
+            .couponStatusId(this.coupon.getCouponStatus().getCouponStatusId())
+            .couponStatusName(this.coupon.getCouponStatus().getCouponStatusName())
+            .couponTypeId(this.getCoupon().getCouponType().getCouponTypeId())
+            .couponTypeName(this.coupon.getCouponType().getTypeName())
+            .memberCouponId(this.getMemberCouponId())
             .discountPrice(this.coupon.getDiscountPrice())
             .maxDiscountPrice(this.coupon.getMaxDiscountPrice()).minPrice(this.coupon.getMinPrice())
             .expiredAt(this.getExpiredAt()).isBirth(this.coupon.getIsBirth())
             .usedAt(this.getUsedAt()).build();
-    }
+    }t a
 
 }
