@@ -68,6 +68,6 @@ public class MemberCoupon {
             .maxDiscountPrice(this.coupon.getMaxDiscountPrice()).minPrice(this.coupon.getMinPrice())
             .expiredAt(this.getExpiredAt()).isBirth(this.coupon.getIsBirth())
             .usedAt(this.getUsedAt()).build();
-    }t a
+    }
 
 }

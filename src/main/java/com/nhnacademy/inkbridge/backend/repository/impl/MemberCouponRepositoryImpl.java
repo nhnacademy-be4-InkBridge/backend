@@ -53,9 +53,11 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
                 coupon.minPrice,
                 coupon.discountPrice,
                 coupon.maxDiscountPrice,
-                coupon.couponType,
+                coupon.couponType.couponTypeId,
+                coupon.couponType.typeName,
                 coupon.isBirth,
-                coupon.couponStatus))
+                coupon.couponStatus.couponStatusId,
+                coupon.couponStatus.couponStatusName))
             .fetch();
         return result;
     }
