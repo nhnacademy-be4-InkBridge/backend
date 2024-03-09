@@ -1,7 +1,5 @@
 package com.nhnacademy.inkbridge.backend.dto.coupon;
 
-import com.nhnacademy.inkbridge.backend.entity.CouponStatus;
-import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,14 +22,17 @@ public class MemberCouponReadResponseDto {
     private Long minPrice;
     private Long discountPrice;
     private Long maxDiscountPrice;
-    private CouponType couponType;
+    private Integer couponTypeId;
+    private String couponTypeName;
     private Boolean isBirth;
-    private CouponStatus couponStatus;
+    private Integer couponStatusId;
+    private String couponStatusName;
 
     @Builder
     public MemberCouponReadResponseDto(String memberCouponId, LocalDate expiredAt, LocalDate usedAt,
         String couponName, Long minPrice, Long discountPrice, Long maxDiscountPrice,
-        CouponType couponType, Boolean isBirth, CouponStatus couponStatus) {
+        Integer couponTypeId, String couponTypeName, Boolean isBirth, Integer couponStatusId,
+        String couponStatusName) {
         this.memberCouponId = memberCouponId;
         this.expiredAt = expiredAt;
         this.usedAt = usedAt;
@@ -39,8 +40,10 @@ public class MemberCouponReadResponseDto {
         this.minPrice = minPrice;
         this.discountPrice = discountPrice;
         this.maxDiscountPrice = maxDiscountPrice;
-        this.couponType = couponType;
+        this.couponTypeId = couponTypeId;
+        this.couponTypeName = couponTypeName;
         this.isBirth = isBirth;
-        this.couponStatus = couponStatus;
+        this.couponStatusId = couponStatusId;
+        this.couponStatusName = couponStatusName;
     }
 }
