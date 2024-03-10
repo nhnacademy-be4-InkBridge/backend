@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.address.AddressUpdateRequestDto;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,4 +44,20 @@ public class MemberAddress {
     @ManyToOne
     @JoinColumn(name = "general_address_id")
     private GeneralAddress generalAddress;
+
+    @Builder
+    public MemberAddress(Long addressId, String alias, String addressDetail, Member member,
+        GeneralAddress generalAddress) {
+        this.addressId = addressId;
+        this.alias = alias;
+        this.addressDetail = addressDetail;
+        this.member = member;
+        this.generalAddress = generalAddress;
+    }
+
+    public void update(GeneralAddress generalAddress, AddressUpdateRequestDto addressUpdateRequestDto) {
+        this.generalAddress = generalAddress;
+        this.alias = addressUpdateRequestDto.getAlias();
+        this.addressDetail = addressUpdateRequestDto.getAddressDetail();
+    }
 }

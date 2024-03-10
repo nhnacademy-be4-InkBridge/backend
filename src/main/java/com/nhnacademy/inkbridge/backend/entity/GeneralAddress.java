@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,11 @@ public class GeneralAddress {
 
     @Column(name = "address")
     private String address;
+
+    @Builder
+    public GeneralAddress(Long addressId, String zipCode, String address) {
+        this.addressId = addressId;
+        this.zipCode = zipCode;
+        this.address = address;
+    }
 }
