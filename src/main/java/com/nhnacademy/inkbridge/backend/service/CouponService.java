@@ -90,5 +90,18 @@ public interface CouponService {
     List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
         MemberCouponStatusEnum used);
 
+    /**
+     * 발급가능한 쿠폰의 목록을 보여주는 메소드.
+     *
+     * @param pageable 페이지
+     * @return 발급가능한 쿠폰 목록.
+     */
+    Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable);
 
+    /**
+     * 책이 존재하는지 확인하는 메소드
+     *
+     * @param bookIds 확인할 책 번호
+     */
+    void bookCheck(Long[] bookIds);
 }

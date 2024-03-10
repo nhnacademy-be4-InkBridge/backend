@@ -392,6 +392,17 @@ public class CouponServiceImpl implements CouponService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable) {
+        return couponRepository.findByCouponStatus_CouponStatusId(COUPON_NORMAL, pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void bookCheck(Long[] bookIds) {
         Arrays.stream(bookIds)
             .filter(bookId -> !bookRepository.existsById(bookId))
