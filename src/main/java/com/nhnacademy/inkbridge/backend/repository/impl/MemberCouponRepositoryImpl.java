@@ -41,6 +41,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
             .leftJoin(categoryCoupon).on(coupon.couponId.eq(categoryCoupon.coupon.couponId))
             .where(memberCoupon.member.memberId.eq(memberId)
                 .and(memberCoupon.usedAt.isNull())
+                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(1))
                 .and(bookCoupon.book.bookId.eq(bookCategoriesDto.getBookId())
                     .or(categoryCoupon.category.categoryId.in(bookCategoriesDto.getCategoryIds()))
                     .or(categoryCoupon.category.categoryId.isNull()

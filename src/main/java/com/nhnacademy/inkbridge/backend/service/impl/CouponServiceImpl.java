@@ -392,6 +392,11 @@ public class CouponServiceImpl implements CouponService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable) {
+        return couponRepository.findByCouponStatus_CouponStatusId(COUPON_NORMAL, pageable);
+    }
+
     public void bookCheck(Long[] bookIds) {
         Arrays.stream(bookIds)
             .filter(bookId -> !bookRepository.existsById(bookId))

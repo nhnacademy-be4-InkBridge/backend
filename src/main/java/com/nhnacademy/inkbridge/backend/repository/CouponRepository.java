@@ -32,4 +32,6 @@ public interface CouponRepository extends JpaRepository<Coupon, String> {
      */
     Page<CouponReadResponseDto> findByCouponStatus(CouponStatus couponStatus, Pageable pageable);
 
+    Page<CouponReadResponseDto> findByCouponStatus_CouponStatusId(Integer couponStatusId,
+        Pageable pageable);
 }
