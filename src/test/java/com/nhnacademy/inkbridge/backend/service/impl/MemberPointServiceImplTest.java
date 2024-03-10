@@ -37,11 +37,9 @@ class MemberPointServiceImplTest {
     private static Member member;
 
 
-    private static Long point;
-
     @BeforeAll
     static void setup() {
-        point = 100L;
+        Long point = 100L;
         member = Member.create().memberPoint(point).build();
     }
 
