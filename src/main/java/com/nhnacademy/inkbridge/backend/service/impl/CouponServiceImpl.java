@@ -186,6 +186,7 @@ public class CouponServiceImpl implements CouponService {
         Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
             .couponType(couponType).couponName(bookCouponCreateRequestDto.getCouponName())
             .basicIssuedDate(bookCouponCreateRequestDto.getBasicIssuedDate())
+            .basicExpiredDate(bookCouponCreateRequestDto.getBasicExpiredDate())
             .discountPrice(bookCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(bookCouponCreateRequestDto.getMaxDiscountPrice())
             .isBirth(false)
@@ -231,7 +232,8 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId) {
         CouponStatus couponStatus = findCouponStatus(couponStatusId);
-        return couponRepository.findByCouponStatus(couponStatus, pageable);
+        return couponRepository.findByCouponStatus_CouponStatusId(couponStatus.getCouponStatusId(),
+            pageable);
     }
 
 
