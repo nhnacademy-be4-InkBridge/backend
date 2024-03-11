@@ -234,7 +234,6 @@ public class BookServiceImpl implements BookService {
                 bookAdminUpdateRequestDto.getStatusId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
-
         File savedThumbnail =
             (thumbnail != null) ? fileService.saveThumbnail(thumbnail) : book.getThumbnailFile();
 

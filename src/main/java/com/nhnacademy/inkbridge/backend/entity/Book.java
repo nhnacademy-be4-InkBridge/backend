@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,6 +69,12 @@ public class Book {
     @Column(name = "is_packagable")
     private Boolean isPackagable;
 
+    @Column(name = "view")
+    private Long view;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "status_id")
     private BookStatus bookStatus;
@@ -112,6 +119,7 @@ public class Book {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
+        this.updatedAt = LocalDateTime.now();
         this.bookStatus = bookStatus;
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;
