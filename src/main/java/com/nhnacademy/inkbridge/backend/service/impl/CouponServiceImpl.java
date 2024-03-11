@@ -19,7 +19,6 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
@@ -206,23 +205,30 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
-        Coupon coupon = couponRepository.findById(issueCouponDto.getCouponId()).orElseThrow(
+    public void issueCoupon(Long memberId, String couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
-                    issueCouponDto.getCouponId())));
-        Member member = memberRepository.findById(issueCouponDto.getMemberId()).orElseThrow(
+                    couponId)));
+        System.out.println("test4");
+
+        Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
-                    issueCouponDto.getMemberId())));
+                    memberId)));
+        System.out.println("test3");
+
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
+        System.out.println("test2");
+
         MemberCoupon memberCoupon = MemberCoupon.builder()
             .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
+        System.out.println("test");
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 

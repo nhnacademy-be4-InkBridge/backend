@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -50,8 +51,9 @@ public class MemberController {
     private final CouponService couponService;
 
     @PostMapping("/members")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
-                                             BindingResult bindingResult) {
+    public ResponseEntity<HttpStatus> create(
+        @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
@@ -63,16 +65,17 @@ public class MemberController {
 
     @PostMapping("/members/login")
     public ResponseEntity<MemberAuthLoginResponseDto> authLogin(
-            @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
-            BindingResult bindingResult) {
+        @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
         log.info("login info start ->");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
-                memberService.loginInfoMember(memberAuthLoginRequestDto);
-        log.info("login info end -> {}",memberAuthLoginResponseDto.getEmail());
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
+            memberService.loginInfoMember(memberAuthLoginRequestDto);
+        log.info("login info end -> {}", memberAuthLoginResponseDto.getEmail());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberAuthLoginResponseDto);
     }
 
     @GetMapping("/auth/info")
@@ -103,5 +106,13 @@ public class MemberController {
         return ResponseEntity.ok(
             couponService.getMemberCouponList(memberId, statusEnum
             ));
+    }
+
+    @PostMapping("/auth/members/{memberId}/coupons/{couponId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity issueCoupon(@PathVariable("memberId") Long memberId,
+        @PathVariable("couponId") String couponId) {
+        couponService.issueCoupon(memberId, couponId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
