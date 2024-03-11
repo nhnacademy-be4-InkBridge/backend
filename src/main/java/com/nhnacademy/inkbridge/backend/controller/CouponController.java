@@ -26,6 +26,11 @@ public class CouponController {
     }
 
 
+    /***
+     * 발급가능한 전체 쿠폰을 가져오는 메소드.
+     * @param pageable page
+     * @return 발급가능한 전체 쿠폰
+     */
     @GetMapping
     public ResponseEntity<Page<CouponReadResponseDto>> getCoupons(Pageable pageable) {
         Page<CouponReadResponseDto> coupons = couponService.getIssuableCoupons(pageable);
