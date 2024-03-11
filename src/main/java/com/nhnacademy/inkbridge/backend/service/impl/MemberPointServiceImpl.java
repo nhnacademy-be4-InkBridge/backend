@@ -23,6 +23,15 @@ public class MemberPointServiceImpl implements MemberPointService {
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 지정된 회원의 포인트를 업데이트합니다.
+     * 포인트가 음수가 되는 경우 {@link ValidationException}을 발생시킵니다.
+     *
+     * @param memberId 회원의 ID
+     * @param pointValue 변경할 포인트 값
+     * @throws NotFoundException 회원을 찾을 수 없는 경우 발생
+     * @throws ValidationException 포인트가 음수가 될 경우 발생
+     */
     @Override
     @Transactional
     public void memberPointUpdate(Long memberId, Long pointValue) {
@@ -34,6 +43,13 @@ public class MemberPointServiceImpl implements MemberPointService {
         memberRepository.save(member);
     }
 
+    /**
+     * 지정된 회원의 현재 포인트를 조회합니다.
+     *
+     * @param memberId 회원의 ID
+     * @return 조회된 회원의 포인트
+     * @throws NotFoundException 회원을 찾을 수 없는 경우 발생
+     */
     @Override
     @Transactional
     public Long getMemberPoint(Long memberId) {
