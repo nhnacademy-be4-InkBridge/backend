@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
@@ -99,9 +100,17 @@ public interface CouponService {
     Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable);
 
     /**
-     * 책이 존재하는지 확인하는 메소드
+     * 책이 존재하는지 확인하는 메소드.
      *
      * @param bookIds 확인할 책 번호
      */
     void bookCheck(Long[] bookIds);
+
+    /**
+     * 쿠폰의 상세한 정보를 찾아주는 메소드.
+     *
+     * @param couponId 쿠폰ID
+     * @return 쿠폰의 상세정보, 카테고리, 책등 연관관계를 보여줌
+     */
+    CouponDetailReadResponseDto getDetailCoupon(String couponId);
 }
