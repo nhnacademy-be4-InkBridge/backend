@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.inkbridge.backend.dto.tag.TagCreateRequestDto;
@@ -134,6 +136,9 @@ class TagServiceImplTest {
         doNothing().when(bookTagRepository).deleteAllByPk_TagId(anyLong());
         doNothing().when(tagRepository).deleteById(anyLong());
         assertEquals(testTagId1 + " is deleted", tagService.deleteTag(testTagId1).getMessage());
+
+        verify(bookTagRepository, times(1)).deleteAllByPk_TagId(anyLong());
+        verify(tagRepository, times(1)).deleteById(anyLong());
     }
 
     @Test
