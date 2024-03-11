@@ -67,7 +67,46 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .on(author.eq(bookAuthor.author))
             .innerJoin(file)
             .on(book.thumbnailFile.eq(file))
-            .where(bookStatus.statusId.eq(1L))
+            .where(bookStatus.statusId.in(1L, 3L, 4L))
+            .select(Projections.constructor(BooksReadResponseDto.class,
+                book.bookId, book.bookTitle, book.price, publisher.publisherName,
+                author.authorName, file.fileUrl))
+            .orderBy(book.bookId.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        return new PageImpl<>(content, pageable, content.size());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<BooksReadResponseDto> findAllBooksByCategory(Pageable pageable, Long categoryId) {
+        QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
+        QFile file = QFile.file;
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+
+        List<BooksReadResponseDto> content = from(book)
+            .innerJoin(publisher)
+            .on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus)
+            .on(bookStatus.eq(book.bookStatus))
+            .innerJoin(bookAuthor)
+            .on(bookAuthor.book.eq(book))
+            .innerJoin(author)
+            .on(author.eq(bookAuthor.author))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
+            .innerJoin(bookCategory)
+            .on(bookCategory.pk.bookId.eq(book.bookId))
+            .where(
+                bookStatus.statusId.in(1L, 3L, 4L).and(bookCategory.pk.categoryId.eq(categoryId)))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
                 author.authorName, file.fileUrl))
@@ -111,7 +150,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookCategory).on(bookCategory.pk.bookId.eq(book.bookId))
             .innerJoin(category).on(category.categoryId.eq(bookCategory.category.categoryId))
             .leftJoin(wish).on(wish.pk.bookId.eq(book.bookId).and(wish.pk.memberId.eq(memberId)))
-            .where(bookStatus.statusId.eq(1L).and(book.bookId.eq(bookId)))
+            .where(bookStatus.statusId.in(1L, 3L, 4L).and(book.bookId.eq(bookId)))
             .select(
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,

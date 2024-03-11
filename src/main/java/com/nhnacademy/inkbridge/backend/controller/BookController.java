@@ -42,6 +42,20 @@ public class BookController {
     }
 
     /**
+     * 카테고리에 따른 도서 목록 조회 api입니다.
+     *
+     * @param categoryId Long
+     * @param pageable   Pageable
+     * @return BooksReadResponseDto page
+     */
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<Page<BooksReadResponseDto>> readBooksByCategory(
+        @PathVariable Long categoryId, Pageable pageable) {
+        Page<BooksReadResponseDto> content = bookService.readBooksByCategory(categoryId, pageable);
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    /**
      * 도서 상세 조회 api입니다.
      *
      * @param bookId Long

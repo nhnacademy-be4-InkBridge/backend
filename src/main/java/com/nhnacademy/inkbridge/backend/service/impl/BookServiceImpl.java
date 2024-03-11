@@ -110,6 +110,14 @@ public class BookServiceImpl implements BookService {
      * {@inheritDoc}
      */
     @Override
+    public Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable) {
+        return bookRepository.findAllBooksByCategory(pageable, categoryId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @Transactional(readOnly = true)
     public BookReadResponseDto readBook(Long bookId, Long memberId) {
         if (!bookRepository.existsById(bookId)) {

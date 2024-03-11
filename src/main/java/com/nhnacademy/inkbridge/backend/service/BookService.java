@@ -28,6 +28,15 @@ public interface BookService {
     Page<BooksReadResponseDto> readBooks(Pageable pageable);
 
     /**
+     * page와 카테고리에 따른 전체 도서를 가져오는 메서드입니다.
+     *
+     * @param categoryId Long
+     * @param pageable   Pageable
+     * @return BooksReadResponseDto page
+     */
+    Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable);
+
+    /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
      * 던집니다.
      *
