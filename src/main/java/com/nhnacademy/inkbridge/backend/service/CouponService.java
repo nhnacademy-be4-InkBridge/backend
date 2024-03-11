@@ -97,11 +97,4 @@ public interface CouponService {
      * @return 발급가능한 쿠폰 목록.
      */
     Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable);
-
-    /**
-     * 책이 존재하는지 확인하는 메소드
-     *
-     * @param bookIds 확인할 책 번호
-     */
-    void bookCheck(Long[] bookIds);
 }

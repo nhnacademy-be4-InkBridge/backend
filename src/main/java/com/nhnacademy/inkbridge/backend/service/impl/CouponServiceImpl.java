@@ -401,9 +401,12 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * {@inheritDoc}
+     * 책이 존재하는지 확인하는 메소드
+     *
+     * @param bookIds 확인할 책 번호
+     * @throw생 NotFoundException 책이 존재하지 않으면 발
      */
-    public void bookCheck(Long[] bookIds) {
+    private void bookCheck(Long[] bookIds) {
         Arrays.stream(bookIds)
             .filter(bookId -> !bookRepository.existsById(bookId))
             .findFirst()
