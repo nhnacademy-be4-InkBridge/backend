@@ -4,10 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDt
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.cart.CartReadResponseDto;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -63,5 +60,4 @@ public interface BookRepositoryCustom {
      */
     Optional<BookAdminSelectedReadResponseDto> findBookByAdminByBookId(Long bookId);
 
-    List<CartReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
 }
