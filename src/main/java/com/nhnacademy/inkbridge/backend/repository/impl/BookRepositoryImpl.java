@@ -8,6 +8,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDt
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.cart.CartReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -25,6 +26,7 @@ import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -259,5 +261,26 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             return Optional.empty();
         }
         return Optional.of(result.get(0));
+    }
+
+    /**
+     * 카트 도서 조회 메서드입니다.
+     *
+     * @param bookIdList book id list
+     * @return CartReadResponseDto
+     */
+    @Override
+    public List<CartReadResponseDto> findByBookIdIn(Set<Long> bookIdList) {
+        QBook book = QBook.book;
+        QFile file = QFile.file;
+
+        return from(book)
+            .innerJoin(file)
+            .on(file.fileId.eq(book.thumbnailFile.fileId))
+            .where(book.bookId.in(bookIdList))
+            .select(Projections.constructor(CartReadResponseDto.class, book.bookId, book.bookTitle,
+                book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
+                file.fileUrl))
+            .fetch();
     }
 }
