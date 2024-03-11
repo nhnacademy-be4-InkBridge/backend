@@ -21,6 +21,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implements
     MemberCouponCustomRepository {
 
+    private final int ISSUABLE_COUPON_STATUS_ID = 1;
+
     public MemberCouponRepositoryImpl() {
         super(MemberCoupon.class);
     }
@@ -45,7 +47,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
             .leftJoin(categoryCoupon).on(coupon.couponId.eq(categoryCoupon.coupon.couponId))
             .where(memberCoupon.member.memberId.eq(memberId)
                 .and(memberCoupon.usedAt.isNull())
-                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(1))
+                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(ISSUABLE_COUPON_STATUS_ID))
                 .and(bookCoupon.book.bookId.eq(bookCategoriesDto.getBookId())
                     .or(categoryCoupon.category.categoryId.in(bookCategoriesDto.getCategoryIds()))
                     .or(categoryCoupon.category.categoryId.isNull()
