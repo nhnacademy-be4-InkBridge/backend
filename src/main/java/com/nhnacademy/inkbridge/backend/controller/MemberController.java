@@ -87,13 +87,13 @@ public class MemberController {
             .body(memberService.getMemberInfo(memberId));
     }
 
-    @GetMapping("/members/{memberId}/order-coupons")
+    @GetMapping("/auth/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
         @PathVariable("memberId") Long memberId, @RequestParam("book-id") Long[] bookId) {
         return ResponseEntity.ok(couponService.getOrderCouponList(bookId, memberId));
     }
 
-    @GetMapping("/members/{memberId}/coupons")
+    @GetMapping("/auth/members/{memberId}/coupons")
     public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
         @PathVariable("memberId") Long memberId,
         @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
