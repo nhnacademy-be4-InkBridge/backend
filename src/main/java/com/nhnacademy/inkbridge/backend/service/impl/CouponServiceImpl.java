@@ -210,25 +210,21 @@ public class CouponServiceImpl implements CouponService {
             () -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
                     couponId)));
-        System.out.println("test4");
 
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
                     memberId)));
-        System.out.println("test3");
 
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
-        System.out.println("test2");
 
         MemberCoupon memberCoupon = MemberCoupon.builder()
             .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
-        System.out.println("test");
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 
