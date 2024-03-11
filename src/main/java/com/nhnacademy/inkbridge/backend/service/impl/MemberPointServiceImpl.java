@@ -37,10 +37,9 @@ public class MemberPointServiceImpl implements MemberPointService {
     public void memberPointUpdate(Long memberId, Long pointValue) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
-        member.setMemberPoint(member.getMemberPoint() + pointValue);
+        member.updateMemberPoint(pointValue);
         if(member.getMemberPoint() < 0) throw new ValidationException(
             MemberPointMessageEnum.MEMBER_POINT_VALID_FAIL.getMessage());
-        memberRepository.save(member);
     }
 
     /**
@@ -51,7 +50,7 @@ public class MemberPointServiceImpl implements MemberPointService {
      * @throws NotFoundException 회원을 찾을 수 없는 경우 발생
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Long getMemberPoint(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));

@@ -12,11 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * class: member.
@@ -26,9 +24,8 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "member")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
-@Setter
 public class Member {
 
     @Id
@@ -76,9 +73,10 @@ public class Member {
     private MemberGrade memberGrade;
 
     @Builder(builderMethodName = "create")
-    public Member(String memberName, String phoneNumber, String email, LocalDate birthday, String password,
-                  LocalDateTime createdAt, Long memberPoint, MemberAuth memberAuth,
-                  MemberStatus memberStatus, MemberGrade memberGrade) {
+    public Member(String memberName, String phoneNumber, String email, LocalDate birthday,
+        String password,
+        LocalDateTime createdAt, Long memberPoint, MemberAuth memberAuth,
+        MemberStatus memberStatus, MemberGrade memberGrade) {
         this.memberName = memberName;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -89,5 +87,9 @@ public class Member {
         this.memberAuth = memberAuth;
         this.memberStatus = memberStatus;
         this.memberGrade = memberGrade;
+    }
+
+    public void updateMemberPoint(Long pointValue) {
+        this.memberPoint += pointValue;
     }
 }
