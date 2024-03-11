@@ -45,7 +45,7 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Stri
         Long memberId, LocalDate now, LocalDate now2);
 
     /**
-     * 사용자가 가진 쿠폰들중 사용이 블가능한것들만 보여준다.
+     * 사용자가 가진 쿠폰들중 사용이 불가능한것들만 보여준다.
      *
      * @param memberId 조회할 회원 Id
      * @return 현재 사용자가 가진 사용불가능한 쿠폰
