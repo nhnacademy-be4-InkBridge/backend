@@ -90,7 +90,8 @@ public class Book {
     @Builder
     public Book(String bookTitle, String bookIndex, String description, LocalDate publicatedAt,
         String isbn, Long regularPrice, Long price, BigDecimal discountRatio, Integer stock,
-        Boolean isPackagable, BookStatus bookStatus, Publisher publisher, File thumbnailFile) {
+        Boolean isPackagable, LocalDateTime updatedAt, BookStatus bookStatus, Publisher publisher,
+        File thumbnailFile) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -101,6 +102,8 @@ public class Book {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
+        this.updatedAt = updatedAt;
+        this.view = 0L;
         this.bookStatus = bookStatus;
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;

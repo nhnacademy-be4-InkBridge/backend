@@ -41,6 +41,7 @@ import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -204,6 +205,7 @@ public class BookServiceImpl implements BookService {
             .discountRatio(bookAdminCreateRequestDto.getDiscountRatio())
             .stock(bookAdminCreateRequestDto.getStock())
             .isPackagable(bookAdminCreateRequestDto.getIsPackagable())
+            .updatedAt(LocalDateTime.now())
             .bookStatus(BookStatus.builder().statusId(1L).build())
             .publisher(publisher)
             .thumbnailFile(savedThumbnail)
