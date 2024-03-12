@@ -1,7 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.config.KeyConfig;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
+import com.nhnacademy.inkbridge.backend.property.ObjectStorageProperty;
 import com.nhnacademy.inkbridge.backend.service.AuthService;
 import com.nhnacademy.inkbridge.backend.service.ObjectService;
 import java.io.IOException;
@@ -34,9 +36,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class ObjectServiceImpl implements ObjectService {
 
     private final AuthService authService;
+    private final KeyConfig keyConfig;
+    private final ObjectStorageProperty objectStorageProperty;
     private String tokenId;
-    private static final String STORAGE_URL = "https://kr1-api-object-storage.nhncloudservice.com/v1/AUTH_e805e9a72d2f47338a0a463196c36314";
-    private static final String CONTAINER_NAME = "inkbridge";
+
 
 
     @Override
@@ -89,6 +92,6 @@ public class ObjectServiceImpl implements ObjectService {
     }
 
     private String getUrl(String objectName) {
-        return STORAGE_URL + "/" + CONTAINER_NAME + "/" + objectName;
+        return keyConfig.keyStore(objectStorageProperty.getStorageUrl()) + "/" + keyConfig.keyStore(objectStorageProperty.getContainerName()) + "/" + objectName;
     }
 }
