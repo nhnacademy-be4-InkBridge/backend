@@ -32,6 +32,12 @@ public class BookOrderServiceImpl implements BookOrderService {
     private final BookOrderRepository bookOrderRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param requestDto 주문 정보
+     * @return 주문 번호
+     */
     @Override
     public String createBookOrder(BookOrderCreateRequestDto requestDto) {
 
@@ -65,6 +71,12 @@ public class BookOrderServiceImpl implements BookOrderService {
         return bookOrder.getOrderId();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 주문 결제 정보
+     */
     @Override
     public OrderPayInfoReadResponseDto getOrderPaymentInfoByOderId(String orderId) {
         return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(

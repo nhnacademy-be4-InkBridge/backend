@@ -21,6 +21,12 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         super(BookOrder.class);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 주문 결제 정보
+     */
     @Override
     public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(String orderId) {
         QBookOrder bookOrder = QBookOrder.bookOrder;

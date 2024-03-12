@@ -39,6 +39,12 @@ public class OrderFacade {
         return orderId;
     }
 
+    /**
+     * 주문 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderId 주문 번호
+     * @return 주문 결제 정보
+     */
     @Transactional(readOnly = true)
     public OrderPayInfoReadResponseDto getOrderPaymentInfo(String orderId) {
         return bookOrderService.getOrderPaymentInfoByOderId(orderId);

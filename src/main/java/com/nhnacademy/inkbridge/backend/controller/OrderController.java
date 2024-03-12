@@ -41,6 +41,12 @@ public class OrderController {
             .body(orderFacade.createOrder(orderCreateRequestDto));
     }
 
+    /**
+     * 주문 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderId 주문 번호
+     * @return 주문 결제 젖ㅇ보
+     */
     @GetMapping("/{orderId}/order-pays")
     public ResponseEntity<OrderPayInfoReadResponseDto> getOrderPaymentInfo(
         @PathVariable String orderId) {
