@@ -1,12 +1,16 @@
 package com.nhnacademy.inkbridge.backend.dto.order;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import java.time.LocalDate;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * class: OrderCreateRequestDto.
@@ -17,19 +21,26 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class OrderCreateRequestDto {
-
+    @Valid
     private List<BookOrderDetailCreateRequestDto> bookOrderList;
+    @Valid
     private BookOrderCreateRequestDto bookOrder;
 
     @Getter
     @NoArgsConstructor
     public static class BookOrderDetailCreateRequestDto {
 
+        @NotNull(message = "도서 번호는 필수 항목입니다.")
         private Long bookId;
+        @NotNull(message = "가격은 필수 항목 입니다.")
         private Long price;
+        @NotNull(message = "수량은 필수 항목입니다.")
+        @Min(value = 1, message = "수량은 1개 이상 입력되어야 합니다.")
         private Integer amount;
         private Long wrappingId;
         private String couponId;
+        @NotNull(message = "포장 가격은 필수 항목입니다.")
+        @Min(value = 0, message = "포장 가격은 음수가 될 수 없습니다.")
         private Long wrappingPrice;
     }
 
@@ -56,12 +67,17 @@ public class OrderCreateRequestDto {
         @NotBlank(message = "주문인 이메일은 필수 항목입니다.")
         private String senderEmail;
         @NotNull(message = "배송 예정일은 필수 항목입니다.")
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        @JsonDeserialize(using = LocalDateDeserializer.class)
         private LocalDate deliveryDate;
+        @NotNull(message = "포인트는 필수 항목입니다.")
         @Min(value = 0, message = "포인트는 음수가 될 수 없습니다.")
         private Long usePoint;
+        @NotNull(message = "결제 금액은 필수 항목입니다.")
         @Min(value = 0, message = "결제 금액은 음수가 될 수 없습니다.")
         private Long payAmount;
         private Long memberId;
+        @NotNull(message = "배송비는 필수 항목입니다.")
         @Min(value = 0, message = "배송비는 음수가 될 수 없습니다.")
         private Long deliveryPrice;
     }

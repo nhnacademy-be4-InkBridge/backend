@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
@@ -39,7 +40,7 @@ public class BookOrderServiceImpl implements BookOrderService {
      * @return 주문 번호
      */
     @Override
-    public String createBookOrder(BookOrderCreateRequestDto requestDto) {
+    public OrderCreateResponseDto createBookOrder(BookOrderCreateRequestDto requestDto) {
 
         log.info("Create Book Order : {}", requestDto);
 
@@ -68,7 +69,7 @@ public class BookOrderServiceImpl implements BookOrderService {
 
         bookOrder = bookOrderRepository.save(bookOrder);
 
-        return bookOrder.getOrderId();
+        return new OrderCreateResponseDto(bookOrder.getOrderId());
     }
 
     /**

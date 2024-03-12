@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.order;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * class: OrderCreateResponseDto.
@@ -9,8 +10,8 @@ import lombok.AllArgsConstructor;
  * @version 2024/03/11
  */
 @AllArgsConstructor
+@Getter
 public class OrderCreateResponseDto {
 
     private String orderId;
-
 }

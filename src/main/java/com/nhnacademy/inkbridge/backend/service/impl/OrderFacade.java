@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,14 @@ public class OrderFacade {
      * @param requestDto 주문 정보
      * @return 주문 번호
      */
-    public String createOrder(OrderCreateRequestDto requestDto) {
+    public OrderCreateResponseDto createOrder(OrderCreateRequestDto requestDto) {
         // 주문 정보 저장 후 주문 번호 받아오기
-        String orderId = bookOrderService.createBookOrder(requestDto.getBookOrder());
+        OrderCreateResponseDto responseDto = bookOrderService.createBookOrder(requestDto.getBookOrder());
         // 주문 상세 저장
-        bookOrderDetailService.createBookOrderDetail(orderId, requestDto.getBookOrderList());
+        bookOrderDetailService.createBookOrderDetail(responseDto.getOrderId(), requestDto.getBookOrderList());
         //
 
-        return orderId;
+        return responseDto;
     }
 
     /**

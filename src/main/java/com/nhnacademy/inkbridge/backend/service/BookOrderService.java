@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 
 /**
  * class: BookOrderService.
@@ -18,7 +19,7 @@ public interface BookOrderService {
      * @param requestDto 주문 정보
      * @return 주문 번호
      */
-    String createBookOrder(BookOrderCreateRequestDto requestDto);
+    OrderCreateResponseDto createBookOrder(BookOrderCreateRequestDto requestDto);
 
     /**
      * 주문 결제 정보를 조회하는 메소드입니다.
