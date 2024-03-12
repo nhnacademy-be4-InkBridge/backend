@@ -1,10 +1,10 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.cart.CartReadResponseDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -63,5 +63,11 @@ public interface BookRepositoryCustom {
      */
     Optional<BookAdminSelectedReadResponseDto> findBookByAdminByBookId(Long bookId);
 
-    List<CartReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
+    /**
+     * 카트 도서 조회 메서드입니다.
+     *
+     * @param bookIdList book id list
+     * @return CartReadResponseDto
+     */
+    List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
 }

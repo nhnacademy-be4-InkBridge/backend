@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto.cart;
+package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.Getter;
  * @version 2024/03/09
  */
 @Getter
-public class CartReadResponseDto {
+public class BookOrderReadResponseDto {
 
     private final Long bookId;
     private final String bookTitle;
@@ -23,7 +23,7 @@ public class CartReadResponseDto {
     private final String thumbnail;
 
     @Builder
-    public CartReadResponseDto(Long bookId, String bookTitle, Long regularPrice, Long price,
+    public BookOrderReadResponseDto(Long bookId, String bookTitle, Long regularPrice, Long price,
         BigDecimal discountRatio, Integer stock, Boolean isPackagable, String thumbnail) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;

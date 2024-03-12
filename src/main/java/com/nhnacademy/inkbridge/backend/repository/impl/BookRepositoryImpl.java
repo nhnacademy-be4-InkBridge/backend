@@ -5,10 +5,10 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.cart.CartReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -154,7 +154,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .select(
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,
-                    book.discountRatio, book.isPackagable, thumbnail.fileUrl,
+                    book.discountRatio, book.isPackagable, thumbnail.fileUrl, bookStatus.statusName,
                     publisher.publisherId, publisher.publisherName, author.authorId,
                     author.authorName, wish.pk.memberId.coalesce(0L),
                     set(bookImage.fileUrl.coalesce("")),
@@ -163,8 +163,9 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .transform(groupBy(book.bookId).list(Projections.constructor(BookReadResponseDto.class,
                 book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.isPackagable,
-                thumbnail.fileUrl, publisher.publisherId, publisher.publisherName,
-                author.authorId, author.authorName, wish.pk.memberId.coalesce(0L),
+                thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
+                publisher.publisherName, author.authorId, author.authorName,
+                wish.pk.memberId.coalesce(0L),
                 set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
                 set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
                 set(Projections.constructor(String.class, category.categoryName)))));
@@ -264,13 +265,10 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 카트 도서 조회 메서드입니다.
-     *
-     * @param bookIdList book id list
-     * @return CartReadResponseDto
+     * {@inheritDoc}
      */
     @Override
-    public List<CartReadResponseDto> findByBookIdIn(Set<Long> bookIdList) {
+    public List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList) {
         QBook book = QBook.book;
         QFile file = QFile.file;
 
@@ -278,9 +276,11 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(file)
             .on(file.fileId.eq(book.thumbnailFile.fileId))
             .where(book.bookId.in(bookIdList))
-            .select(Projections.constructor(CartReadResponseDto.class, book.bookId, book.bookTitle,
-                book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
-                file.fileUrl))
+            .select(
+                Projections.constructor(BookOrderReadResponseDto.class, book.bookId, book.bookTitle,
+                    book.regularPrice, book.price, book.discountRatio, book.stock,
+                    book.isPackagable,
+                    file.fileUrl))
             .fetch();
     }
 }

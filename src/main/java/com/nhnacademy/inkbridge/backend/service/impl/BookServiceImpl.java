@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
@@ -104,6 +105,14 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
         return bookRepository.findAllBooks(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<BookOrderReadResponseDto> getCartBooks(Set<Long> bookIdList) {
+        return bookRepository.findByBookIdIn(bookIdList);
     }
 
     /**
