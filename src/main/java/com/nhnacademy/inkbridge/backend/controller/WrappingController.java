@@ -42,8 +42,7 @@ public class WrappingController {
     @GetMapping
     public ResponseEntity<List<WrappingResponseDto>> getWrappings(
         @RequestParam(value = "is_active", defaultValue = "true") boolean isActive) {
-        System.out.println(is_active);
-        return ResponseEntity.ok(wrappingService.getWrappingList(isAtive));
+        return ResponseEntity.ok(wrappingService.getWrappingList(isActive));
     }
 
     /**
