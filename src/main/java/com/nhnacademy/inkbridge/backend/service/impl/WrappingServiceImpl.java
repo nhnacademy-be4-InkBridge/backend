@@ -64,6 +64,8 @@ public class WrappingServiceImpl implements WrappingService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NotFoundException 변경할 포장지가 존재하지 않을때
      */
     @Override
     @Transactional

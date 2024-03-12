@@ -13,21 +13,32 @@ import java.util.List;
 public interface WrappingService {
 
     /**
-     * 모든 wrappingList 가져오기.
+     * 모든 포장지 가져오기.
      *
-     * @returnr WrappingList
+     * @returnr 모든 포장지
      */
     List<WrappingResponseDto> getWrappingList();
 
     /**
-     * wrappingId의 wrapping정보 가져오기.
+     * wrappingId의 포장지정보 가져오기.
      *
-     * @param wrappingId 조회할 wrappingId
+     * @param wrappingId 조회할 포장지 Id
      * @return 조회한 wrapping
      */
     WrappingResponseDto getWrapping(Long wrappingId);
 
+    /**
+     * 새로운 포장지 만들기
+     *
+     * @param wrappingCreateRequestDto 새로운 포장지 정보
+     */
     void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto);
 
+    /**
+     * 기존 포장지 새로운 정보로 업데이트
+     *
+     * @param WrappingId               기존 포장지 Id
+     * @param wrappingCreateRequestDto 새로운 포장지 정보
+     */
     void updateWrapping(Long WrappingId, WrappingCreateRequestDto wrappingCreateRequestDto);
 }

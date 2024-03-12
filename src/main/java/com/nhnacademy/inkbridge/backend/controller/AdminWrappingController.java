@@ -32,6 +32,13 @@ public class AdminWrappingController {
         this.wrappingService = wrappingService;
     }
 
+    /**
+     * 새로운 포장지 추가 메소드.
+     *
+     * @param wrappingCreateRequestDto 새로운 포장지 정보
+     * @param bindingResult            입력값의 대한 조건
+     * @return 201 OK
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity createWrapping(
@@ -44,6 +51,14 @@ public class AdminWrappingController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 기존 포장지 수정 메소드
+     *
+     * @param wrappingId               수정하고싶은 포장지 Id
+     * @param wrappingCreateRequestDto 수정하고싶은 내용
+     * @param bindingResult            입력값의 대한 조건
+     * @return 200 OK
+     */
     @PutMapping("/{wrappingId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity updateWrapping(@PathVariable("wrappingId") Long wrappingId,
