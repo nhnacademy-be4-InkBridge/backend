@@ -19,5 +19,5 @@ public interface MemberAddressService {
 
     void updateAddress(Long userId, AddressUpdateRequestDto addressUpdateRequestDto);
 
-    void deleteAddress(Long userId, MemberAddressService memberAddressService);
+    void deleteAddress(Long userId, Long addressId);
 }

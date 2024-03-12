@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,14 +39,14 @@ public class AddressController {
 
     @PostMapping
     ResponseEntity<HttpStatus> createAddress(@RequestHeader("Authorization-Id") Long userId,
-        AddressCreateRequestDto addressCreateRequestDto) {
+        @RequestBody AddressCreateRequestDto addressCreateRequestDto) {
         memberAddressService.createAddress(userId, addressCreateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PutMapping
     ResponseEntity<HttpStatus> modifyAddress(@RequestHeader("Authorization-Id") Long userId,
-        AddressUpdateRequestDto addressUpdateRequestDto) {
+        @RequestBody AddressUpdateRequestDto addressUpdateRequestDto) {
         memberAddressService.updateAddress(userId, addressUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -53,7 +54,7 @@ public class AddressController {
     @DeleteMapping("/{addressId}")
     ResponseEntity<HttpStatus> deleteAddress(@RequestHeader("Authorization-Id") Long userId,
         @PathVariable("addressId") Long addressId) {
-        memberAddressService.deleteAddress(userId, memberAddressService);
+        memberAddressService.deleteAddress(userId, addressId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

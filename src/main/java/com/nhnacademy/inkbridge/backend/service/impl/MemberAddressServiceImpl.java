@@ -14,8 +14,10 @@ import com.nhnacademy.inkbridge.backend.repository.MemberAddressRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.MemberAddressService;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: MemberAddressServiceImpl.
@@ -33,19 +35,20 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     private final GeneralAddressRepository generalAddressRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberAddressReadResponseDto> getAddressByUserId(Long userId) {
-//        return memberAddressRepository.findAllByMemberMemberId(userId);
-        return null;
+        return memberAddressRepository.findAllByMemberMemberId(userId).stream()
+            .map(MemberAddressReadResponseDto::toDto).collect(
+                Collectors.toList());
     }
 
     @Override
-
     public void createAddress(Long userId, AddressCreateRequestDto addressCreateRequestDto) {
         Member user = memberRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
         GeneralAddress generalAddress = generalAddressRepository.findByZipCodeAndAddress(
                 addressCreateRequestDto.getZipCode(), addressCreateRequestDto.getAddress())
-            .orElse(generalAddressRepository.save(addressCreateRequestDto.toGeneralAddress()));
+            .orElseGet(() -> generalAddressRepository.save(addressCreateRequestDto.toGeneralAddress()));
         MemberAddress memberAddress = addressCreateRequestDto.toEntity(user, generalAddress);
         memberAddressRepository.save(memberAddress);
     }
@@ -56,7 +59,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
         GeneralAddress generalAddress = generalAddressRepository.findByZipCodeAndAddress(
                 addressUpdateRequestDto.getZipCode(), addressUpdateRequestDto.getAddress())
-            .orElse(generalAddressRepository.save(addressUpdateRequestDto.toGeneralAddress()));
+            .orElseGet(() -> generalAddressRepository.save(addressUpdateRequestDto.toGeneralAddress()));
         MemberAddress memberAddress = memberAddressRepository.findByMemberAndAddressId(user,
             addressUpdateRequestDto.getAddressId()).orElseThrow(() -> new NotFoundException(
             AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage()));
@@ -66,7 +69,10 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
-    public void deleteAddress(Long userId, MemberAddressService memberAddressService) {
-
+    public void deleteAddress(Long userId, Long addressId) {
+        MemberAddress memberAddress = memberAddressRepository.findByMemberMemberIdAndAddressId(
+            userId, addressId).orElseThrow(
+            () -> new NotFoundException(AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage()));
+        memberAddressRepository.delete(memberAddress);
     }
 }

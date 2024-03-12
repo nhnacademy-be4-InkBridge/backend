@@ -27,8 +27,6 @@ public class AddressUpdateRequestDto {
 
     private String addressDetail;
 
-    private Member member;
-
 
     public MemberAddress toEntity(Member user, GeneralAddress generalAddress) {
         return MemberAddress.builder().generalAddress(generalAddress).member(user)
