@@ -15,6 +15,7 @@ public interface WrappingService {
     /**
      * 모든 포장지 가져오기.
      *
+     * @param isActive 활성여부 ture / false
      * @returnr 모든 포장지
      */
     List<WrappingResponseDto> getWrappingList(boolean isActive);

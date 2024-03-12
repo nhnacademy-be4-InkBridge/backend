@@ -17,6 +17,7 @@ public interface WrappingRepository extends JpaRepository<Wrapping, Long> {
     /**
      * 모든 wrapping을 가져오는 메소드.
      *
+     * @param isActive 활성여부
      * @return 모든 wrapping dto
      */
     List<WrappingResponseDto> findAllByIsActive(boolean isActive);

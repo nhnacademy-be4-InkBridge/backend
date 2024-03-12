@@ -36,13 +36,14 @@ public class WrappingController {
     /**
      * 모든 wrapping을 제공해주는 메소드.
      *
+     * @param isActive 활성여부 default ture
      * @return 모든 wrapping
      */
     @GetMapping
     public ResponseEntity<List<WrappingResponseDto>> getWrappings(
-        @RequestParam(value = "is_active", defaultValue = "true") boolean is_active) {
+        @RequestParam(value = "is_active", defaultValue = "true") boolean isActive) {
         System.out.println(is_active);
-        return ResponseEntity.ok(wrappingService.getWrappingList(is_active));
+        return ResponseEntity.ok(wrappingService.getWrappingList(isAtive));
     }
 
     /**
