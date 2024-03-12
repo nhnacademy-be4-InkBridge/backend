@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.order.WrappingCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.WrappingResponseDto;
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface WrappingService {
      * @return 조회한 wrapping
      */
     WrappingResponseDto getWrapping(Long wrappingId);
+
+    void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto);
 }

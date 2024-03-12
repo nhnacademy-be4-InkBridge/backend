@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.order.WrappingCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.WrappingResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Wrapping;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
@@ -45,5 +47,16 @@ public class WrappingServiceImpl implements WrappingService {
         return wrappingRepository.findByWrappingId(wrappingId)
             .orElseThrow(() -> new NotFoundException(
                 OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto) {
+        Wrapping newWrapping = Wrapping.builder()
+            .wrappingName(wrappingCreateRequestDto.getWrappingName())
+            .price(wrappingCreateRequestDto.getPrice()).build();
+        wrappingRepository.save(newWrapping);
     }
 }
