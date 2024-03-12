@@ -1,9 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
-import com.nhnacademy.inkbridge.backend.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class OrderServiceImpl implements OrderService {
+public class OrderFacade {
 
     private final BookOrderService bookOrderService;
     private final BookOrderDetailService bookOrderDetailService;
@@ -25,10 +25,10 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 주문 , 주문 상세 테이블에 정보를 저장합니다.
+     *
      * @param requestDto 주문 정보
      * @return 주문 번호
      */
-    @Override
     public String createOrder(OrderCreateRequestDto requestDto) {
         // 주문 정보 저장 후 주문 번호 받아오기
         String orderId = bookOrderService.createBookOrder(requestDto.getBookOrder());
@@ -37,5 +37,10 @@ public class OrderServiceImpl implements OrderService {
         //
 
         return orderId;
+    }
+
+    @Transactional(readOnly = true)
+    public OrderPayInfoReadResponseDto getOrderPaymentInfo(String orderId) {
+        return bookOrderService.getOrderPaymentInfoByOderId(orderId);
     }
 }

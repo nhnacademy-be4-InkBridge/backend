@@ -1,8 +1,10 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
@@ -61,6 +63,13 @@ public class BookOrderServiceImpl implements BookOrderService {
         bookOrder = bookOrderRepository.save(bookOrder);
 
         return bookOrder.getOrderId();
+    }
+
+    @Override
+    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOderId(String orderId) {
+        return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
+        );
     }
 
 }
