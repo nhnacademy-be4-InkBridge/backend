@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: BookOrderDetailServiceImpl.
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
     private final BookOrderRepository bookOrderRepository;
