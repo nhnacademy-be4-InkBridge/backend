@@ -7,7 +7,9 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -31,7 +33,7 @@ public class AdminWrappingController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity createWrapping(
         @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
         BindingResult bindingResult) {
@@ -40,5 +42,17 @@ public class AdminWrappingController {
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/{wrappingId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity updateWrapping(@PathVariable("wrappingId") Long wrappingId,
+        @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+        }
+        wrappingService.updateWrapping(wrappingId, wrappingCreateRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

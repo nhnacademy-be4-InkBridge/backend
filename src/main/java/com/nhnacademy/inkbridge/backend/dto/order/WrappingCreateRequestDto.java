@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.order;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,4 +26,8 @@ public class WrappingCreateRequestDto {
     @NotNull(message = "가격을 입력해주세요.")
     @Min(value = 0, message = "최소 0원이상의 가격으로 작성해주세요")
     private Long price;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    @NotNull
+    private boolean isActive;
 }

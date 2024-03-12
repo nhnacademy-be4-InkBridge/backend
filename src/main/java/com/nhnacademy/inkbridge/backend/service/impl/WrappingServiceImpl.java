@@ -4,11 +4,13 @@ import com.nhnacademy.inkbridge.backend.dto.order.WrappingCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.WrappingResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Wrapping;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.WrappingMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
 import com.nhnacademy.inkbridge.backend.service.WrappingService;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: WrappingServiceImpl.
@@ -58,5 +60,19 @@ public class WrappingServiceImpl implements WrappingService {
             .wrappingName(wrappingCreateRequestDto.getWrappingName())
             .price(wrappingCreateRequestDto.getPrice()).build();
         wrappingRepository.save(newWrapping);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void updateWrapping(Long wrappingId, WrappingCreateRequestDto wrappingCreateRequestDto) {
+        Wrapping wrapping = wrappingRepository.findById(wrappingId)
+            .orElseThrow(() -> new NotFoundException(
+                WrappingMessageEnum.WRAPPING_NOT_FOUND.getMessage()));
+        System.out.println(wrappingCreateRequestDto.isActive());
+        wrapping.update(wrappingCreateRequestDto.getWrappingName(),
+            wrappingCreateRequestDto.getPrice(), wrappingCreateRequestDto.isActive());
     }
 }

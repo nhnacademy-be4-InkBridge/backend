@@ -28,4 +28,6 @@ public interface WrappingService {
     WrappingResponseDto getWrapping(Long wrappingId);
 
     void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto);
+
+    void updateWrapping(Long WrappingId, WrappingCreateRequestDto wrappingCreateRequestDto);
 }

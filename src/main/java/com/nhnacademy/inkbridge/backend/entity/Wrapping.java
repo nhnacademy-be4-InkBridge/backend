@@ -40,4 +40,10 @@ public class Wrapping {
         this.price = price;
         this.isActive = true;
     }
+
+    public void update(String wrappingName, Long price, boolean isActive) {
+        this.wrappingName = wrappingName;
+        this.price = price;
+        this.isActive = isActive;
+    }
 }
