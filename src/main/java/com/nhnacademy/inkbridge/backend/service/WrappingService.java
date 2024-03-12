@@ -17,7 +17,7 @@ public interface WrappingService {
      *
      * @returnr 모든 포장지
      */
-    List<WrappingResponseDto> getWrappingList();
+    List<WrappingResponseDto> getWrappingList(boolean isActive);
 
     /**
      * wrappingId의 포장지정보 가져오기.

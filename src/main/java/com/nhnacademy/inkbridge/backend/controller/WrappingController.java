@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -38,8 +39,10 @@ public class WrappingController {
      * @return 모든 wrapping
      */
     @GetMapping
-    public ResponseEntity<List<WrappingResponseDto>> getWrappings() {
-        return ResponseEntity.ok(wrappingService.getWrappingList());
+    public ResponseEntity<List<WrappingResponseDto>> getWrappings(
+        @RequestParam(value = "is_active", defaultValue = "true") boolean is_active) {
+        System.out.println(is_active);
+        return ResponseEntity.ok(wrappingService.getWrappingList(is_active));
     }
 
     /**

@@ -37,8 +37,8 @@ public class WrappingServiceImpl implements WrappingService {
      * {@inheritDoc}
      */
     @Override
-    public List<WrappingResponseDto> getWrappingList() {
-        return wrappingRepository.findAllBy();
+    public List<WrappingResponseDto> getWrappingList(boolean isActive) {
+        return wrappingRepository.findAllByIsActive(isActive);
     }
 
     /**
