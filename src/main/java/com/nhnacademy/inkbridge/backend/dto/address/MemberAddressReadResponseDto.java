@@ -25,22 +25,30 @@ public class MemberAddressReadResponseDto {
 
     private String addressDetail;
 
+    private String receiverName;
+
+    private String receiverNumber;
+
     public static MemberAddressReadResponseDto toDto(MemberAddress memberAddress) {
         return MemberAddressReadResponseDto.builder()
             .address(memberAddress.getGeneralAddress().getAddress())
             .zipCode(memberAddress.getGeneralAddress().getZipCode()).addressId(
                 memberAddress.getAddressId()).alias(memberAddress.getAlias())
-            .addressDetail(memberAddress.getAddressDetail()).build();
+            .addressDetail(memberAddress.getAddressDetail()).receiverName(
+                memberAddress.getReceiverName()).receiverNumber(memberAddress.getReceiverNumber())
+            .build();
     }
 
     @Builder
     public MemberAddressReadResponseDto(Long addressId, String zipCode, String address,
         String alias,
-        String addressDetail) {
+        String addressDetail, String receiverName, String receiverNumber) {
         this.addressId = addressId;
         this.zipCode = zipCode;
         this.address = address;
         this.alias = alias;
         this.addressDetail = addressDetail;
+        this.receiverName = receiverName;
+        this.receiverNumber = receiverNumber;
     }
 }

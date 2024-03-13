@@ -27,10 +27,15 @@ public class AddressCreateRequestDto {
 
     private String addressDetail;
 
+    private String receiverName;
+
+    private String receiverNumber;
+
 
     public MemberAddress toEntity(Member user, GeneralAddress generalAddress) {
         return MemberAddress.builder().generalAddress(generalAddress).member(user)
-            .addressDetail(addressDetail).alias(alias).build();
+            .addressDetail(addressDetail).alias(alias).receiverName(receiverName)
+            .receiverNumber(receiverNumber).build();
     }
 
     public GeneralAddress toGeneralAddress() {
