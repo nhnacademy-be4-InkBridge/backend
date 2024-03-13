@@ -41,14 +41,13 @@ public class AdminWrappingController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createWrapping(
+    public void createWrapping(
         @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
