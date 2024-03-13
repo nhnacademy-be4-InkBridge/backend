@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
@@ -17,7 +16,6 @@ import org.hibernate.validator.constraints.Length;
  * @version 2024/03/12
  */
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class WrappingCreateRequestDto {
