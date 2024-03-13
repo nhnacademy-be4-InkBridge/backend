@@ -45,6 +45,6 @@ public class OrderFacade {
      */
     @Transactional(readOnly = true)
     public OrderPayInfoReadResponseDto getOrderPaymentInfo(String orderId) {
-        return bookOrderService.getOrderPaymentInfoByOderId(orderId);
+        return bookOrderService.getOrderPaymentInfoByOrderId(orderId);
     }
 }

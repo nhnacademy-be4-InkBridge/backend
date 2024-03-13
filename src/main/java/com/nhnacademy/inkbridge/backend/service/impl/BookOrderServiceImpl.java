@@ -42,8 +42,6 @@ public class BookOrderServiceImpl implements BookOrderService {
     @Override
     public OrderCreateResponseDto createBookOrder(BookOrderCreateRequestDto requestDto) {
 
-        log.info("Create Book Order : {}", requestDto);
-
         BookOrder bookOrder = BookOrder.builder()
             .orderId(UUID.randomUUID().toString().replace("-", ""))
             .orderName(requestDto.getOrderName())
@@ -79,7 +77,7 @@ public class BookOrderServiceImpl implements BookOrderService {
      * @return 주문 결제 정보
      */
     @Override
-    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOderId(String orderId) {
+    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId) {
         return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
         );

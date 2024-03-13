@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,12 @@ public class Wrapping {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Builder
+    public Wrapping(Long wrappingId, String wrappingName, Long price, Boolean isActive) {
+        this.wrappingId = wrappingId;
+        this.wrappingName = wrappingName;
+        this.price = price;
+        this.isActive = isActive;
+    }
 }

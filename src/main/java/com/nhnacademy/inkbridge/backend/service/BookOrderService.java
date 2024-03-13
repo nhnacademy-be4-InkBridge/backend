@@ -27,5 +27,5 @@ public interface BookOrderService {
      * @param orderId 주문 번호
      * @return 주문 결제 정보
      */
-    OrderPayInfoReadResponseDto getOrderPaymentInfoByOderId(String orderId);
+    OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId);
 }
