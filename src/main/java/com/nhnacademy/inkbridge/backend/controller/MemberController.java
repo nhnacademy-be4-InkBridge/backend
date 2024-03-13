@@ -10,7 +10,6 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
-import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
@@ -54,16 +53,10 @@ public class MemberController {
      * 회원가입 하는 메서드입니다.
      *
      * @param memberCreateRequestDto 회원가입 폼 데이터
-     * @param bindingResult valid 결과
      * @return 회원가입 성공
      */
     @PostMapping("/members")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
-                                             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
-        }
-
+    public ResponseEntity<HttpStatus> create(@RequestBody MemberCreateRequestDto memberCreateRequestDto) {
         memberService.createMember(memberCreateRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();

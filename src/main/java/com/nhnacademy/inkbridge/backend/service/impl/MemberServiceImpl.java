@@ -62,7 +62,9 @@ public class MemberServiceImpl implements MemberService {
         String email = memberCreateRequestDto.getEmail();
         if (email.startsWith("SOCIAL ")) {
             memberAuth = socialAuth;
-            email.substring(7);
+            email = email.substring(7);
+            log.info("email -> {}",email);
+            log.info("auth -> {}",memberAuth.getMemberAuthName());
         }
 
         Member member = Member.create()
