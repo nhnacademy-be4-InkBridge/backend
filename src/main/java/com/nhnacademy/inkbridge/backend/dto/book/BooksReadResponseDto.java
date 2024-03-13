@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,12 @@ public class BooksReadResponseDto {
     private String bookTitle;
     private Long price;
     private String publisherName;
-    private String authorName;
+    private List<String> authorName;
     private String fileUrl;
 
     @Builder
     public BooksReadResponseDto(Long bookId, String bookTitle, Long price, String publisherName,
-        String authorName, String fileUrl) {
+        List<String> authorName, String fileUrl) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.price = price;

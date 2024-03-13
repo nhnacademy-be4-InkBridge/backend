@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.map;
 import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
@@ -27,6 +28,7 @@ import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author minm063
  * @version 2024/02/15
  */
+@Slf4j
 public class BookRepositoryImpl extends QuerydslRepositorySupport implements BookRepositoryCustom {
 
     public BookRepositoryImpl() {
@@ -70,11 +73,19 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.in(1L, 3L, 4L))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName, file.fileUrl))
+                list(author.authorName), file.fileUrl))
             .orderBy(book.bookId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .fetch();
+            .transform(groupBy(book.bookId).list(
+                Projections.constructor(BooksReadResponseDto.class,
+                    book.bookId, book.bookTitle, book.price, publisher.publisherName,
+                    list(Projections.constructor(String.class, author.authorName)), file.fileUrl)
+            ));
+
+        log.info("!!!!: {}", pageable.getOffset());
+        log.info("!!!!: {}", pageable.getPageSize());
+        log.info("!!!; {}", content.size());
 
         return new PageImpl<>(content, pageable, content.size());
     }
@@ -109,7 +120,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 bookStatus.statusId.in(1L, 3L, 4L).and(bookCategory.pk.categoryId.eq(categoryId)))
             .select(Projections.constructor(BooksReadResponseDto.class,
                 book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName, file.fileUrl))
+                list(author.authorName), file.fileUrl))
             .orderBy(book.bookId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -155,8 +166,9 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,
                     book.discountRatio, book.isPackagable, thumbnail.fileUrl, bookStatus.statusName,
-                    publisher.publisherId, publisher.publisherName, author.authorId,
-                    author.authorName, wish.pk.memberId.coalesce(0L),
+                    publisher.publisherId, publisher.publisherName,
+                    map(author.authorId, author.authorName),
+                    wish.pk.memberId.coalesce(0L),
                     set(bookImage.fileUrl.coalesce("")),
                     set(tag.tagName.coalesce("")),
                     set(category.categoryName)))
@@ -164,7 +176,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                 book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.isPackagable,
                 thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
-                publisher.publisherName, author.authorId, author.authorName,
+                publisher.publisherName, map(Projections.constructor(Long.class, author.authorId),
+                    Projections.constructor(String.class, author.authorName)),
                 wish.pk.memberId.coalesce(0L),
                 set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
                 set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
@@ -212,10 +225,15 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
             .orderBy(book.bookId.asc())
             .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
-                book.bookTitle, author.authorName, publisher.publisherName, bookStatus.statusName))
+                book.bookTitle, list(author.authorName), publisher.publisherName,
+                bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .fetch();
+            .transform(groupBy(book.bookId).list(
+                Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
+                    book.bookTitle, list(Projections.constructor(String.class, author.authorName)),
+                    publisher.publisherName, bookStatus.statusName))
+            );
 
         Long count = getCount();
 
@@ -244,7 +262,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
-                author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                list(author.authorId), book.publisher.publisherId, book.bookStatus.statusId,
                 file.fileUrl,
                 list(bookCategory.pk.categoryId),
                 list(bookTag.pk.tagId)))
@@ -253,7 +271,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                     book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                     book.regularPrice, book.price, book.discountRatio, book.stock,
                     book.isPackagable,
-                    author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                    list(Projections.constructor(Long.class, author.authorId)),
+                    book.publisher.publisherId, book.bookStatus.statusId,
                     file.fileUrl,
                     list(Projections.constructor(Long.class, bookCategory.pk.categoryId)),
                     list(Projections.constructor(Long.class, bookTag.pk.tagId)))

@@ -101,8 +101,8 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
         return bookRepository.findAllBooks(pageable);
     }
@@ -110,6 +110,7 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
     public List<BookOrderReadResponseDto> getCartBooks(Set<Long> bookIdList) {
         return bookRepository.findByBookIdIn(bookIdList);
@@ -118,6 +119,7 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
     public Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable) {
         return bookRepository.findAllBooksByCategory(pageable, categoryId);
@@ -126,8 +128,8 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public BookReadResponseDto readBook(Long bookId, Long memberId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
@@ -140,8 +142,8 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable) {
         return bookRepository.findAllBooksByAdmin(pageable);
     }
@@ -149,8 +151,8 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
-    @Transactional
     public BookAdminDetailReadResponseDto readBookByAdmin(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
@@ -179,7 +181,7 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public BookAdminReadResponseDto readBookByAdmin() {
         List<ParentCategoryReadResponseDto> parentCategoryReadResponseDtoList = readAllCategory();
@@ -200,8 +202,8 @@ public class BookServiceImpl implements BookService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @Transactional
+    @Override
     public void createBook(MultipartFile thumbnail,
         BookAdminCreateRequestDto bookAdminCreateRequestDto) {
         Publisher publisher = publisherRepository.findById(
@@ -232,7 +234,7 @@ public class BookServiceImpl implements BookService {
 
         saveBookCategory(bookAdminCreateRequestDto.getCategories(), saved);
         saveBookTag(bookAdminCreateRequestDto.getTags(), saved);
-        saveBookAuthor(bookAdminCreateRequestDto.getAuthorId(), saved);
+        saveBookAuthor(bookAdminCreateRequestDto.getAuthorIdList(), saved);
         saveBookFile(bookAdminCreateRequestDto.getFileIdList(), saved);
     }
 
@@ -263,7 +265,7 @@ public class BookServiceImpl implements BookService {
             bookAdminUpdateRequestDto.getDiscountRatio(), bookAdminUpdateRequestDto.getStock(),
             bookAdminUpdateRequestDto.getIsPackagable(), bookStatus, publisher, savedThumbnail);
 
-        updateBookAuthor(bookAdminUpdateRequestDto.getAuthorId(), bookId);
+        updateBookAuthor(bookAdminUpdateRequestDto.getAuthorIdList(), book);
         updateBookCategory(bookAdminUpdateRequestDto.getCategories(), book);
         updateBookTag(bookAdminUpdateRequestDto.getTags(), book);
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
@@ -289,20 +291,24 @@ public class BookServiceImpl implements BookService {
     /**
      * BookAuthor을 저장하는 메서드입니다. Author 테이블에 authorId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
      *
-     * @param authorId Long
-     * @param book     Book
+     * @param authorIdList Long
+     * @param book         Book
      * @throws NotFoundException 주어진 Author ID로 찾을 수 없는 경우
      */
-    private void saveBookAuthor(Long authorId, Book book) {
-        Author author = authorRepository.findById(authorId)
-            .orElseThrow(() -> new NotFoundException(
-                BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
-        BookAuthor bookAuthor = BookAuthor.builder()
-            .pk(BookAuthor.Pk.builder().bookId(book.getBookId()).authorId(authorId).build())
-            .author(author)
-            .book(book)
-            .build();
-        bookAuthorRepository.save(bookAuthor);
+    private void saveBookAuthor(List<Long> authorIdList, Book book) {
+        List<BookAuthor> bookAuthorList = new ArrayList<>();
+        for (Long authorId : authorIdList) {
+            Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new NotFoundException(
+                    BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
+            BookAuthor bookAuthor = BookAuthor.builder()
+                .pk(BookAuthor.Pk.builder().bookId(book.getBookId()).authorId(authorId).build())
+                .author(author)
+                .book(book)
+                .build();
+            bookAuthorList.add(bookAuthor);
+        }
+        bookAuthorRepository.saveAll(bookAuthorList);
     }
 
     /**
@@ -439,16 +445,24 @@ public class BookServiceImpl implements BookService {
     /**
      * BookAuthor를 수정하는 메서드입니다. Author 테이블에 authorId와 일치하는 데이터가 없으면 NotFoundException을 던집니다.
      *
-     * @param authorId Long
-     * @param bookId   Long
+     * @param authorIdList Long
+     * @param book         Book
      * @throws NotFoundException 주어진 Author ID로 찾을 수 없는 경우
      */
-    private void updateBookAuthor(Long authorId, Long bookId) {
-        Author author = authorRepository.findById(authorId)
-            .orElseThrow(
-                () -> new NotFoundException(BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
-        BookAuthor prevBookAuthor = bookAuthorRepository.findByPk_BookId(bookId);
-        prevBookAuthor.updateBookAuthor(author);
+    private void updateBookAuthor(List<Long> authorIdList, Book book) {
+        List<BookAuthor> bookAuthorList = new ArrayList<>();
+        authorIdList.forEach(authorId -> {
+            Author author = authorRepository.findById(authorId)
+                .orElseThrow(
+                    () -> new NotFoundException(
+                        BookMessageEnum.BOOK_AUTHOR_NOT_FOUND.getMessage()));
+            BookAuthor bookAuthor = BookAuthor.builder().author(author).book(book)
+                .pk(BookAuthor.Pk.builder().authorId(authorId).bookId(book.getBookId()).build())
+                .build();
+            bookAuthorList.add(bookAuthor);
+        });
+        bookAuthorRepository.deleteAllByBook_BookId(book.getBookId());
+        bookAuthorRepository.saveAll(bookAuthorList);
     }
 
     /**

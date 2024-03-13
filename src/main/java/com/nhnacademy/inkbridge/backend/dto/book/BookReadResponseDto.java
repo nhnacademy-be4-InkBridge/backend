@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +31,7 @@ public class BookReadResponseDto {
     private String statusName;
     private Long publisherId;
     private String publisherName;
-    private Long authorId;
-    private String authorName;
+    private Map<Long, String> authors;
     private Long wish;
     private Set<String> fileUrl;
     private Set<String> tagName;
@@ -41,7 +41,7 @@ public class BookReadResponseDto {
     public BookReadResponseDto(String bookTitle, String bookIndex, String description,
         LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
         BigDecimal discountRatio, Boolean isPackagable, String thumbnail, String statusName,
-        Long publisherId, String publisherName, Long authorId, String authorName, Long wish,
+        Long publisherId, String publisherName, Map<Long, String> authors, Long wish,
         Set<String> fileUrl, Set<String> tagName, Set<String> categoryName) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
@@ -56,8 +56,7 @@ public class BookReadResponseDto {
         this.statusName = statusName;
         this.publisherId = publisherId;
         this.publisherName = publisherName;
-        this.authorId = authorId;
-        this.authorName = authorName;
+        this.authors = authors;
         this.wish = wish;
         this.fileUrl = fileUrl;
         this.tagName = tagName;
