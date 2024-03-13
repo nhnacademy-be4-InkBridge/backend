@@ -3,11 +3,15 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.address.AddressCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.address.AddressUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.address.MemberAddressReadResponseDto;
+import com.nhnacademy.inkbridge.backend.enums.AddressMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.MemberAddressService;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/mypage/address")
+@RequestMapping("/api/mypage/addresses")
 public class AddressController {
 
     private final MemberAddressService memberAddressService;
@@ -40,7 +44,7 @@ public class AddressController {
     @GetMapping
     ResponseEntity<List<MemberAddressReadResponseDto>> getAddresses(
         @RequestHeader("Authorization-Id") Long userId) {
-        return ResponseEntity.ok(memberAddressService.getAddressByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(memberAddressService.getAddressByUserId(userId));
     }
 
     /**
@@ -53,7 +57,7 @@ public class AddressController {
     @GetMapping("/{addressId}")
     ResponseEntity<MemberAddressReadResponseDto> getAddress(
         @RequestHeader("Authorization-Id") Long userId, @PathVariable("addressId") Long addressId) {
-        return ResponseEntity.ok(memberAddressService.getAddressByUserIdAndAddressId(userId, addressId));
+        return ResponseEntity.status(HttpStatus.OK).body(memberAddressService.getAddressByUserIdAndAddressId(userId, addressId));
     }
 
     /**
@@ -65,9 +69,13 @@ public class AddressController {
      */
     @PostMapping
     ResponseEntity<HttpStatus> createAddress(@RequestHeader("Authorization-Id") Long userId,
-        @RequestBody AddressCreateRequestDto addressCreateRequestDto) {
+        @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(AddressMessageEnum.ADDRESS_VALID_FAIL.getMessage());
+        }
+
         memberAddressService.createAddress(userId, addressCreateRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -79,7 +87,10 @@ public class AddressController {
      */
     @PutMapping
     ResponseEntity<HttpStatus> modifyAddress(@RequestHeader("Authorization-Id") Long userId,
-        @RequestBody AddressUpdateRequestDto addressUpdateRequestDto) {
+        @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(AddressMessageEnum.ADDRESS_VALID_FAIL.getMessage());
+        }
         memberAddressService.updateAddress(userId, addressUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

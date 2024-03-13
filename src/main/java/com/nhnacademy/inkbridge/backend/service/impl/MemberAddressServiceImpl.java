@@ -87,7 +87,6 @@ public class MemberAddressServiceImpl implements MemberAddressService {
             AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage()));
 
         memberAddress.update(generalAddress, addressUpdateRequestDto);
-        memberAddressRepository.save(memberAddress);
     }
      /**
      * 주소 정보를 삭제합니다.
