@@ -55,6 +55,7 @@ public class WrappingServiceImpl implements WrappingService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto) {
         Wrapping newWrapping = Wrapping.builder()
             .wrappingName(wrappingCreateRequestDto.getWrappingName())
