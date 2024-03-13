@@ -74,7 +74,6 @@ public class WrappingServiceImpl implements WrappingService {
         Wrapping wrapping = wrappingRepository.findById(wrappingId)
             .orElseThrow(() -> new NotFoundException(
                 WrappingMessageEnum.WRAPPING_NOT_FOUND.getMessage()));
-        System.out.println(wrappingCreateRequestDto.getIsActive());
         wrapping.update(wrappingCreateRequestDto.getWrappingName(),
             wrappingCreateRequestDto.getPrice(), wrappingCreateRequestDto.getIsActive());
     }
