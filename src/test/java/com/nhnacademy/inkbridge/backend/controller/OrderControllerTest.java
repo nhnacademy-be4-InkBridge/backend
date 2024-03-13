@@ -33,6 +33,7 @@ import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.impl.OrderFacade;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,9 +66,13 @@ class OrderControllerTest {
 
     OrderCreateRequestDto dto;
 
+    BookOrderDetailCreateRequestDto orderDetailCreateRequestDto;
+
+    BookOrderCreateRequestDto orderCreateRequestDto;
+
     @BeforeEach
     void setup() {
-        BookOrderDetailCreateRequestDto orderDetailCreateRequestDto = new BookOrderDetailCreateRequestDto();
+        orderDetailCreateRequestDto = new BookOrderDetailCreateRequestDto();
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "bookId", 1L);
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "price", 18000L);
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "amount", 3);
@@ -75,7 +80,7 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "couponId", "TestCoupon");
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "wrappingPrice", 3000L);
 
-        BookOrderCreateRequestDto orderCreateRequestDto = new BookOrderCreateRequestDto();
+        orderCreateRequestDto = new BookOrderCreateRequestDto();
         ReflectionTestUtils.setField(orderCreateRequestDto, "orderName", "orderName");
         ReflectionTestUtils.setField(orderCreateRequestDto, "receiverName", "receiverName");
         ReflectionTestUtils.setField(orderCreateRequestDto, "receiverPhoneNumber", "01011112222");
@@ -84,7 +89,7 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(orderCreateRequestDto, "detailAddress", "detailAddress");
         ReflectionTestUtils.setField(orderCreateRequestDto, "senderName", "senderName");
         ReflectionTestUtils.setField(orderCreateRequestDto, "senderPhoneNumber",
-            "senderPhoneNumber");
+            "01033334444");
         ReflectionTestUtils.setField(orderCreateRequestDto, "senderEmail",
             "sender@inkbridge.store");
         ReflectionTestUtils.setField(orderCreateRequestDto, "deliveryDate",
@@ -103,24 +108,495 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패")
-    void testCreateOrder_valid_failed() throws Exception {
-
-        BookOrderDetailCreateRequestDto detailCreateRequestDto = new BookOrderDetailCreateRequestDto();
-        BookOrderCreateRequestDto orderCreateRequestDto = new BookOrderCreateRequestDto();
-
-        OrderCreateRequestDto requestDto = new OrderCreateRequestDto();
-        ReflectionTestUtils.setField(requestDto, "bookOrderList", List.of(detailCreateRequestDto));
-        ReflectionTestUtils.setField(requestDto, "bookOrder", orderCreateRequestDto);
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문 이름 공백")
+    void testCreateOrder_valid_failed_orderName_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "orderName", "");
 
         mockMvc.perform(post("/api/orders")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
+                .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
                 ValidationException.class))
-            .andDo(document("order/order-post-422",
+            .andDo(document("order/order-post-422/order-name/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문 이름 길이")
+    void testCreateOrder_valid_failed_orderName_size() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "orderName",
+            UUID.randomUUID().toString().concat(UUID.randomUUID().toString()));
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/order-name/size",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 수취인 이름 길이")
+    void testCreateOrder_valid_failed_receiverName_size() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverName", "TeamInkBridgeReceiverName");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/receiver-name/size",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 수취인 이름 공백")
+    void testCreateOrder_valid_failed_receiverName_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverName", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/receiver-name/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 수취인 전화번호 패턴")
+    void testCreateOrder_valid_failed_receiverPhoneNumber_pattern() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverPhoneNumber", "111122223333");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/receiver-phone-number/pattern",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 수취인 전화번호 공백")
+    void testCreateOrder_valid_failed_receiverPhoneNumber_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverPhoneNumber", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/receiver-phone-number/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 우편번호 공백")
+    void testCreateOrder_valid_failed_zipCode_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "zipCode", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/zipCode/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 우편번호 패턴")
+    void testCreateOrder_valid_failed_zipCode_pattern() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "zipCode", "1234567");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/zipCode/pattern",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주소 공백")
+    void testCreateOrder_valid_failed_address_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "address", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/address/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 상세 주소 공백")
+    void testCreateOrder_valid_failed_detailAddress_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "detailAddress", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/detail-address/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 이름 공백")
+    void testCreateOrder_valid_failed_senderName_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderName", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-name/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 이름 길이")
+    void testCreateOrder_valid_failed_senderName_size() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderName", "TeamInkBridgeSenderName");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-name/size",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 전화번호 패턴")
+    void testCreateOrder_valid_failed_senderPhoneNumber_pattern() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderPhoneNumber", "111122223333");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-phone-number/pattern",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 전화번호 공백")
+    void testCreateOrder_valid_failed_senderPhoneNumber_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderPhoneNumber", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-phone-number/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 이메일 공백")
+    void testCreateOrder_valid_failed_senderEmail_blank() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderEmail", "");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-email/blank",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 이메일 공백")
+    void testCreateOrder_valid_failed_senderEmail_email() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderEmail", "inkbridge.store");
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/sender-email/email",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 배송 예정일 널 값")
+    void testCreateOrder_valid_failed_deliveryDate_null() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "deliveryDate", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/delivery-date/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 포인트 음수")
+    void testCreateOrder_valid_failed_point_negative() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "usePoint", -15L);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/point/negative",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 포인트 널")
+    void testCreateOrder_valid_failed_point_null() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "usePoint", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/point/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문 금액 음수")
+    void testCreateOrder_valid_failed_payAmount_negative() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "payAmount", -10000L);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/pay-amount/negative",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문 금액 널")
+    void testCreateOrder_valid_failed_payAmount_null() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "payAmount", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/pay-amount/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 배송비 음수")
+    void testCreateOrder_valid_failed_deliveryPrice_negative() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "deliveryPrice", -10000L);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/delivery-price/negative",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 배송비 널")
+    void testCreateOrder_valid_failed_deliveryPrice_null() throws Exception {
+        ReflectionTestUtils.setField(orderCreateRequestDto, "deliveryPrice", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/delivery-price/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 도서번호 널")
+    void testCreateOrder_valid_failed_bookId_null() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "bookId", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/book-id/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 도서 가격 널")
+    void testCreateOrder_valid_failed_price_null() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "price", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/price/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 도서 수량 널")
+    void testCreateOrder_valid_failed_amount_null() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "amount", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/amount/null",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 도서 수량 음수")
+    void testCreateOrder_valid_failed_amount_negative() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "amount", -1);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/amount/negative",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 포장비 음수")
+    void testCreateOrder_valid_failed_wrapping_negative() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "wrappingPrice", -1L);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/wrapping-price/negative",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 포장비 널")
+    void testCreateOrder_valid_failed_wrapping_null() throws Exception {
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "wrappingPrice", null);
+
+        mockMvc.perform(post("/api/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
+                ValidationException.class))
+            .andDo(document("order/order-post-422/wrapping-price/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
     }

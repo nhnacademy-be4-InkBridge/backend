@@ -76,6 +76,7 @@ public class BookOrderServiceImpl implements BookOrderService {
      * @param orderId 주문 번호
      * @return 주문 결제 정보
      */
+    @Transactional(readOnly = true)
     @Override
     public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId) {
         return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(
