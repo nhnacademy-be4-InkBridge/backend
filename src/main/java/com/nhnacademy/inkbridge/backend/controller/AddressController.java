@@ -31,12 +31,38 @@ public class AddressController {
 
     private final MemberAddressService memberAddressService;
 
+    /**
+     * 사용자 ID에 해당하는 모든 주소 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID (요청 헤더 'Authorization-Id'로 전달)
+     * @return 조회된 주소 정보 리스트와 HTTP 상태 코드 200
+     */
     @GetMapping
-    ResponseEntity<List<MemberAddressReadResponseDto>> getAddress(
+    ResponseEntity<List<MemberAddressReadResponseDto>> getAddresses(
         @RequestHeader("Authorization-Id") Long userId) {
         return ResponseEntity.ok(memberAddressService.getAddressByUserId(userId));
     }
 
+    /**
+     * 특정 주소 ID에 해당하는 주소 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID (요청 헤더 'Authorization-Id'로 전달)
+     * @param addressId 조회할 주소 ID
+     * @return 조회된 주소 정보와 HTTP 상태 코드 200
+     */
+    @GetMapping("/{addressId}")
+    ResponseEntity<MemberAddressReadResponseDto> getAddress(
+        @RequestHeader("Authorization-Id") Long userId, @PathVariable("addressId") Long addressId) {
+        return ResponseEntity.ok(memberAddressService.getAddressByUserIdAndAddressId(userId, addressId));
+    }
+
+    /**
+     * 새로운 주소 정보를 생성합니다.
+     *
+     * @param userId 사용자 ID (요청 헤더 'Authorization-Id'로 전달)
+     * @param addressCreateRequestDto 생성할 주소의 정보
+     * @return HTTP 상태 코드 200
+     */
     @PostMapping
     ResponseEntity<HttpStatus> createAddress(@RequestHeader("Authorization-Id") Long userId,
         @RequestBody AddressCreateRequestDto addressCreateRequestDto) {
@@ -44,6 +70,13 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * 기존 주소 정보를 수정합니다.
+     *
+     * @param userId 사용자 ID (요청 헤더 'Authorization-Id'로 전달)
+     * @param addressUpdateRequestDto 수정할 주소의 정보
+     * @return HTTP 상태 코드 200
+     */
     @PutMapping
     ResponseEntity<HttpStatus> modifyAddress(@RequestHeader("Authorization-Id") Long userId,
         @RequestBody AddressUpdateRequestDto addressUpdateRequestDto) {
@@ -51,6 +84,13 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * 특정 주소 정보를 삭제합니다.
+     *
+     * @param userId 사용자 ID (요청 헤더 'Authorization-Id'로 전달)
+     * @param addressId 삭제할 주소 ID
+     * @return HTTP 상태 코드 200
+     */
     @DeleteMapping("/{addressId}")
     ResponseEntity<HttpStatus> deleteAddress(@RequestHeader("Authorization-Id") Long userId,
         @PathVariable("addressId") Long addressId) {

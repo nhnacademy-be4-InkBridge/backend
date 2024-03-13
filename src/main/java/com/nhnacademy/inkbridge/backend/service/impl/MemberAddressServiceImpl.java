@@ -34,6 +34,12 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     private final MemberRepository memberRepository;
     private final GeneralAddressRepository generalAddressRepository;
 
+    /**
+     * 사용자 ID에 해당하는 모든 주소 정보를 조회합니다.
+     *
+     * @param userId 조회할 사용자의 ID
+     * @return 조회된 주소 정보 리스트
+     */
     @Override
     @Transactional(readOnly = true)
     public List<MemberAddressReadResponseDto> getAddressByUserId(Long userId) {
@@ -42,24 +48,38 @@ public class MemberAddressServiceImpl implements MemberAddressService {
                 Collectors.toList());
     }
 
+    /**
+     * 새로운 주소 정보를 생성합니다.
+     *
+     * @param userId 주소를 생성할 사용자의 ID
+     * @param addressCreateRequestDto 생성할 주소의 정보
+     */
     @Override
     public void createAddress(Long userId, AddressCreateRequestDto addressCreateRequestDto) {
         Member user = memberRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
         GeneralAddress generalAddress = generalAddressRepository.findByZipCodeAndAddress(
                 addressCreateRequestDto.getZipCode(), addressCreateRequestDto.getAddress())
-            .orElseGet(() -> generalAddressRepository.save(addressCreateRequestDto.toGeneralAddress()));
+            .orElseGet(
+                () -> generalAddressRepository.save(addressCreateRequestDto.toGeneralAddress()));
         MemberAddress memberAddress = addressCreateRequestDto.toEntity(user, generalAddress);
         memberAddressRepository.save(memberAddress);
     }
 
+    /**
+     * 주소 정보를 업데이트합니다.
+     *
+     * @param userId 업데이트할 주소의 사용자 ID
+     * @param addressUpdateRequestDto 업데이트할 주소 정보
+     */
     @Override
     public void updateAddress(Long userId, AddressUpdateRequestDto addressUpdateRequestDto) {
         Member user = memberRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
         GeneralAddress generalAddress = generalAddressRepository.findByZipCodeAndAddress(
                 addressUpdateRequestDto.getZipCode(), addressUpdateRequestDto.getAddress())
-            .orElseGet(() -> generalAddressRepository.save(addressUpdateRequestDto.toGeneralAddress()));
+            .orElseGet(
+                () -> generalAddressRepository.save(addressUpdateRequestDto.toGeneralAddress()));
         MemberAddress memberAddress = memberAddressRepository.findByMemberAndAddressId(user,
             addressUpdateRequestDto.getAddressId()).orElseThrow(() -> new NotFoundException(
             AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage()));
@@ -67,12 +87,34 @@ public class MemberAddressServiceImpl implements MemberAddressService {
         memberAddress.update(generalAddress, addressUpdateRequestDto);
         memberAddressRepository.save(memberAddress);
     }
-
+     /**
+     * 주소 정보를 삭제합니다.
+     *
+     * @param userId 삭제할 주소의 사용자 ID
+     * @param addressId 삭제할 주소의 ID
+     */
     @Override
     public void deleteAddress(Long userId, Long addressId) {
         MemberAddress memberAddress = memberAddressRepository.findByMemberMemberIdAndAddressId(
             userId, addressId).orElseThrow(
             () -> new NotFoundException(AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage()));
         memberAddressRepository.delete(memberAddress);
+    }
+
+
+    /**
+     * 사용자 ID와 주소 ID에 해당하는 주소 정보를 조회합니다.
+     *
+     * @param userId 조회할 사용자의 ID
+     * @param addressId 조회할 주소의 ID
+     * @return 조회된 주소 정보
+     */
+    @Override
+    public MemberAddressReadResponseDto getAddressByUserIdAndAddressId(Long userId,
+        Long addressId) {
+        return MemberAddressReadResponseDto.toDto(
+            memberAddressRepository.findByMemberMemberIdAndAddressId(userId, addressId).orElseThrow(
+                () -> new NotFoundException(
+                    AddressMessageEnum.ADDRESS_NOT_FOUND_ERROR.getMessage())));
     }
 }
