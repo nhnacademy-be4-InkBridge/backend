@@ -21,10 +21,16 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implements
     MemberCouponCustomRepository {
 
+    private final int ISSUABLE_COUPON_STATUS_ID = 1;
+
     public MemberCouponRepositoryImpl() {
         super(MemberCoupon.class);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<MemberCouponReadResponseDto> findOrderCoupons(Long memberId,
         BookCategoriesDto bookCategoriesDto) {
@@ -41,6 +47,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
             .leftJoin(categoryCoupon).on(coupon.couponId.eq(categoryCoupon.coupon.couponId))
             .where(memberCoupon.member.memberId.eq(memberId)
                 .and(memberCoupon.usedAt.isNull())
+                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(ISSUABLE_COUPON_STATUS_ID))
                 .and(bookCoupon.book.bookId.eq(bookCategoriesDto.getBookId())
                     .or(categoryCoupon.category.categoryId.in(bookCategoriesDto.getCategoryIds()))
                     .or(categoryCoupon.category.categoryId.isNull()
@@ -53,41 +60,12 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
                 coupon.minPrice,
                 coupon.discountPrice,
                 coupon.maxDiscountPrice,
-                coupon.couponType,
+                coupon.couponType.couponTypeId,
+                coupon.couponType.typeName,
                 coupon.isBirth,
-                coupon.couponStatus))
+                coupon.couponStatus.couponStatusId,
+                coupon.couponStatus.couponStatusName))
             .fetch();
         return result;
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-////    @Override
-//    public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
-//        QBook book = QBook.book;
-//        QAuthor author = QAuthor.author;
-//        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-//        QPublisher publisher = QPublisher.publisher;
-//        QBookStatus bookStatus = QBookStatus.bookStatus;
-//
-//        List<BooksReadResponseDto> content = from(book)
-//            .innerJoin(publisher)
-//            .on(book.publisher.eq(publisher))
-//            .innerJoin(bookStatus)
-//            .on(bookStatus.eq(book.bookStatus))
-//            .innerJoin(bookAuthor)
-//            .on(bookAuthor.book.eq(book))
-//            .innerJoin(author)
-//            .on(author.eq(bookAuthor.author))
-//            .where(bookStatus.statusId.eq(1L))
-//            .select(Projections.constructor(BooksReadResponseDto.class,
-//                book.bookId, book.bookTitle, book.price, publisher.publisherName,
-//                author.authorName, book.thumbnailFile.fileUrl))
-//            .offset(pageable.getOffset())
-//            .limit(pageable.getPageSize())
-//            .fetch();
-//
-//        return new PageImpl<>(content, pageable, content.size());
-//    }
 }
