@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @version 2/15/24
  */
 @Getter
-@Setter
 @NoArgsConstructor
 public class MemberCreateRequestDto {
     @Email(message = "이메일 형식이 틀렸습니다.")

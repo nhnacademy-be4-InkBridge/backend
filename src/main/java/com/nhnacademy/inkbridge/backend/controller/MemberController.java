@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
@@ -49,6 +50,13 @@ public class MemberController {
     private final MemberService memberService;
     private final CouponService couponService;
 
+    /**
+     * 회원가입 하는 메서드입니다.
+     *
+     * @param memberCreateRequestDto 회원가입 폼 데이터
+     * @param bindingResult valid 결과
+     * @return 회원가입 성공
+     */
     @PostMapping("/members")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
                                              BindingResult bindingResult) {
@@ -68,10 +76,9 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
-        log.info("login info start ->");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
                 memberService.loginInfoMember(memberAuthLoginRequestDto);
-        log.info("login info end -> {}",memberAuthLoginResponseDto.getEmail());
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
     }
 
@@ -103,5 +110,18 @@ public class MemberController {
         return ResponseEntity.ok(
             couponService.getMemberCouponList(memberId, statusEnum
             ));
+    }
+
+
+    @PostMapping("/oauth/check")
+    public ResponseEntity<Boolean> oauthMemberCheck(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<String> getOAuthEmail(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 }
