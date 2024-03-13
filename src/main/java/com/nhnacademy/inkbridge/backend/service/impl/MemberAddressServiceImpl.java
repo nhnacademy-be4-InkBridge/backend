@@ -55,6 +55,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
      * @param addressCreateRequestDto 생성할 주소의 정보
      */
     @Override
+    @Transactional
     public void createAddress(Long userId, AddressCreateRequestDto addressCreateRequestDto) {
         Member user = memberRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
@@ -73,6 +74,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
      * @param addressUpdateRequestDto 업데이트할 주소 정보
      */
     @Override
+    @Transactional
     public void updateAddress(Long userId, AddressUpdateRequestDto addressUpdateRequestDto) {
         Member user = memberRepository.findById(userId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
@@ -94,6 +96,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
      * @param addressId 삭제할 주소의 ID
      */
     @Override
+    @Transactional
     public void deleteAddress(Long userId, Long addressId) {
         MemberAddress memberAddress = memberAddressRepository.findByMemberMemberIdAndAddressId(
             userId, addressId).orElseThrow(
@@ -110,6 +113,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
      * @return 조회된 주소 정보
      */
     @Override
+    @Transactional(readOnly = true)
     public MemberAddressReadResponseDto getAddressByUserIdAndAddressId(Long userId,
         Long addressId) {
         return MemberAddressReadResponseDto.toDto(
