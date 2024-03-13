@@ -16,4 +16,6 @@ public interface MemberCustomRepository {
     MemberAuthLoginResponseDto findByMemberAuth(String email);
 
     Optional<MemberInfoResponseDto> findByMemberInfo(Long memberId);
+
+
 }
