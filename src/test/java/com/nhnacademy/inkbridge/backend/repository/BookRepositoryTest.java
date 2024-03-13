@@ -146,7 +146,8 @@ class BookRepositoryTest {
             () -> assertEquals(book.getPrice(), books.getContent().get(0).getPrice()),
             () -> assertEquals(publisher.getPublisherName(),
                 books.getContent().get(0).getPublisherName()),
-            () -> assertEquals(author.getAuthorName(), books.getContent().get(0).getAuthorName()),
+            () -> assertEquals(author.getAuthorName(),
+                books.getContent().get(0).getAuthorName().get(0)),
             () -> assertEquals(file.getFileUrl(), books.getContent().get(0).getFileUrl())
         );
     }
@@ -172,8 +173,7 @@ class BookRepositoryTest {
                     publisher.getPublisherId()),
                 () -> assertEquals(bookReadResponseDto.getPublisherName(),
                     publisher.getPublisherName()),
-                () -> assertEquals(bookReadResponseDto.getAuthorId(), author.getAuthorId()),
-                () -> assertEquals(bookReadResponseDto.getAuthorName(), author.getAuthorName()),
+                () -> assertEquals(1, bookReadResponseDto.getAuthors().size()),
                 () -> assertEquals(bookReadResponseDto.getWish(), wish.getPk().getMemberId()),
                 () -> assertEquals(1, bookReadResponseDto.getFileUrl().size()),
                 () -> assertEquals(1, bookReadResponseDto.getTagName().size()),
@@ -202,7 +202,7 @@ class BookRepositoryTest {
             () -> assertEquals(allBooksByAdmin.getContent().get(0).getBookId(), book.getBookId()),
             () -> assertEquals(allBooksByAdmin.getContent().get(0).getBookTitle(),
                 book.getBookTitle()),
-            () -> assertEquals(allBooksByAdmin.getContent().get(0).getAuthorName(),
+            () -> assertEquals(allBooksByAdmin.getContent().get(0).getAuthorName().get(0),
                 author.getAuthorName()),
             () -> assertEquals(allBooksByAdmin.getContent().get(0).getPublisherName(),
                 publisher.getPublisherName()),
@@ -230,7 +230,8 @@ class BookRepositoryTest {
                 () -> assertEquals(bookByAdminByBookId.getDiscountRatio(), book.getDiscountRatio()),
                 () -> assertEquals(bookByAdminByBookId.getStock(), book.getStock()),
                 () -> assertEquals(bookByAdminByBookId.getIsPackagable(), book.getIsPackagable()),
-                () -> assertEquals(bookByAdminByBookId.getAuthorId(), author.getAuthorId()),
+                () -> assertEquals(bookByAdminByBookId.getAuthorIdList().get(0),
+                    author.getAuthorId()),
                 () -> assertEquals(bookByAdminByBookId.getPublisherId(),
                     publisher.getPublisherId()),
                 () -> assertEquals(bookByAdminByBookId.getStatusId(), bookStatus.getStatusId()),

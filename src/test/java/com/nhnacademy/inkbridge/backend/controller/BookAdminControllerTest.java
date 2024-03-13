@@ -107,7 +107,7 @@ class BookAdminControllerTest {
         BooksAdminReadResponseDto booksAdminReadResponseDto = BooksAdminReadResponseDto.builder()
             .bookId(1L)
             .bookTitle("title")
-            .authorName("author")
+            .authorName(List.of("author"))
             .publisherName("publisher")
             .statusName("status")
             .build();
@@ -120,18 +120,18 @@ class BookAdminControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.content.[0].bookId", equalTo(1)))
             .andExpect(jsonPath("$.content.[0].bookTitle", equalTo("title")))
-            .andExpect(jsonPath("$.content.[0].authorName", equalTo("author")))
+            .andExpect(jsonPath("$.content.[0].authorName[0]", equalTo("author")))
             .andExpect(jsonPath("$.content.[0].publisherName", equalTo("publisher")))
             .andExpect(jsonPath("$.content.[0].statusName", equalTo("status")))
             .andDo(document("book/get-books",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
-                    fieldWithPath("content.[].bookId").description("도서 번호"),
-                    fieldWithPath("content.[].bookTitle").description("도서 이름"),
-                    fieldWithPath("content.[].authorName").description("저자 이름"),
-                    fieldWithPath("content.[].publisherName").description("출판사 이름"),
-                    fieldWithPath("content.[].statusName").description("도서 상태 이름"),
+                    fieldWithPath("content[].bookId").description("도서 번호"),
+                    fieldWithPath("content[].bookTitle").description("도서 이름"),
+                    fieldWithPath("content[].authorName").description("저자 이름"),
+                    fieldWithPath("content[].publisherName").description("출판사 이름"),
+                    fieldWithPath("content[].statusName").description("도서 상태 이름"),
                     fieldWithPath("totalPages").description("총 페이지"),
                     fieldWithPath("totalElements").description("총 개수"),
                     fieldWithPath("size").description("화면에 출력할 개수"),
@@ -153,7 +153,7 @@ class BookAdminControllerTest {
             .discountRatio(BigDecimal.valueOf(33.3))
             .stock(100)
             .isPackagable(true)
-            .authorId(1L)
+            .authorIdList(List.of(1L))
             .publisherId(1L)
             .statusId(1L)
             .url("test")
@@ -186,7 +186,7 @@ class BookAdminControllerTest {
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.discountRatio", equalTo(33.3)))
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.stock", equalTo(100)))
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.isPackagable", equalTo(true)))
-            .andExpect(jsonPath("$.adminSelectedReadResponseDto.authorId", equalTo(1)))
+            .andExpect(jsonPath("$.adminSelectedReadResponseDto.authorIdList[0]", equalTo(1)))
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.publisherId", equalTo(1)))
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.statusId", equalTo(1)))
             .andExpect(jsonPath("$.adminSelectedReadResponseDto.url", equalTo("test")))
@@ -217,7 +217,8 @@ class BookAdminControllerTest {
                     fieldWithPath("adminSelectedReadResponseDto.discountRatio").description("할인율"),
                     fieldWithPath("adminSelectedReadResponseDto.stock").description("재고"),
                     fieldWithPath("adminSelectedReadResponseDto.isPackagable").description("포장 여부"),
-                    fieldWithPath("adminSelectedReadResponseDto.authorId").description("작가 번호"),
+                    fieldWithPath("adminSelectedReadResponseDto.authorIdList").description(
+                        "작가 번호 리스트"),
                     fieldWithPath("adminSelectedReadResponseDto.publisherId").description("출판사 번호"),
                     fieldWithPath("adminSelectedReadResponseDto.statusId").description("도서 상태 번호"),
                     fieldWithPath("adminSelectedReadResponseDto.url").description("도서 썸네일"),

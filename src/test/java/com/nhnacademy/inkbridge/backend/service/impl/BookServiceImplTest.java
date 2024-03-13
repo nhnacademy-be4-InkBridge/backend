@@ -21,7 +21,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
-import com.nhnacademy.inkbridge.backend.entity.BookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.BookStatus;
 import com.nhnacademy.inkbridge.backend.entity.Category;
 import com.nhnacademy.inkbridge.backend.entity.File;
@@ -225,7 +224,7 @@ class BookServiceImplTest {
         when(bookAdminCreateRequestDto.getCategories()).thenReturn(Set.of(1L));
         when(bookAdminCreateRequestDto.getTags()).thenReturn(List.of(1L));
         when(bookAdminCreateRequestDto.getFileIdList()).thenReturn(List.of(1L));
-        when(bookAdminCreateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminCreateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminCreateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.save(any(Book.class))).thenReturn(book);
@@ -236,7 +235,7 @@ class BookServiceImplTest {
             Optional.of(mock(Tag.class)));
         when(bookTagRepository.saveAll(any())).thenReturn(Collections.emptyList());
         when(authorRepository.findById(anyLong())).thenReturn(Optional.of(mock(Author.class)));
-        when(bookAuthorRepository.save(any())).thenReturn(null);
+        when(bookAuthorRepository.saveAll(any())).thenReturn(Collections.emptyList());
         when(publisherRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Publisher.class)));
         when(fileRepository.findById(anyLong())).thenReturn(Optional.of(mock(File.class)));
@@ -256,7 +255,7 @@ class BookServiceImplTest {
 
         verify(bookFileRepository, times(1)).saveAll(any());
         verify(bookTagRepository, times(1)).saveAll(any());
-        verify(bookAuthorRepository, times(1)).save(any());
+        verify(bookAuthorRepository, times(1)).saveAll(any());
         verify(bookCategoryRepository, times(1)).saveAll(any());
     }
 
@@ -278,6 +277,7 @@ class BookServiceImplTest {
     @Test
     void givenInvalidAuthor_whenCreateBook_thenThrowNotFoundException() {
         BookAdminCreateRequestDto bookAdminCreateRequestDto = mock(BookAdminCreateRequestDto.class);
+        when(bookAdminCreateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookRepository.save(any())).thenReturn(mock(Book.class));
         when(publisherRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Publisher.class)));
@@ -358,7 +358,7 @@ class BookServiceImplTest {
         when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
         when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getFileIdList()).thenReturn(List.of(1L));
-        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
@@ -369,7 +369,8 @@ class BookServiceImplTest {
 
         when(authorRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Author.class)));
-        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+        doNothing().when(bookAuthorRepository).deleteAllByBook_BookId(anyLong());
+        when(bookAuthorRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
         when(fileRepository.findById(anyLong())).thenReturn(Optional.of(mock(File.class)));
         doNothing().when(bookFileRepository).deleteAllByBook_BookId(anyLong());
@@ -454,7 +455,7 @@ class BookServiceImplTest {
         when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
         when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getFileIdList()).thenReturn(List.of(1L));
-        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
@@ -465,7 +466,8 @@ class BookServiceImplTest {
 
         when(authorRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Author.class)));
-        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+        doNothing().when(bookAuthorRepository).deleteAllByBook_BookId(anyLong());
+        when(bookAuthorRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
         when(fileRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -496,7 +498,7 @@ class BookServiceImplTest {
 
         when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
         when(bookAdminUpdateRequestDto.getTags()).thenReturn(List.of(1L));
-        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
@@ -507,7 +509,8 @@ class BookServiceImplTest {
 
         when(authorRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Author.class)));
-        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+        doNothing().when(bookAuthorRepository).deleteAllByBook_BookId(anyLong());
+        when(bookAuthorRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
         when(categoryRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Category.class)));
@@ -533,7 +536,7 @@ class BookServiceImplTest {
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
 
         when(bookAdminUpdateRequestDto.getCategories()).thenReturn(Set.of(1L));
-        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));
@@ -544,7 +547,8 @@ class BookServiceImplTest {
 
         when(authorRepository.findById(anyLong())).thenReturn(
             Optional.of(mock(Author.class)));
-        when(bookAuthorRepository.findByPk_BookId(anyLong())).thenReturn(mock(BookAuthor.class));
+        doNothing().when(bookAuthorRepository).deleteAllByBook_BookId(anyLong());
+        when(bookAuthorRepository.saveAll(any())).thenReturn(Collections.emptyList());
 
         when(categoryRepository.findById(anyLong())).thenReturn(
             Optional.empty());
@@ -565,7 +569,7 @@ class BookServiceImplTest {
     void givenInvalidBookAuthor_whenUpdateBook_thenThrowNotFoundException() {
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto = mock(BookAdminUpdateRequestDto.class);
 
-        when(bookAdminUpdateRequestDto.getAuthorId()).thenReturn(1L);
+        when(bookAdminUpdateRequestDto.getAuthorIdList()).thenReturn(List.of(1L));
         when(bookAdminUpdateRequestDto.getPublisherId()).thenReturn(1L);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(mock(Book.class)));

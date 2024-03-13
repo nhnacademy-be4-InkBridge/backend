@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.when;
@@ -11,6 +12,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,7 +25,9 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +70,7 @@ class BookControllerTest {
             .bookTitle("title")
             .price(1000L)
             .publisherName("publisher")
-            .authorName("author")
+            .authorName(List.of("author"))
             .fileUrl("url")
             .build();
         Page<BooksReadResponseDto> page = new PageImpl<>(List.of(booksReadResponseDto));
@@ -76,12 +80,12 @@ class BookControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.content.[0].bookId", equalTo(1)))
-            .andExpect(jsonPath("$.content.[0].bookTitle", equalTo("title")))
-            .andExpect(jsonPath("$.content.[0].price", equalTo(1000)))
-            .andExpect(jsonPath("$.content.[0].publisherName", equalTo("publisher")))
-            .andExpect(jsonPath("$.content.[0].authorName", equalTo("author")))
-            .andExpect(jsonPath("$.content.[0].fileUrl", equalTo("url")))
+            .andExpect(jsonPath("$.content[0].bookId", equalTo(1)))
+            .andExpect(jsonPath("$.content[0].bookTitle", equalTo("title")))
+            .andExpect(jsonPath("$.content[0].price", equalTo(1000)))
+            .andExpect(jsonPath("$.content[0].publisherName", equalTo("publisher")))
+            .andExpect(jsonPath("$.content[0].authorName[0]", equalTo("author")))
+            .andExpect(jsonPath("$.content[0].fileUrl", equalTo("url")))
             .andDo(document("book/member-get-books",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -102,13 +106,15 @@ class BookControllerTest {
 
     @Test
     void whenReadBook_thenReturnDto() throws Exception {
+        Map<Long, String> author = new HashMap<>();
+        author.put(1L, "author");
+
         BookReadResponseDto bookReadResponseDto = BookReadResponseDto.builder()
             .bookTitle("title").bookIndex("index").description("description").publicatedAt(
                 LocalDate.now()).isbn("1234567890123").regularPrice(10000L).price(8000L)
             .discountRatio(new BigDecimal("3.3"))
             .isPackagable(true).thumbnail("thumbnail").publisherId(1L).publisherName("publisher")
-            .authorId(1L)
-            .authorName("author").wish(1L).fileUrl(Set.of("url")).tagName(Set.of("tag"))
+            .authors(author).wish(1L).fileUrl(Set.of("url")).tagName(Set.of("tag"))
             .categoryName(Set.of("category")).build();
         when(bookService.readBook(anyLong(), anyLong())).thenReturn(bookReadResponseDto);
 
@@ -127,8 +133,7 @@ class BookControllerTest {
             .andExpect(jsonPath("$.thumbnail", equalTo("thumbnail")))
             .andExpect(jsonPath("$.publisherId", equalTo(1)))
             .andExpect(jsonPath("$.publisherName", equalTo("publisher")))
-            .andExpect(jsonPath("$.authorId", equalTo(1)))
-            .andExpect(jsonPath("$.authorName", equalTo("author")))
+            .andExpect(jsonPath("$.authors", hasKey("1")))
             .andExpect(jsonPath("$.wish", equalTo(1)))
             .andExpect(jsonPath("$.fileUrl[0]", equalTo("url")))
             .andExpect(jsonPath("$.tagName[0]", equalTo("tag")))
@@ -148,10 +153,10 @@ class BookControllerTest {
                     fieldWithPath("discountRatio").description("도서 할인율"),
                     fieldWithPath("isPackagable").description("도서 포장여부"),
                     fieldWithPath("thumbnail").description("도서 썸네일"),
+                    fieldWithPath("statusName").description("도서 상태 이름"),
                     fieldWithPath("publisherId").description("출판사 번호"),
                     fieldWithPath("publisherName").description("출판사 이름"),
-                    fieldWithPath("authorId").description("작가 번호"),
-                    fieldWithPath("authorName").description("작가 이름"),
+                    subsectionWithPath("authors").description("작가"),
                     fieldWithPath("wish").description("좋아요"),
                     fieldWithPath("fileUrl[]").description("도서 상세 이미지"),
                     fieldWithPath("tagName[]").description("태그 이름"),
