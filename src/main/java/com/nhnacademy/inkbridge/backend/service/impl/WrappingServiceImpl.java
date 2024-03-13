@@ -58,7 +58,8 @@ public class WrappingServiceImpl implements WrappingService {
     public void createWrapping(WrappingCreateRequestDto wrappingCreateRequestDto) {
         Wrapping newWrapping = Wrapping.builder()
             .wrappingName(wrappingCreateRequestDto.getWrappingName())
-            .price(wrappingCreateRequestDto.getPrice()).build();
+            .price(wrappingCreateRequestDto.getPrice())
+            .isActive(wrappingCreateRequestDto.getIsActive()).build();
         wrappingRepository.save(newWrapping);
     }
 
@@ -73,8 +74,8 @@ public class WrappingServiceImpl implements WrappingService {
         Wrapping wrapping = wrappingRepository.findById(wrappingId)
             .orElseThrow(() -> new NotFoundException(
                 WrappingMessageEnum.WRAPPING_NOT_FOUND.getMessage()));
-        System.out.println(wrappingCreateRequestDto.isActive());
+        System.out.println(wrappingCreateRequestDto.getIsActive());
         wrapping.update(wrappingCreateRequestDto.getWrappingName(),
-            wrappingCreateRequestDto.getPrice(), wrappingCreateRequestDto.isActive());
+            wrappingCreateRequestDto.getPrice(), wrappingCreateRequestDto.getIsActive());
     }
 }

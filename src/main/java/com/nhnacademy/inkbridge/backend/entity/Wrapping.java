@@ -35,10 +35,10 @@ public class Wrapping {
     private Boolean isActive;
 
     @Builder
-    public Wrapping(String wrappingName, Long price) {
+    public Wrapping(String wrappingName, Long price, Boolean isActive) {
         this.wrappingName = wrappingName;
         this.price = price;
-        this.isActive = true;
+        this.isActive = isActive;
     }
 
     public void update(String wrappingName, Long price, boolean isActive) {

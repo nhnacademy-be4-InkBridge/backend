@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * class: WrappingCreateRequestDto.
@@ -17,10 +19,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class WrappingCreateRequestDto {
 
     @NotNull(message = "포장지 이름을 입력해주세요.")
     @NotBlank(message = "포장지 이름이 공란입니다.")
+    @Length(max = 20)
     private String wrappingName;
 
     @NotNull(message = "가격을 입력해주세요.")
@@ -29,5 +33,5 @@ public class WrappingCreateRequestDto {
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     @NotNull
-    private boolean isActive;
+    private Boolean isActive;
 }
