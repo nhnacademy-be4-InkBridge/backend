@@ -31,11 +31,8 @@ public class OrderFacade {
      * @return 주문 번호
      */
     public OrderCreateResponseDto createOrder(OrderCreateRequestDto requestDto) {
-        // 주문 정보 저장 후 주문 번호 받아오기
         OrderCreateResponseDto responseDto = bookOrderService.createBookOrder(requestDto.getBookOrder());
-        // 주문 상세 저장
         bookOrderDetailService.createBookOrderDetail(responseDto.getOrderId(), requestDto.getBookOrderList());
-        //
 
         return responseDto;
     }
