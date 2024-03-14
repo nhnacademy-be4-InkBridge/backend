@@ -46,7 +46,7 @@ public class BookAdminCreateRequestDto {
 
     private List<Long> tags;
 
-    private Long authorId;
+    private List<Long> authorIdList;
 
     private List<Long> fileIdList;
 }

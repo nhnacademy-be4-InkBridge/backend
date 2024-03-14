@@ -10,7 +10,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import java.util.List;
 import java.util.Set;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +27,7 @@ public interface BookService {
      * @param pageable pageable
      * @return BooksReadResponseDto
      */
-    Page<BooksReadResponseDto> readBooks(Pageable pageable);
+    BooksReadResponseDto readBooks(Pageable pageable);
 
     /**
      * bookId에 따른 도서 목록을 가져오는 메서드입니다.
@@ -45,7 +44,7 @@ public interface BookService {
      * @param pageable   Pageable
      * @return BooksReadResponseDto page
      */
-    Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable);
+    BooksReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
 
     /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
@@ -61,7 +60,7 @@ public interface BookService {
      * @param pageable pageable
      * @return BooksAdminReadResponseDto
      */
-    Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable);
+    BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable);
 
     /**
      * admin 페이지에서 저장된 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을

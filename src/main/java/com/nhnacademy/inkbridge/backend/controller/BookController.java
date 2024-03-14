@@ -7,7 +7,7 @@ import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author minm063
  * @version 2024/02/14
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -40,8 +41,8 @@ public class BookController {
      * @return BooksReadResponseDto List
      */
     @GetMapping
-    public ResponseEntity<Page<BooksReadResponseDto>> readBooks(Pageable pageable) {
-        Page<BooksReadResponseDto> content = bookService.readBooks(pageable);
+    public ResponseEntity<BooksReadResponseDto> readBooks(Pageable pageable) {
+        BooksReadResponseDto content = bookService.readBooks(pageable);
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
@@ -65,9 +66,10 @@ public class BookController {
      * @return BooksReadResponseDto page
      */
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<Page<BooksReadResponseDto>> readBooksByCategory(
+    public ResponseEntity<BooksReadResponseDto> readBooksByCategory(
         @PathVariable Long categoryId, Pageable pageable) {
-        Page<BooksReadResponseDto> content = bookService.readBooksByCategory(categoryId, pageable);
+        BooksReadResponseDto content = bookService.readBooksByCategory(categoryId,
+            pageable);
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 

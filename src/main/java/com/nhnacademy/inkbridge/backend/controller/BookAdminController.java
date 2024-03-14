@@ -9,7 +9,6 @@ import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,10 +48,10 @@ public class BookAdminController {
      * @return ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<Page<BooksAdminReadResponseDto>> readBooks(Pageable pageable) {
-        Page<BooksAdminReadResponseDto> booksDtoByAdmin = bookService.readBooksByAdmin(
+    public ResponseEntity<BooksAdminReadResponseDto> readBooks(Pageable pageable) {
+        BooksAdminReadResponseDto content = bookService.readBooksByAdmin(
             pageable);
-        return new ResponseEntity<>(booksDtoByAdmin, HttpStatus.OK);
+        return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
     /**

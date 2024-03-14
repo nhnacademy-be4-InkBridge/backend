@@ -35,7 +35,7 @@ public class BookAdminSelectedReadResponseDto {
 
     private final Boolean isPackagable;
 
-    private final Long authorId;
+    private final List<Long> authorIdList;
 
     private final Long publisherId;
 
@@ -50,8 +50,9 @@ public class BookAdminSelectedReadResponseDto {
     @Builder
     public BookAdminSelectedReadResponseDto(String bookTitle, String bookIndex, String description,
         LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
-        BigDecimal discountRatio, Integer stock, Boolean isPackagable, Long authorId,
-        Long publisherId, Long statusId, String url, List<Long> categoryIdList,
+        BigDecimal discountRatio, Integer stock, Boolean isPackagable,
+        List<Long> authorIdList, Long publisherId, Long statusId, String url,
+        List<Long> categoryIdList,
         List<Long> tagIdList) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
@@ -63,7 +64,7 @@ public class BookAdminSelectedReadResponseDto {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
-        this.authorId = authorId;
+        this.authorIdList = authorIdList;
         this.publisherId = publisherId;
         this.statusId = statusId;
         this.url = url;
