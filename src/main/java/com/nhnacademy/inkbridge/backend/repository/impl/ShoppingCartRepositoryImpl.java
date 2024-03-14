@@ -7,7 +7,6 @@ import com.nhnacademy.inkbridge.backend.entity.QShoppingCart;
 import com.nhnacademy.inkbridge.backend.entity.ShoppingCart;
 import com.nhnacademy.inkbridge.backend.repository.custom.ShoppingCartRepositoryCustom;
 import com.querydsl.core.types.Projections;
-import java.util.Collections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -33,16 +32,11 @@ public class ShoppingCartRepositoryImpl extends QuerydslRepositorySupport implem
         QBook book = QBook.book;
         QMember member = QMember.member;
 
-        List<CartReadResponseDto> list = from(shoppingCart)
+        return from(shoppingCart)
             .innerJoin(book).on(book.bookId.eq(shoppingCart.book.bookId))
             .innerJoin(member).on(member.memberId.eq(shoppingCart.member.memberId))
             .where(member.memberId.eq(memberId))
             .select(Projections.constructor(CartReadResponseDto.class, shoppingCart.amount,
                 book.bookId)).fetch();
-
-        if (list.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return list;
     }
 }

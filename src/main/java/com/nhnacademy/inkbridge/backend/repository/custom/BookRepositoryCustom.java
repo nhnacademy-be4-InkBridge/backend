@@ -3,8 +3,8 @@ package com.nhnacademy.inkbridge.backend.repository.custom;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +27,7 @@ public interface BookRepositoryCustom {
      * @param pageable pagination
      * @return 메인 페이지 도서 목록 조회 데이터
      */
-    Page<BooksReadResponseDto> findAllBooks(Pageable pageable);
+    Page<BooksPaginationReadResponseDto> findAllBooks(Pageable pageable);
 
     /**
      * 카테고리 아이디에 대한 도서 목록 조회 메서드입니다.
@@ -36,7 +36,7 @@ public interface BookRepositoryCustom {
      * @param categoryId Long
      * @return BooksReadResponseDto Page
      */
-    Page<BooksReadResponseDto> findAllBooksByCategory(Pageable pageable, Long categoryId);
+    Page<BooksPaginationReadResponseDto> findAllBooksByCategory(Pageable pageable, Long categoryId);
 
     /**
      * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
@@ -53,7 +53,7 @@ public interface BookRepositoryCustom {
      * @param pageable pagination
      * @return admin 도서 목록 조회 데이터
      */
-    Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable);
+    Page<BooksAdminPaginationReadResponseDto> findAllBooksByAdmin(Pageable pageable);
 
     /**
      * admin 도서 상세 페이지 조회 메서드입니다.

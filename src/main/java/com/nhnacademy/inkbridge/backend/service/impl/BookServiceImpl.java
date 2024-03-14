@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
@@ -8,7 +9,9 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDt
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
@@ -103,8 +106,13 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
-        return bookRepository.findAllBooks(pageable);
+    public BooksReadResponseDto readBooks(Pageable pageable) {
+        Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooks(pageable);
+        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+            books.stream().map(BooksPaginationReadResponseDto::getBookId).collect(
+                Collectors.toList()));
+        return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
+            .authorPaginationReadResponseDto(authors).build();
     }
 
     /**
@@ -121,8 +129,15 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable) {
-        return bookRepository.findAllBooksByCategory(pageable, categoryId);
+    public BooksReadResponseDto readBooksByCategory(Long categoryId,
+        Pageable pageable) {
+        Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByCategory(
+            pageable, categoryId);
+        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+            books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
+                .collect(Collectors.toList()));
+        return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
+            .authorPaginationReadResponseDto(authors).build();
     }
 
     /**
@@ -144,8 +159,14 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable) {
-        return bookRepository.findAllBooksByAdmin(pageable);
+    public BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable) {
+        Page<BooksAdminPaginationReadResponseDto> books = bookRepository.findAllBooksByAdmin(
+            pageable);
+        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+            books.getContent().stream().map(BooksAdminPaginationReadResponseDto::getBookId).collect(
+                Collectors.toList()));
+        return BooksAdminReadResponseDto.builder().booksAdminPaginationReadResponseDtos(books)
+            .authorPaginationReadResponseDtos(authors).build();
     }
 
     /**
