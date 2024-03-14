@@ -113,4 +113,6 @@ public interface CouponService {
      * @return 쿠폰의 상세정보, 카테고리, 책등 연관관계를 보여줌
      */
     CouponDetailReadResponseDto getDetailCoupon(String couponId);
+
+    void useCoupons(Long id, List<String> couponId);
 }

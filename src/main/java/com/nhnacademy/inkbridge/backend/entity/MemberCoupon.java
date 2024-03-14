@@ -70,4 +70,8 @@ public class MemberCoupon {
             .usedAt(this.getUsedAt()).build();
     }
 
+    public void use() {
+        this.usedAt = LocalDate.now();
+    }
+
 }
