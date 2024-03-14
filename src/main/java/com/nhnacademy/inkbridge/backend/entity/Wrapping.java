@@ -35,7 +35,8 @@ public class Wrapping {
     private Boolean isActive;
 
     @Builder
-    public Wrapping(String wrappingName, Long price, Boolean isActive) {
+    public Wrapping(Long wrappingId, String wrappingName, Long price, Boolean isActive) {
+        this.wrappingId = wrappingId;
         this.wrappingName = wrappingName;
         this.price = price;
         this.isActive = isActive;
