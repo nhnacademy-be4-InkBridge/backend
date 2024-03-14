@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +18,10 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "general_address")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 public class GeneralAddress {
+
     @Id
     @Column(name = "general_address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +32,11 @@ public class GeneralAddress {
 
     @Column(name = "address")
     private String address;
+
+    @Builder
+    public GeneralAddress(Long addressId, String zipCode, String address) {
+        this.addressId = addressId;
+        this.zipCode = zipCode;
+        this.address = address;
+    }
 }
