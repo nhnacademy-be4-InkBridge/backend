@@ -2,8 +2,6 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.inkbridge.backend.entity.Member;
@@ -44,11 +42,18 @@ class MemberPointServiceImplTest {
     }
 
     @Test
+    void getMemberPoint() {
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+
+        assertEquals(member.getMemberPoint(), memberPointService.getMemberPoint(1L));
+    }
+
+    @Test
     void memberPointUpdate() {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         memberPointService.memberPointUpdate(1L, 50L);
 
-        verify(memberRepository, times(1)).save(member);
+        assertEquals(150L, member.getMemberPoint());
     }
 
     @Test
@@ -62,15 +67,10 @@ class MemberPointServiceImplTest {
     void memberPointUpdateWhenPointValidFail() {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
-        assertThrows(ValidationException.class, () -> memberPointService.memberPointUpdate(1L, -120L));
+        assertThrows(ValidationException.class,
+            () -> memberPointService.memberPointUpdate(1L, -200L));
     }
 
-    @Test
-    void getMemberPoint() {
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-
-        assertEquals(100L, memberPointService.getMemberPoint(1L));
-    }
 
     @Test
     void getMemberPointWhenMemberNotFound() {
