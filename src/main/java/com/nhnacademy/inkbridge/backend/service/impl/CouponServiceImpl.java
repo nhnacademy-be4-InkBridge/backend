@@ -428,11 +428,15 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional
     public void useCoupons(Long id, List<String> couponId) {
         List<MemberCoupon> useCoupons = memberCouponRepository.findAllById(couponId);
         if (useCoupons.size() != couponId.size()) {
             throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
         }
-        useCoupons.iterator().forEachRemaining(coupon -> coupon.use());
+        useCoupons.forEach(coupon -> {
+            validateCouponUsed(coupon);
+            coupon.use();
+        });
     }
 }
