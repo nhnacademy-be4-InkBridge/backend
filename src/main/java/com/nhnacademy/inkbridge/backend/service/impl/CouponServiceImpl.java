@@ -71,7 +71,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CouponServiceImpl implements CouponService {
 
-    private static final int COUPON_LENGTH = 10;
     private static final int COUPON_NORMAL = 1;
     private static final int COUPON_WAIT = 4;
     private final CouponRepository couponRepository;
@@ -121,6 +120,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
         validDuplicatedCouponName(couponCreateRequestDto.getCouponName());
@@ -132,11 +132,10 @@ public class CouponServiceImpl implements CouponService {
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
             .basicIssuedDate(couponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(couponCreateRequestDto.getDiscountPrice())
-            .isBirth(couponCreateRequestDto.getIsBirth())
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
     }
 
     /**
@@ -158,11 +157,10 @@ public class CouponServiceImpl implements CouponService {
             .basicIssuedDate(categoryCouponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(categoryCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(categoryCouponCreateRequestDto.getMaxDiscountPrice())
-            .isBirth(false)
             .minPrice(categoryCouponCreateRequestDto.getMinPrice())
             .validity(categoryCouponCreateRequestDto.getValidity()).couponStatus(couponStatus)
             .build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
         Set<Long> categoryIds = categoryCouponCreateRequestDto.getCategoryIds();
         for (Long categoryId : categoryIds) {
             Category category = categoryRepository.findById(categoryId)
@@ -187,7 +185,6 @@ public class CouponServiceImpl implements CouponService {
             .basicIssuedDate(bookCouponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(bookCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(bookCouponCreateRequestDto.getMaxDiscountPrice())
-            .isBirth(false)
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
@@ -204,11 +201,13 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
-        Coupon coupon = couponRepository.findById(issueCouponDto.getCouponId()).orElseThrow(
-            () -> new NotFoundException(
-                String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
-                    issueCouponDto.getCouponId())));
+        Coupon coupon = couponRepository.findByCouponIdAndIsBirthFalse(issueCouponDto.getCouponId())
+            .orElseThrow(
+                () -> new NotFoundException(
+                    String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
+                        issueCouponDto.getCouponId())));
         Member member = memberRepository.findById(issueCouponDto.getMemberId()).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
@@ -397,7 +396,8 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     public Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable) {
-        return couponRepository.findByCouponStatus_CouponStatusId(COUPON_NORMAL, pageable);
+        return couponRepository.findByCouponStatus_CouponStatusIdAndIsBirthFalse(COUPON_NORMAL,
+            pageable);
     }
 
     /**
