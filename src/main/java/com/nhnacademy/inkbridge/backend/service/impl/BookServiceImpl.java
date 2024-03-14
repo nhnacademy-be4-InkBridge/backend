@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
@@ -41,6 +42,7 @@ import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -103,6 +105,22 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public Page<BooksReadResponseDto> readBooks(Pageable pageable) {
         return bookRepository.findAllBooks(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<BookOrderReadResponseDto> getCartBooks(Set<Long> bookIdList) {
+        return bookRepository.findByBookIdIn(bookIdList);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable) {
+        return bookRepository.findAllBooksByCategory(pageable, categoryId);
     }
 
     /**
@@ -204,6 +222,7 @@ public class BookServiceImpl implements BookService {
             .discountRatio(bookAdminCreateRequestDto.getDiscountRatio())
             .stock(bookAdminCreateRequestDto.getStock())
             .isPackagable(bookAdminCreateRequestDto.getIsPackagable())
+            .updatedAt(LocalDateTime.now())
             .bookStatus(BookStatus.builder().statusId(1L).build())
             .publisher(publisher)
             .thumbnailFile(savedThumbnail)
@@ -234,7 +253,6 @@ public class BookServiceImpl implements BookService {
                 bookAdminUpdateRequestDto.getStatusId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
-
         File savedThumbnail =
             (thumbnail != null) ? fileService.saveThumbnail(thumbnail) : book.getThumbnailFile();
 

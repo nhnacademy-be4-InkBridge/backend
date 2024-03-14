@@ -4,9 +4,12 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +29,23 @@ public interface BookService {
      * @return BooksReadResponseDto
      */
     Page<BooksReadResponseDto> readBooks(Pageable pageable);
+
+    /**
+     * bookId에 따른 도서 목록을 가져오는 메서드입니다.
+     *
+     * @param bookIdList Set
+     * @return CartReadResponseDto
+     */
+    List<BookOrderReadResponseDto> getCartBooks(Set<Long> bookIdList);
+
+    /**
+     * page와 카테고리에 따른 전체 도서를 가져오는 메서드입니다.
+     *
+     * @param categoryId Long
+     * @param pageable   Pageable
+     * @return BooksReadResponseDto page
+     */
+    Page<BooksReadResponseDto> readBooksByCategory(Long categoryId, Pageable pageable);
 
     /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을

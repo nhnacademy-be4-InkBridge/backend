@@ -1,10 +1,13 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -27,9 +30,18 @@ public interface BookRepositoryCustom {
     Page<BooksReadResponseDto> findAllBooks(Pageable pageable);
 
     /**
+     * 카테고리 아이디에 대한 도서 목록 조회 메서드입니다.
+     *
+     * @param pageable   Pageable
+     * @param categoryId Long
+     * @return BooksReadResponseDto Page
+     */
+    Page<BooksReadResponseDto> findAllBooksByCategory(Pageable pageable, Long categoryId);
+
+    /**
      * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
      *
-     * @param bookId Long
+     * @param bookId   Long
      * @param memberId Long
      * @return 도서 상세 조회 데이터
      */
@@ -51,4 +63,11 @@ public interface BookRepositoryCustom {
      */
     Optional<BookAdminSelectedReadResponseDto> findBookByAdminByBookId(Long bookId);
 
+    /**
+     * 카트 도서 조회 메서드입니다.
+     *
+     * @param bookIdList book id list
+     * @return CartReadResponseDto
+     */
+    List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
 }
