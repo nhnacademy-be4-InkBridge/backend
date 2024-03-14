@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,10 +28,10 @@ public class BookReadResponseDto {
     private BigDecimal discountRatio;
     private Boolean isPackagable;
     private String thumbnail;
+    private String statusName;
     private Long publisherId;
     private String publisherName;
-    private Long authorId;
-    private String authorName;
+    private Map<Long, String> authors;
     private Long wish;
     private Set<String> fileUrl;
     private Set<String> tagName;
@@ -39,11 +40,9 @@ public class BookReadResponseDto {
     @Builder
     public BookReadResponseDto(String bookTitle, String bookIndex, String description,
         LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
-        BigDecimal discountRatio,
-        Boolean isPackagable, String thumbnail, Long publisherId, String publisherName,
-        Long authorId,
-        String authorName, Long wish, Set<String> fileUrl, Set<String> tagName,
-        Set<String> categoryName) {
+        BigDecimal discountRatio, Boolean isPackagable, String thumbnail, String statusName,
+        Long publisherId, String publisherName, Map<Long, String> authors, Long wish,
+        Set<String> fileUrl, Set<String> tagName, Set<String> categoryName) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -54,10 +53,10 @@ public class BookReadResponseDto {
         this.discountRatio = discountRatio;
         this.isPackagable = isPackagable;
         this.thumbnail = thumbnail;
+        this.statusName = statusName;
         this.publisherId = publisherId;
         this.publisherName = publisherName;
-        this.authorId = authorId;
-        this.authorName = authorName;
+        this.authors = authors;
         this.wish = wish;
         this.fileUrl = fileUrl;
         this.tagName = tagName;
