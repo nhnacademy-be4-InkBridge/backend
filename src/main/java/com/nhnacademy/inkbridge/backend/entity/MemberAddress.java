@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.address.AddressUpdateRequestDto;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +37,12 @@ public class MemberAddress {
     @Column(name = "address_detail")
     private String addressDetail;
 
+    @Column(name = "receiver_name")
+    private String receiverName;
+
+    @Column(name = "receiver_number")
+    private String receiverNumber;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -42,4 +50,25 @@ public class MemberAddress {
     @ManyToOne
     @JoinColumn(name = "general_address_id")
     private GeneralAddress generalAddress;
+
+    @Builder
+    public MemberAddress(Long addressId, String alias, String addressDetail, String receiverName,
+        String receiverNumber, Member member, GeneralAddress generalAddress) {
+        this.addressId = addressId;
+        this.alias = alias;
+        this.addressDetail = addressDetail;
+        this.receiverName = receiverName;
+        this.receiverNumber = receiverNumber;
+        this.member = member;
+        this.generalAddress = generalAddress;
+    }
+
+
+    public void update(GeneralAddress generalAddress, AddressUpdateRequestDto addressUpdateRequestDto) {
+        this.generalAddress = generalAddress;
+        this.alias = addressUpdateRequestDto.getAlias();
+        this.addressDetail = addressUpdateRequestDto.getAddressDetail();
+        this.receiverName = addressUpdateRequestDto.getReceiverName();
+        this.receiverNumber = addressUpdateRequestDto.getReceiverNumber();
+    }
 }
