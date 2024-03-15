@@ -43,7 +43,7 @@ public class BookOrderServiceImpl implements BookOrderService {
     public OrderCreateResponseDto createBookOrder(BookOrderCreateRequestDto requestDto) {
 
         BookOrder bookOrder = BookOrder.builder()
-            .orderId(UUID.randomUUID().toString().replace("-", ""))
+            .orderCode(UUID.randomUUID().toString().replace("-", ""))
             .orderName(requestDto.getOrderName())
             .orderAt(LocalDateTime.now())
             .receiver(requestDto.getReceiverName())
@@ -59,27 +59,27 @@ public class BookOrderServiceImpl implements BookOrderService {
             .totalPrice(requestDto.getPayAmount())
             .deliveryPrice(requestDto.getDeliveryPrice())
             .isPayment(false)
-            .member(Objects.nonNull(requestDto.getMemberId()) ?
-                memberRepository.findById(requestDto.getMemberId())
+            .member(Objects.nonNull(requestDto.getMemberId())
+                ? memberRepository.findById(requestDto.getMemberId())
                     .orElseThrow(() -> new NotFoundException(
                         MemberMessageEnum.MEMBER_NOT_FOUND.getMessage())) : null)
             .build();
 
         bookOrder = bookOrderRepository.save(bookOrder);
 
-        return new OrderCreateResponseDto(bookOrder.getOrderId());
+        return new OrderCreateResponseDto(bookOrder.getOrderId(), bookOrder.getOrderCode());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param orderId 주문 번호
+     * @param orderCode 주문 코드
      * @return 주문 결제 정보
      */
     @Transactional(readOnly = true)
     @Override
-    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId) {
-        return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(
+    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderCode) {
+        return bookOrderRepository.findOrderPayByOrderId(orderCode).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
         );
     }

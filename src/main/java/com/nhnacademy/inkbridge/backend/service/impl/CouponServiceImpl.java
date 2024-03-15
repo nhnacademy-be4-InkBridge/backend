@@ -218,9 +218,8 @@ public class CouponServiceImpl implements CouponService {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()
+            .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
-            .coupon(coupon)
-            .member(member)
             .build();
         System.out.println("test1");
         memberCouponRepository.saveAndFlush(memberCoupon);

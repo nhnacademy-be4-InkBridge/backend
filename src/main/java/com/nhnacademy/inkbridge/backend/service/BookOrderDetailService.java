@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface BookOrderDetailService {
 
-    void createBookOrderDetail(String orderId, List<BookOrderDetailCreateRequestDto> requestDtoList);
+    void createBookOrderDetail(Long orderId, List<BookOrderDetailCreateRequestDto> requestDtoList);
 }
