@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -331,7 +332,7 @@ public class CouponServiceImpl implements CouponService {
         return couponTypeRepository.findById(couponTypeId)
             .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
     }
-  
+
     /**
      * 중복된 이름의 쿠폰이 존재하는지 확인하는 메소드.
      *
@@ -428,7 +429,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     @Transactional
-    public void useCoupons(Long id, List<String> couponId) {
+    public void useCoupons(Long memberId, List<String> couponId) {
         List<MemberCoupon> useCoupons = memberCouponRepository.findAllById(couponId);
         if (useCoupons.size() != couponId.size()) {
             throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());

@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
@@ -122,14 +123,17 @@ public class MemberController {
 
 
     @PostMapping("/oauth/check")
-    public ResponseEntity<Boolean> oauthMemberCheck(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+    public ResponseEntity<Boolean> oauthMemberCheck(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
         boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
 
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/oauth")
-    public ResponseEntity<String> getOAuthEmail(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+    public ResponseEntity<String> getOAuthEmail(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 }
