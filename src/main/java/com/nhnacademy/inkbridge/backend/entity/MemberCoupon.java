@@ -29,7 +29,7 @@ public class MemberCoupon {
 
     @Id
     @Column(name = "member_coupon_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberCouponId;
 
     @Column(name = "expired_at")
@@ -71,6 +71,10 @@ public class MemberCoupon {
             .maxDiscountPrice(this.coupon.getMaxDiscountPrice()).minPrice(this.coupon.getMinPrice())
             .expiredAt(this.getExpiredAt()).isBirth(this.coupon.getIsBirth())
             .usedAt(this.getUsedAt()).build();
+    }
+
+    public void use() {
+        this.usedAt = LocalDate.now();
     }
 
 }

@@ -18,7 +18,7 @@ import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
@@ -121,6 +121,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
@@ -131,7 +132,7 @@ public class CouponServiceImpl implements CouponService {
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
             .basicIssuedDate(couponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(couponCreateRequestDto.getDiscountPrice())
-            .isBirth(couponCreateRequestDto.getIsBirth())
+            .isBirth(false)
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
@@ -182,6 +183,7 @@ public class CouponServiceImpl implements CouponService {
         Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
             .couponType(couponType).couponName(bookCouponCreateRequestDto.getCouponName())
             .basicIssuedDate(bookCouponCreateRequestDto.getBasicIssuedDate())
+            .basicExpiredDate(bookCouponCreateRequestDto.getBasicExpiredDate())
             .discountPrice(bookCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(bookCouponCreateRequestDto.getMaxDiscountPrice())
             .isBirth(false)
@@ -201,15 +203,16 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
-        Coupon coupon = couponRepository.findById(issueCouponDto.getCouponId()).orElseThrow(
+    @Transactional
+    public void issueCoupon(Long memberId, String couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
-                    issueCouponDto.getCouponId())));
-        Member member = memberRepository.findById(issueCouponDto.getMemberId()).orElseThrow(
+                    couponId)));
+        Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
-                    issueCouponDto.getMemberId())));
+                    memberId)));
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
@@ -218,6 +221,7 @@ public class CouponServiceImpl implements CouponService {
             .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
+        System.out.println("test1");
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 
@@ -227,7 +231,8 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId) {
         CouponStatus couponStatus = findCouponStatus(couponStatusId);
-        return couponRepository.findByCouponStatus(couponStatus, pageable);
+        return couponRepository.findByCouponStatus_CouponStatusId(couponStatus.getCouponStatusId(),
+            pageable);
     }
 
 
@@ -327,7 +332,7 @@ public class CouponServiceImpl implements CouponService {
         return couponTypeRepository.findById(couponTypeId)
             .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
     }
-  
+
     /**
      * 중복된 이름의 쿠폰이 존재하는지 확인하는 메소드.
      *
@@ -410,5 +415,29 @@ public class CouponServiceImpl implements CouponService {
             .ifPresent(id -> {
                 throw new NotFoundException(BOOK_NOT_FOUND.getMessage());
             });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CouponDetailReadResponseDto getDetailCoupon(String couponId) {
+
+        return couponRepository.findDetailCoupon(couponId).orElseThrow(() -> new NotFoundException(
+            COUPON_NOT_FOUND.getMessage()));
+    }
+
+    @Override
+    @Transactional
+    public void useCoupons(Long memberId, List<Long> memberCouponId) {
+        List<MemberCoupon> useCoupons = memberCouponRepository.findAllByMemberCouponIdAndMember_MemberIdAnd(
+            memberCouponId, memberId);
+        if (useCoupons.size() != memberCouponId.size()) {
+            throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
+        }
+        useCoupons.forEach(coupon -> {
+            validateCouponUsed(coupon);
+            coupon.use();
+        });
     }
 }
