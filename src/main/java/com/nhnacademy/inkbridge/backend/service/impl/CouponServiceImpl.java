@@ -14,12 +14,16 @@ import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TY
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID;
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_NOT_FOUND;
 
+import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
+import com.nhnacademy.inkbridge.backend.entity.BookCategory;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon;
 import com.nhnacademy.inkbridge.backend.entity.BookCoupon.Pk;
 import com.nhnacademy.inkbridge.backend.entity.Category;
@@ -30,10 +34,12 @@ import com.nhnacademy.inkbridge.backend.entity.CouponType;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookCategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryCouponRepository;
@@ -45,8 +51,12 @@ import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,7 +71,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CouponServiceImpl implements CouponService {
 
-    private static final int COUPON_LENGTH = 10;
     private static final int COUPON_NORMAL = 1;
     private static final int COUPON_WAIT = 4;
     private final CouponRepository couponRepository;
@@ -73,6 +82,7 @@ public class CouponServiceImpl implements CouponService {
     private final BookRepository bookRepository;
     private final BookCouponRepository bookCouponRepository;
     private final CouponStatusRepository couponStatusRepository;
+    private final BookCategoryRepository bookCategoryRepository;
 
     /**
      * couponService에 필요한 Repository들 주입.
@@ -86,12 +96,14 @@ public class CouponServiceImpl implements CouponService {
      * @param bookRepository           책
      * @param bookCouponRepository     책전용 쿠폰
      * @param couponStatusRepository   쿠폰상태
+     * @param bookCategoryRepository
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
         MemberCouponRepository memberCouponRepository, CategoryRepository categoryRepository,
         CategoryCouponRepository categoryCouponRepository, BookRepository bookRepository,
-        BookCouponRepository bookCouponRepository, CouponStatusRepository couponStatusRepository) {
+        BookCouponRepository bookCouponRepository, CouponStatusRepository couponStatusRepository,
+        BookCategoryRepository bookCategoryRepository) {
         this.couponRepository = couponRepository;
         this.couponTypeRepository = couponTypeRepository;
         this.memberRepository = memberRepository;
@@ -101,15 +113,16 @@ public class CouponServiceImpl implements CouponService {
         this.bookRepository = bookRepository;
         this.bookCouponRepository = bookCouponRepository;
         this.couponStatusRepository = couponStatusRepository;
+        this.bookCategoryRepository = bookCategoryRepository;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(couponCreateRequestDto.getCouponName());
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             couponCreateRequestDto.getBasicIssuedDate());
 
@@ -118,11 +131,11 @@ public class CouponServiceImpl implements CouponService {
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
             .basicIssuedDate(couponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(couponCreateRequestDto.getDiscountPrice())
-            .isBirth(couponCreateRequestDto.getIsBirth())
+            .isBirth(false)
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
     }
 
     /**
@@ -133,7 +146,6 @@ public class CouponServiceImpl implements CouponService {
     public void createCategoryCoupon(
         CategoryCouponCreateRequestDto categoryCouponCreateRequestDto) {
         CouponType couponType = findCouponType(categoryCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(categoryCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             categoryCouponCreateRequestDto.getBasicIssuedDate());
@@ -148,7 +160,7 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(categoryCouponCreateRequestDto.getMinPrice())
             .validity(categoryCouponCreateRequestDto.getValidity()).couponStatus(couponStatus)
             .build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
         Set<Long> categoryIds = categoryCouponCreateRequestDto.getCategoryIds();
         for (Long categoryId : categoryIds) {
             Category category = categoryRepository.findById(categoryId)
@@ -164,13 +176,13 @@ public class CouponServiceImpl implements CouponService {
     @Transactional
     public void createBookCoupon(BookCouponCreateRequestDto bookCouponCreateRequestDto) {
         CouponType couponType = findCouponType(bookCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(bookCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             bookCouponCreateRequestDto.getBasicIssuedDate());
         Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
             .couponType(couponType).couponName(bookCouponCreateRequestDto.getCouponName())
             .basicIssuedDate(bookCouponCreateRequestDto.getBasicIssuedDate())
+            .basicExpiredDate(bookCouponCreateRequestDto.getBasicExpiredDate())
             .discountPrice(bookCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(bookCouponCreateRequestDto.getMaxDiscountPrice())
             .isBirth(false)
@@ -190,21 +202,22 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
-        Coupon coupon = couponRepository.findById(issueCouponDto.getCouponId()).orElseThrow(
+    @Transactional
+    public void issueCoupon(Long memberId, String couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
-                    issueCouponDto.getCouponId())));
-        Member member = memberRepository.findById(issueCouponDto.getMemberId()).orElseThrow(
+                    couponId)));
+        Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
-                    issueCouponDto.getMemberId())));
+                    memberId)));
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()
-            .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
+            .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
         memberCouponRepository.saveAndFlush(memberCoupon);
@@ -327,5 +340,102 @@ public class CouponServiceImpl implements CouponService {
         if (couponRepository.existsByCouponName(couponName)) {
             throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrderCouponReadResponseDto> getOrderCouponList(Long[] bookIds, Long memberId) {
+        bookCheck(bookIds);
+        List<BookCategoriesDto> bookCategoriesDtoList = new ArrayList<>();
+        List<OrderCouponReadResponseDto> orderCouponReadResponseDtoList = new ArrayList<>();
+        for (Long bookId : bookIds) {
+            List<BookCategory> bookCategory = bookCategoryRepository.findByPk_BookId(bookId);
+            bookCategoriesDtoList.add(
+                BookCategoriesDto.builder().bookId(bookId).categoryIds(bookCategory.stream()
+                    .map(bookCategoryItem -> bookCategoryItem.getCategory().getCategoryId())
+                    .collect(Collectors.toList())).build());
+        }
+        for (BookCategoriesDto bookCategoriesDto : bookCategoriesDtoList) {
+
+            orderCouponReadResponseDtoList.add(
+                OrderCouponReadResponseDto.builder().bookId(bookCategoriesDto.getBookId())
+                    .memberCouponReadResponseDtos(
+                        memberCouponRepository.findOrderCoupons(memberId, bookCategoriesDto))
+                    .build());
+        }
+        return orderCouponReadResponseDtoList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum statusEnum) {
+        LocalDate now = LocalDate.now();
+        List<MemberCoupon> coupons = null;
+
+        if (statusEnum == MemberCouponStatusEnum.USED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId);
+        } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+                memberId, now, now);
+        } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
+            coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
+                memberId, now);
+        }
+        return coupons.stream()
+            .map(MemberCoupon::toResponseDto)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable) {
+        return couponRepository.findByCouponStatus_CouponStatusIdAndIsBirthFalse(COUPON_NORMAL,
+            pageable);
+    }
+
+    /**
+     * 책이 존재하는지 확인하는 메소드
+     *
+     * @param bookIds 확인할 책 번호
+     * @throw생 NotFoundException 책이 존재하지 않으면 발
+     */
+    private void bookCheck(Long[] bookIds) {
+        Arrays.stream(bookIds)
+            .filter(bookId -> !bookRepository.existsById(bookId))
+            .findFirst()
+            .ifPresent(id -> {
+                throw new NotFoundException(BOOK_NOT_FOUND.getMessage());
+            });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CouponDetailReadResponseDto getDetailCoupon(String couponId) {
+
+        return couponRepository.findDetailCoupon(couponId).orElseThrow(() -> new NotFoundException(
+            COUPON_NOT_FOUND.getMessage()));
+    }
+
+    @Override
+    @Transactional
+    public void useCoupons(Long memberId, List<Long> memberCouponIds) {
+        List<MemberCoupon> useCoupons = memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(
+            memberCouponIds, memberId);
+        if (useCoupons.size() != memberCouponIds.size()) {
+            throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
+        }
+        useCoupons.forEach(coupon -> {
+            validateCouponUsed(coupon);
+            coupon.use();
+        });
     }
 }

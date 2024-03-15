@@ -1,30 +1,27 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 /**
  * class: BooksReadResponseDto.
  *
  * @author minm063
- * @version 2024/02/15
+ * @version 2024/03/13
  */
 @Getter
 public class BooksReadResponseDto {
 
-    private final Long bookId;
-    private final String bookTitle;
-    private final Long price;
-    private final String publisherName;
-    private final String authorName;
+    private final Page<BooksPaginationReadResponseDto> booksPaginationReadResponseDtos;
+    private final List<AuthorPaginationReadResponseDto> authorPaginationReadResponseDto;
 
     @Builder
-    public BooksReadResponseDto(Long bookId, String bookTitle, Long price, String publisherName,
-        String authorName) {
-        this.bookId = bookId;
-        this.bookTitle = bookTitle;
-        this.price = price;
-        this.publisherName = publisherName;
-        this.authorName = authorName;
+    public BooksReadResponseDto(
+        Page<BooksPaginationReadResponseDto> booksPaginationReadResponseDtos,
+        List<AuthorPaginationReadResponseDto> authorPaginationReadResponseDto) {
+        this.booksPaginationReadResponseDtos = booksPaginationReadResponseDtos;
+        this.authorPaginationReadResponseDto = authorPaginationReadResponseDto;
     }
 }

@@ -3,12 +3,16 @@ package com.nhnacademy.inkbridge.backend.service;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,12 +38,13 @@ public interface CouponService {
     /**
      * 사용자가 쿠폰을 등록하는 메소드. UUID에 randomUUID기능을 사용하여 난수의 중복을 방지한다.
      *
-     * @param issueCouponDto 쿠폰을 등록하기 위한 Request DTO
+     * @param memberId 쿠폰을 등록하는 유저
+     * @param couponId 등록할 쿠폰
      * @throws NotFoundException      존재하지 않는 쿠폰이 입력된 경우 예외 발생
      * @throws AlreadyExistException  이미 등록된 쿠폰인 경우 예외 발생
      * @throws InvalidPeriodException 쿠폰 발급이 가능한 날짜가 아닌 경우 예외 발생
      */
-    void issueCoupon(CouponIssueRequestDto issueCouponDto);
+    void issueCoupon(Long memberId, String couponId);
 
     /**
      * 관리자용 쿠폰리스트를 보여주는 메소드.
@@ -74,4 +79,33 @@ public interface CouponService {
     void createCategoryCoupon(
         CategoryCouponCreateRequestDto categoryCouponCreateRequestDto);
 
+    List<OrderCouponReadResponseDto> getOrderCouponList(Long[] bookId, Long memberId);
+
+    /**
+     * 사용자가 가진 쿠폰을 조회하는 메소드. 이 때 used를 이용해서 사용햇는쿠폰을 조회할 것인지 미사용쿠폰을 조회할 것인지 정한다.
+     *
+     * @param memberId 조회할 사용자Id
+     * @param used     사용여부
+     * @return 사용자가 가진 쿠폰
+     */
+    List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum used);
+
+    /**
+     * 발급가능한 쿠폰의 목록을 보여주는 메소드.
+     *
+     * @param pageable 페이지
+     * @return 발급가능한 쿠폰 목록.
+     */
+    Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable);
+
+    /**
+     * 쿠폰의 상세한 정보를 찾아주는 메소드.
+     *
+     * @param couponId 쿠폰ID
+     * @return 쿠폰의 상세정보, 카테고리, 책등 연관관계를 보여줌
+     */
+    CouponDetailReadResponseDto getDetailCoupon(String couponId);
+
+    void useCoupons(Long memberId, List<Long> memberCouponId);
 }

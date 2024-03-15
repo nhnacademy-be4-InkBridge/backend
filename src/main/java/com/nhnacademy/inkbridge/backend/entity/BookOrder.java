@@ -4,11 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,11 +26,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "book_order")
+@Builder
+@AllArgsConstructor
 public class BookOrder {
 
     @Id
     @Column(name = "order_id")
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+
+    @Column(name = "order_code")
+    private String orderCode;
+
 
     @Column(name = "order_name")
     private String orderName;
@@ -38,7 +49,7 @@ public class BookOrder {
     private LocalDateTime orderAt;
 
     @Column(name = "delivery_date")
-    private LocalDateTime deliveryDate;
+    private LocalDate deliveryDate;
 
     @Column(name = "receiver")
     private String receiver;
@@ -70,7 +81,14 @@ public class BookOrder {
     @Column(name = "total_price")
     private Long totalPrice;
 
+    @Column(name = "is_payment")
+    private Boolean isPayment;
+
+    @Column(name = "delivery_price")
+    private Long deliveryPrice;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
 }

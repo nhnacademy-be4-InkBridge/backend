@@ -4,10 +4,12 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
-import org.springframework.data.domain.Page;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +27,24 @@ public interface BookService {
      * @param pageable pageable
      * @return BooksReadResponseDto
      */
-    Page<BooksReadResponseDto> readBooks(Pageable pageable);
+    BooksReadResponseDto readBooks(Pageable pageable);
+
+    /**
+     * bookId에 따른 도서 목록을 가져오는 메서드입니다.
+     *
+     * @param bookIdList Set
+     * @return CartReadResponseDto
+     */
+    List<BookOrderReadResponseDto> getCartBooks(Set<Long> bookIdList);
+
+    /**
+     * page와 카테고리에 따른 전체 도서를 가져오는 메서드입니다.
+     *
+     * @param categoryId Long
+     * @param pageable   Pageable
+     * @return BooksReadResponseDto page
+     */
+    BooksReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
 
     /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
@@ -33,7 +52,7 @@ public interface BookService {
      *
      * @return BookReadResponseDto
      */
-    BookReadResponseDto readBook(Long bookId);
+    BookReadResponseDto readBook(Long bookId, Long memberId);
 
     /**
      * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드입니다.
@@ -41,7 +60,7 @@ public interface BookService {
      * @param pageable pageable
      * @return BooksAdminReadResponseDto
      */
-    Page<BooksAdminReadResponseDto> readBooksByAdmin(Pageable pageable);
+    BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable);
 
     /**
      * admin 페이지에서 저장된 상세 도서 관련 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을

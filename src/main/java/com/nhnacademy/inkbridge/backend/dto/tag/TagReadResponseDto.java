@@ -13,8 +13,8 @@ import lombok.Getter;
 @Getter
 public class TagReadResponseDto {
 
-    private  final Long tagId;
-    private  final String tagName;
+    private final Long tagId;
+    private final String tagName;
 
     @Builder
     public TagReadResponseDto(Tag tag) {
