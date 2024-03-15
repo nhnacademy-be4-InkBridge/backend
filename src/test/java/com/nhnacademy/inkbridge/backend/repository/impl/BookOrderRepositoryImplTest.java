@@ -35,7 +35,7 @@ class BookOrderRepositoryImplTest {
     @BeforeEach
     void setup() {
         bookOrder = BookOrder.builder()
-            .orderId("orderId")
+            .orderCode("orderCode")
             .orderName("orderName")
             .orderAt(LocalDateTime.of(2024, 1, 1, 0, 0))
             .receiver("receiverName")
@@ -58,12 +58,12 @@ class BookOrderRepositoryImplTest {
 
     @Test
     void testFindOrderPayByOrderId() {
-        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderId("orderId")
+        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderId("orderCode")
             .orElse(null);
 
         assertAll(
             () -> assertNotNull(result),
-            () -> assertEquals(bookOrder.getOrderId(), result.getOrderId()),
+            () -> assertEquals(bookOrder.getOrderCode(), result.getOrderCode()),
             () -> assertEquals(bookOrder.getOrderName(), result.getOrderName()),
             () -> assertEquals(bookOrder.getTotalPrice(), result.getAmount())
         );

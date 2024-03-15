@@ -24,19 +24,19 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
     /**
      * {@inheritDoc}
      *
-     * @param orderId 주문 번호
+     * @param orderCode 주문 코드
      * @return 주문 결제 정보
      */
     @Override
-    public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(String orderId) {
+    public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
         OrderPayInfoReadResponseDto orderPayInfoReadResponseDto = from(bookOrder)
             .select(Projections.constructor(OrderPayInfoReadResponseDto.class,
-                bookOrder.orderId,
+                bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.totalPrice))
-            .where(bookOrder.orderId.eq(orderId))
+            .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
         return Optional.of(orderPayInfoReadResponseDto);
     }

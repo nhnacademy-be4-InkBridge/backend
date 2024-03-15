@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -214,7 +215,7 @@ public class CouponServiceImpl implements CouponService {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()
-            .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
+            .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
         memberCouponRepository.saveAndFlush(memberCoupon);

@@ -46,8 +46,7 @@ public class OrderCreateRequestDto {
 
         private Long wrappingId;
 
-        @Size(max = 200, message = "쿠폰 번호의 글자 수는 0~200자 사이입니다.")
-        private String couponId;
+        private Long couponId;
 
         @NotNull(message = "포장 가격은 필수 항목입니다.")
         @Min(value = 0, message = "포장 가격은 음수가 될 수 없습니다.")

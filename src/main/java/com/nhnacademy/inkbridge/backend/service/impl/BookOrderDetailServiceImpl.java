@@ -44,7 +44,7 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     private final WrappingRepository wrappingRepository;
 
     @Override
-    public void createBookOrderDetail(String orderId,
+    public void createBookOrderDetail(Long orderId,
         List<BookOrderDetailCreateRequestDto> requestDtoList) {
 
         BookOrder bookOrder = bookOrderRepository.findById(orderId)
@@ -56,8 +56,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
                     .orElseThrow(
                         () -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
 
-                MemberCoupon coupon = !requestDto.getCouponId().isEmpty() ?
-                    memberCouponRepository.findById(requestDto.getCouponId())
+                MemberCoupon coupon = Objects.nonNull(requestDto.getCouponId())
+                    ? memberCouponRepository.findById(requestDto.getCouponId())
                         .orElseThrow(() -> new NotFoundException(
                             CouponMessageEnum.COUPON_NOT_FOUND.getMessage())) : null;
 
@@ -65,8 +65,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
                     .orElseThrow(() -> new NotFoundException(
                         OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
 
-                Wrapping wrapping = Objects.nonNull(requestDto.getWrappingId()) ?
-                    wrappingRepository.findById(requestDto.getWrappingId())
+                Wrapping wrapping = Objects.nonNull(requestDto.getWrappingId())
+                    ? wrappingRepository.findById(requestDto.getWrappingId())
                         .orElseThrow(() -> new NotFoundException(
                             OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage())) : null;
 

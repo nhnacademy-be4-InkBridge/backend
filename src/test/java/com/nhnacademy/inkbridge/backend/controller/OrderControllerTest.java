@@ -77,7 +77,7 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "price", 18000L);
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "amount", 3);
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "wrappingId", 1L);
-        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "couponId", "TestCoupon");
+        ReflectionTestUtils.setField(orderDetailCreateRequestDto, "couponId", 1L);
         ReflectionTestUtils.setField(orderDetailCreateRequestDto, "wrappingPrice", 3000L);
 
         orderCreateRequestDto = new BookOrderCreateRequestDto();
@@ -712,7 +712,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 정보 저장 요청 - 성공")
     void testCreateOrder_success() throws Exception {
-        given(orderFacade.createOrder(any())).willReturn(new OrderCreateResponseDto("UUID"));
+        given(orderFacade.createOrder(any())).willReturn(new OrderCreateResponseDto(1L, "orderCode"));
 
         mockMvc.perform(post("/api/orders")
                 .accept(MediaType.APPLICATION_JSON)
@@ -720,13 +720,14 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
             .andExpectAll(
                 status().isCreated(),
-                jsonPath("orderId", equalTo("UUID"))
+                jsonPath("orderCode", equalTo("orderCode"))
             )
             .andDo(document("order/order-post-201",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
-                    fieldWithPath("orderId").description("주문 번호")
+                    fieldWithPath("orderId").description("주문 번호"),
+                    fieldWithPath("orderCode").description("주문 코드")
                 )));
     }
 
@@ -755,12 +756,12 @@ class OrderControllerTest {
             new OrderPayInfoReadResponseDto("UUID", "TestOrder", 30000L));
 
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/orders/{orderId}/order-pays", "UUID")
+                RestDocumentationRequestBuilders.get("/api/orders/{orderCode}/order-pays", "UUID")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpectAll(
                 status().isOk(),
-                jsonPath("$.orderId", equalTo("UUID")),
+                jsonPath("$.orderCode", equalTo("UUID")),
                 jsonPath("$.orderName", equalTo("TestOrder")),
                 jsonPath("$.amount").value(30000L)
             )
@@ -768,10 +769,10 @@ class OrderControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
-                    parameterWithName("orderId").description("주문 번호")
+                    parameterWithName("orderCode").description("주문 코드")
                 ),
                 responseFields(
-                    fieldWithPath("orderId").description("주문 번호"),
+                    fieldWithPath("orderCode").description("주문 코드"),
                     fieldWithPath("orderName").description("주문 이름"),
                     fieldWithPath("amount").description("가격")
                 )));

@@ -40,11 +40,11 @@ public class OrderFacade {
     /**
      * 주문 결제 정보를 조회하는 메소드입니다.
      *
-     * @param orderId 주문 번호
+     * @param orderCode 주문 코드
      * @return 주문 결제 정보
      */
     @Transactional(readOnly = true)
-    public OrderPayInfoReadResponseDto getOrderPaymentInfo(String orderId) {
-        return bookOrderService.getOrderPaymentInfoByOrderId(orderId);
+    public OrderPayInfoReadResponseDto getOrderPaymentInfo(String orderCode) {
+        return bookOrderService.getOrderPaymentInfoByOrderId(orderCode);
     }
 }

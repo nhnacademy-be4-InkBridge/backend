@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberCouponReadResponseDto {
 
-    private String memberCouponId;
+    private Long memberCouponId;
     private LocalDate expiredAt;
     private LocalDate usedAt;
     private String couponName;
@@ -29,7 +29,7 @@ public class MemberCouponReadResponseDto {
     private String couponStatusName;
 
     @Builder
-    public MemberCouponReadResponseDto(String memberCouponId, LocalDate expiredAt, LocalDate usedAt,
+    public MemberCouponReadResponseDto(Long memberCouponId, LocalDate expiredAt, LocalDate usedAt,
         String couponName, Long minPrice, Long discountPrice, Long maxDiscountPrice,
         Integer couponTypeId, String couponTypeName, Boolean isBirth, Integer couponStatusId,
         String couponStatusName) {

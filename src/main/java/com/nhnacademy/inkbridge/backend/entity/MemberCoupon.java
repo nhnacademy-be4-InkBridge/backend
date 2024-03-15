@@ -4,6 +4,8 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,7 +29,8 @@ public class MemberCoupon {
 
     @Id
     @Column(name = "member_coupon_id")
-    private String memberCouponId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long memberCouponId;
 
     @Column(name = "expired_at")
     private LocalDate expiredAt;
@@ -47,7 +50,7 @@ public class MemberCoupon {
     private Coupon coupon;
 
     @Builder
-    public MemberCoupon(String memberCouponId, LocalDate expiredAt, LocalDate issuedAt,
+    public MemberCoupon(Long memberCouponId, LocalDate expiredAt, LocalDate issuedAt,
         LocalDate usedAt, Member member, Coupon coupon) {
         this.memberCouponId = memberCouponId;
         this.expiredAt = expiredAt;

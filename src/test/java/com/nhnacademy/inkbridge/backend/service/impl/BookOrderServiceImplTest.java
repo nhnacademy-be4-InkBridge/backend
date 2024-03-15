@@ -1,9 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -79,7 +79,7 @@ class BookOrderServiceImplTest {
     @DisplayName("주문 생성 - 회원 성공")
     void testCreateBookOrder_member_success() {
         BookOrder bookOrder = BookOrder.builder()
-            .orderId("UUID")
+            .orderCode("UUID")
             .build();
         Member member = Member.create().build();
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
@@ -87,7 +87,7 @@ class BookOrderServiceImplTest {
 
         OrderCreateResponseDto result = bookOrderService.createBookOrder(requestDto);
 
-        assertEquals(bookOrder.getOrderId(), result.getOrderId());
+        assertEquals(bookOrder.getOrderCode(), result.getOrderCode());
 
         verify(memberRepository, times(1)).findById(1L);
         verify(bookOrderRepository, times(1)).save(any());
@@ -98,14 +98,14 @@ class BookOrderServiceImplTest {
     void testCreateBookOrder_anonymous_success() {
         ReflectionTestUtils.setField(requestDto, "memberId", null);
         BookOrder bookOrder = BookOrder.builder()
-            .orderId("UUID")
+            .orderCode("UUID")
             .build();
 
         given(bookOrderRepository.save(any())).willReturn(bookOrder);
 
         OrderCreateResponseDto result = bookOrderService.createBookOrder(requestDto);
 
-        assertEquals(bookOrder.getOrderId(), result.getOrderId());
+        assertEquals(bookOrder.getOrderCode(), result.getOrderCode());
 
         verify(bookOrderRepository, times(1)).save(any());
     }
@@ -115,7 +115,8 @@ class BookOrderServiceImplTest {
     void testGetOrderPaymentInfoByOrderId_not_found() {
         given(bookOrderRepository.findOrderPayByOrderId("orderId")).willReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> bookOrderService.getOrderPaymentInfoByOrderId("orderId"));
+        assertThrows(NotFoundException.class,
+            () -> bookOrderService.getOrderPaymentInfoByOrderId("orderId"));
 
         verify(bookOrderRepository, times(1)).findOrderPayByOrderId("orderId");
     }
@@ -126,12 +127,14 @@ class BookOrderServiceImplTest {
         OrderPayInfoReadResponseDto responseDto = new OrderPayInfoReadResponseDto("orderId",
             "orderName", 10000L);
 
-        given(bookOrderRepository.findOrderPayByOrderId("orderId")).willReturn(Optional.of(responseDto));
+        given(bookOrderRepository.findOrderPayByOrderId("orderId")).willReturn(
+            Optional.of(responseDto));
 
-        OrderPayInfoReadResponseDto result = bookOrderService.getOrderPaymentInfoByOrderId("orderId");
+        OrderPayInfoReadResponseDto result = bookOrderService.getOrderPaymentInfoByOrderId(
+            "orderId");
 
         assertAll(
-            () -> assertEquals(responseDto.getOrderId(), result.getOrderId()),
+            () -> assertEquals(responseDto.getOrderCode(), result.getOrderCode()),
             () -> assertEquals(responseDto.getOrderName(), result.getOrderName()),
             () -> assertEquals(responseDto.getAmount(), result.getAmount())
         );

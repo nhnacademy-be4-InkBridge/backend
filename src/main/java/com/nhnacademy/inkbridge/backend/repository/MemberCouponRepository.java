@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author JBum
  * @version 2024/02/19
  */
-public interface MemberCouponRepository extends JpaRepository<MemberCoupon, String>,
+public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long>,
     MemberCouponCustomRepository {
 
     /**

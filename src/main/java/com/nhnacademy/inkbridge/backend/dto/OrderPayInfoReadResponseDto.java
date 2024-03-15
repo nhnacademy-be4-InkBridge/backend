@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class OrderPayInfoReadResponseDto {
 
-    private String orderId;
+    private String orderCode;
     private String orderName;
     private Long amount;
 }
