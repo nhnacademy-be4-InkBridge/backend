@@ -115,10 +115,9 @@ public class MemberController {
 
     @PostMapping("/auth/members/{memberId}/coupons/{couponId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity issueCoupon(@PathVariable("memberId") Long memberId,
+    public void issueCoupon(@PathVariable("memberId") Long memberId,
         @PathVariable("couponId") String couponId) {
         couponService.issueCoupon(memberId, couponId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
