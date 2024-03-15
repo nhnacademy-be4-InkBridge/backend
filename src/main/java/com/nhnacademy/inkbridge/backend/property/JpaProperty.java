@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @version 2024/02/23
  */
 @Component
-@ConfigurationProperties(prefix = "spring.datasource")
+@ConfigurationProperties(prefix = "datasource")
 @Setter
 @Getter
 public class JpaProperty {

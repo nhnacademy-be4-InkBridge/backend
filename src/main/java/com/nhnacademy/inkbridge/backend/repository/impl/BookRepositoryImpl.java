@@ -1,13 +1,19 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import static com.nhnacademy.inkbridge.backend.enums.BookStatusEnum.OUT_OF_STOCK;
+import static com.nhnacademy.inkbridge.backend.enums.BookStatusEnum.SALE;
+import static com.nhnacademy.inkbridge.backend.enums.BookStatusEnum.SOLD_OUT;
+import static com.nhnacademy.inkbridge.backend.enums.BookStatusEnum.STOP_SALE;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.map;
 import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -25,6 +31,8 @@ import com.nhnacademy.inkbridge.backend.repository.custom.BookRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +44,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author minm063
  * @version 2024/02/15
  */
+@Slf4j
 public class BookRepositoryImpl extends QuerydslRepositorySupport implements BookRepositoryCustom {
 
     public BookRepositoryImpl() {
@@ -46,35 +55,65 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public Page<BooksReadResponseDto> findAllBooks(Pageable pageable) {
+    public Page<BooksPaginationReadResponseDto> findAllBooks(Pageable pageable) {
         QBook book = QBook.book;
-        QAuthor author = QAuthor.author;
-        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
         QFile file = QFile.file;
 
-        List<BooksReadResponseDto> content = from(book)
+        List<BooksPaginationReadResponseDto> content = from(book)
             .innerJoin(publisher)
             .on(book.publisher.eq(publisher))
             .innerJoin(bookStatus)
             .on(bookStatus.eq(book.bookStatus))
-            .innerJoin(bookAuthor)
-            .on(bookAuthor.book.eq(book))
-            .innerJoin(author)
-            .on(author.eq(bookAuthor.author))
             .innerJoin(file)
             .on(book.thumbnailFile.eq(file))
-            .where(bookStatus.statusId.eq(1L))
-            .select(Projections.constructor(BooksReadResponseDto.class,
-                book.bookId, book.bookTitle, book.price, publisher.publisherName,
-                author.authorName, file.fileUrl))
+            .where(bookStatus.statusId.in(SALE.getStatusId(), SOLD_OUT.getStatusId(),
+                OUT_OF_STOCK.getStatusId()))
+            .select(Projections.constructor(BooksPaginationReadResponseDto.class, book.bookId,
+                book.bookTitle,
+                book.price, publisher.publisherName, file.fileUrl))
             .orderBy(book.bookId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(content, pageable, getCount());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<BooksPaginationReadResponseDto> findAllBooksByCategory(Pageable pageable,
+        Long categoryId) {
+        QBook book = QBook.book;
+        QPublisher publisher = QPublisher.publisher;
+        QBookStatus bookStatus = QBookStatus.bookStatus;
+        QFile file = QFile.file;
+        QBookCategory bookCategory = QBookCategory.bookCategory;
+
+        List<BooksPaginationReadResponseDto> content = from(book)
+            .innerJoin(publisher)
+            .on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus)
+            .on(bookStatus.eq(book.bookStatus))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
+            .innerJoin(bookCategory)
+            .on(bookCategory.pk.bookId.eq(book.bookId))
+            .where(
+                bookStatus.statusId.in(SALE.getStatusId(), SOLD_OUT.getStatusId(),
+                    OUT_OF_STOCK.getStatusId()).and(bookCategory.pk.categoryId.eq(categoryId)))
+            .select(Projections.constructor(BooksPaginationReadResponseDto.class, book.bookId,
+                book.bookTitle,
+                book.price, publisher.publisherName, file.fileUrl))
+            .orderBy(book.bookId.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        return new PageImpl<>(content, pageable, getCount());
     }
 
     /**
@@ -109,21 +148,25 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookCategory).on(bookCategory.pk.bookId.eq(book.bookId))
             .innerJoin(category).on(category.categoryId.eq(bookCategory.category.categoryId))
             .leftJoin(wish).on(wish.pk.bookId.eq(book.bookId).and(wish.pk.memberId.eq(memberId)))
-            .where(bookStatus.statusId.eq(1L).and(book.bookId.eq(bookId)))
+            .where(bookStatus.statusId.in(SALE.getStatusId(), SOLD_OUT.getStatusId(),
+                OUT_OF_STOCK.getStatusId()).and(book.bookId.eq(bookId)))
             .select(
                 Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,
-                    book.discountRatio, book.isPackagable, thumbnail.fileUrl,
-                    publisher.publisherId, publisher.publisherName, author.authorId,
-                    author.authorName, wish.pk.memberId.coalesce(0L),
+                    book.discountRatio, book.isPackagable, thumbnail.fileUrl, bookStatus.statusName,
+                    publisher.publisherId, publisher.publisherName,
+                    map(author.authorId, author.authorName),
+                    wish.pk.memberId.coalesce(0L),
                     set(bookImage.fileUrl.coalesce("")),
                     set(tag.tagName.coalesce("")),
                     set(category.categoryName)))
             .transform(groupBy(book.bookId).list(Projections.constructor(BookReadResponseDto.class,
                 book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.isPackagable,
-                thumbnail.fileUrl, publisher.publisherId, publisher.publisherName,
-                author.authorId, author.authorName, wish.pk.memberId.coalesce(0L),
+                thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
+                publisher.publisherName, map(Projections.constructor(Long.class, author.authorId),
+                    Projections.constructor(String.class, author.authorName)),
+                wish.pk.memberId.coalesce(0L),
                 set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
                 set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
                 set(Projections.constructor(String.class, category.categoryName)))));
@@ -135,49 +178,28 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
     }
 
     /**
-     * 도서 개수를 조회하는 메서드입니다.
-     *
-     * @return Book Count
-     */
-    private Long getCount() {
-        QBook book = QBook.book;
-
-        return from(book)
-            .select(book.count())
-            .fetchOne();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public Page<BooksAdminReadResponseDto> findAllBooksByAdmin(Pageable pageable) {
+    public Page<BooksAdminPaginationReadResponseDto> findAllBooksByAdmin(Pageable pageable) {
         QBook book = QBook.book;
-        QAuthor author = QAuthor.author;
-        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
 
-        List<BooksAdminReadResponseDto> content = from(book)
-            .innerJoin(bookAuthor)
-            .on(book.eq(bookAuthor.book))
-            .innerJoin(author)
-            .on(bookAuthor.author.eq(author))
-            .innerJoin(publisher)
-            .on(book.publisher.eq(publisher))
-            .innerJoin(bookStatus)
-            .on(book.bookStatus.eq(bookStatus))
-            .where(bookStatus.statusId.in(1L, 2L, 3L, 4L))
+        List<BooksAdminPaginationReadResponseDto> content = from(book)
+            .innerJoin(publisher).on(book.publisher.eq(publisher))
+            .innerJoin(bookStatus).on(book.bookStatus.eq(bookStatus))
+            .where(bookStatus.statusId.in(SALE.getStatusId(), STOP_SALE.getStatusId(),
+                SOLD_OUT.getStatusId(), OUT_OF_STOCK.getStatusId()))
             .orderBy(book.bookId.asc())
-            .select(Projections.constructor(BooksAdminReadResponseDto.class, book.bookId,
-                book.bookTitle, author.authorName, publisher.publisherName, bookStatus.statusName))
+            .select(Projections.constructor(BooksAdminPaginationReadResponseDto.class, book.bookId,
+                book.bookTitle, publisher.publisherName,
+                bookStatus.statusName))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        Long count = getCount();
-
-        return new PageImpl<>(content, pageable, count);
+        return new PageImpl<>(content, pageable, getCount());
     }
 
     /**
@@ -198,11 +220,13 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .innerJoin(bookCategory).on(bookCategory.book.eq(book))
             .leftJoin(bookTag).on(bookTag.book.eq(book))
             .innerJoin(file).on(file.eq(book.thumbnailFile))
-            .where(book.bookId.eq(bookId).and(book.bookStatus.statusId.in(1L, 2L, 3L, 4L)))
+            .where(book.bookId.eq(bookId)
+                .and(book.bookStatus.statusId.in(SALE.getStatusId(), STOP_SALE.getStatusId(),
+                    SOLD_OUT.getStatusId(), OUT_OF_STOCK.getStatusId())))
             .select(Projections.constructor(BookAdminSelectedReadResponseDto.class, book.bookTitle,
                 book.bookIndex, book.description, book.publicatedAt, book.isbn,
                 book.regularPrice, book.price, book.discountRatio, book.stock, book.isPackagable,
-                author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                list(author.authorId), book.publisher.publisherId, book.bookStatus.statusId,
                 file.fileUrl,
                 list(bookCategory.pk.categoryId),
                 list(bookTag.pk.tagId)))
@@ -211,7 +235,8 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                     book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
                     book.regularPrice, book.price, book.discountRatio, book.stock,
                     book.isPackagable,
-                    author.authorId, book.publisher.publisherId, book.bookStatus.statusId,
+                    list(Projections.constructor(Long.class, author.authorId)),
+                    book.publisher.publisherId, book.bookStatus.statusId,
                     file.fileUrl,
                     list(Projections.constructor(Long.class, bookCategory.pk.categoryId)),
                     list(Projections.constructor(Long.class, bookTag.pk.tagId)))
@@ -220,5 +245,38 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             return Optional.empty();
         }
         return Optional.of(result.get(0));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList) {
+        QBook book = QBook.book;
+        QFile file = QFile.file;
+
+        return from(book)
+            .innerJoin(file)
+            .on(file.fileId.eq(book.thumbnailFile.fileId))
+            .where(book.bookId.in(bookIdList))
+            .select(
+                Projections.constructor(BookOrderReadResponseDto.class, book.bookId, book.bookTitle,
+                    book.regularPrice, book.price, book.discountRatio, book.stock,
+                    book.isPackagable,
+                    file.fileUrl))
+            .fetch();
+    }
+
+    /**
+     * 도서 개수를 조회하는 메서드입니다.
+     *
+     * @return Book Count
+     */
+    private Long getCount() {
+        QBook book = QBook.book;
+
+        return from(book)
+            .select(book.count())
+            .fetchOne();
     }
 }

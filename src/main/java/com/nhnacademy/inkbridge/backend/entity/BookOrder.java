@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,7 +39,7 @@ public class BookOrder {
     private LocalDateTime orderAt;
 
     @Column(name = "delivery_date")
-    private LocalDateTime deliveryDate;
+    private LocalDate deliveryDate;
 
     @Column(name = "receiver")
     private String receiver;
@@ -70,7 +71,40 @@ public class BookOrder {
     @Column(name = "total_price")
     private Long totalPrice;
 
+    @Column(name = "is_payment")
+    private Boolean isPayment;
+
+    @Column(name = "delivery_price")
+    private Long deliveryPrice;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public BookOrder(String orderId, String orderName, LocalDate shipDate, LocalDateTime orderAt,
+        LocalDate deliveryDate, String receiver, String receiverNumber, String zipCode,
+        String address,
+        String addressDetail, String orderer, String ordererNumber, String ordererEmail,
+        Long usePoint,
+        Long totalPrice, Boolean isPayment, Long deliveryPrice, Member member) {
+        this.orderId = orderId;
+        this.orderName = orderName;
+        this.shipDate = shipDate;
+        this.orderAt = orderAt;
+        this.deliveryDate = deliveryDate;
+        this.receiver = receiver;
+        this.receiverNumber = receiverNumber;
+        this.zipCode = zipCode;
+        this.address = address;
+        this.addressDetail = addressDetail;
+        this.orderer = orderer;
+        this.ordererNumber = ordererNumber;
+        this.ordererEmail = ordererEmail;
+        this.usePoint = usePoint;
+        this.totalPrice = totalPrice;
+        this.isPayment = isPayment;
+        this.deliveryPrice = deliveryPrice;
+        this.member = member;
+    }
 }

@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,7 +38,7 @@ public class BookOrderDetail {
     private Long wrappingPrice;
 
     @Column(name = "amount")
-    private Long amount;
+    private Integer amount;
 
     @ManyToOne
     @JoinColumn(name = "order_status_id")
@@ -58,4 +59,19 @@ public class BookOrderDetail {
     @OneToOne
     @JoinColumn(name = "member_coupon_id")
     private MemberCoupon memberCoupon;
+
+    @Builder
+    public BookOrderDetail(Long orderDetailId, Long bookPrice, Long wrappingPrice, Integer amount,
+        BookOrderStatus bookOrderStatus, Wrapping wrapping, BookOrder bookOrder, Book book,
+        MemberCoupon memberCoupon) {
+        this.orderDetailId = orderDetailId;
+        this.bookPrice = bookPrice;
+        this.wrappingPrice = wrappingPrice;
+        this.amount = amount;
+        this.bookOrderStatus = bookOrderStatus;
+        this.wrapping = wrapping;
+        this.bookOrder = bookOrder;
+        this.book = book;
+        this.memberCoupon = memberCoupon;
+    }
 }

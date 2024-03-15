@@ -50,6 +50,12 @@ public class MemberController {
     private final MemberService memberService;
     private final CouponService couponService;
 
+    /**
+     * 회원가입 하는 메서드입니다.
+     *
+     * @param memberCreateRequestDto 회원가입 폼 데이터
+     * @return 회원가입 성공
+     */
     @PostMapping("/members")
     public ResponseEntity<HttpStatus> create(
         @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
@@ -70,10 +76,8 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
-        log.info("login info start ->");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
             memberService.loginInfoMember(memberAuthLoginRequestDto);
-        log.info("login info end -> {}", memberAuthLoginResponseDto.getEmail());
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
             .body(memberAuthLoginResponseDto);
     }
@@ -114,5 +118,18 @@ public class MemberController {
         @PathVariable("couponId") String couponId) {
         couponService.issueCoupon(memberId, couponId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    @PostMapping("/oauth/check")
+    public ResponseEntity<Boolean> oauthMemberCheck(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<String> getOAuthEmail(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 }

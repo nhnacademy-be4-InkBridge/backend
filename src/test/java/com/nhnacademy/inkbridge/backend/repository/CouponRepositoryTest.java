@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
 import com.nhnacademy.inkbridge.backend.entity.CouponType;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * class: CouponRepositoryTest.
@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
  * @author JBum
  * @version 2024/02/20
  */
-@ActiveProfiles("local")
 @DataJpaTest
 class CouponRepositoryTest {
 
