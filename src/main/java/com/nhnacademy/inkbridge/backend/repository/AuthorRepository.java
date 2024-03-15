@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * class: AuthorRepository.
  *
- * @author minm063
- * @version 2024/02/23
+ * @author JBum
+ * @version 2024/02/29
  */
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 

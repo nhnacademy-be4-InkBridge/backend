@@ -22,6 +22,9 @@ import lombok.NoArgsConstructor;
  *
  * @author nhn
  * @version 2024/02/08
+ * @modifiedBy JBUM
+ * @modifiedAt 2024/03/04
+ * @modificationReason - 생성자(Builder) 추가
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -50,7 +53,16 @@ public class Category {
         this.categoryParent = categoryParent;
     }
 
-    public void updateCategory(String categoryName){
+    @Builder
+    public Category(Long categoryId, String categoryName, Category categoryParent,
+        List<Category> categoryChildren) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.categoryParent = categoryParent;
+        this.categoryChildren = categoryChildren;
+    }
+
+    public void updateCategory(String categoryName) {
         this.categoryName = categoryName;
     }
 }

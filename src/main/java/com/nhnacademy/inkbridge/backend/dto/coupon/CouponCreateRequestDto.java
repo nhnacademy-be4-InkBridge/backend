@@ -7,7 +7,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * class: CouponCreateRequestDTO.
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
  * @version 2024/02/15
  */
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class CouponCreateRequestDto {
 

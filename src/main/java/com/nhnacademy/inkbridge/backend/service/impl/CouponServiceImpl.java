@@ -71,7 +71,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CouponServiceImpl implements CouponService {
 
-    private static final int COUPON_LENGTH = 10;
     private static final int COUPON_NORMAL = 1;
     private static final int COUPON_WAIT = 4;
     private final CouponRepository couponRepository;
@@ -136,7 +135,7 @@ public class CouponServiceImpl implements CouponService {
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
     }
 
     /**
@@ -161,7 +160,7 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(categoryCouponCreateRequestDto.getMinPrice())
             .validity(categoryCouponCreateRequestDto.getValidity()).couponStatus(couponStatus)
             .build();
-        couponRepository.saveAndFlush(newCoupon);
+        couponRepository.save(newCoupon);
         Set<Long> categoryIds = categoryCouponCreateRequestDto.getCategoryIds();
         for (Long categoryId : categoryIds) {
             Category category = categoryRepository.findById(categoryId)
@@ -221,7 +220,6 @@ public class CouponServiceImpl implements CouponService {
             .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
-        System.out.println("test1");
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 
@@ -231,8 +229,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public Page<CouponReadResponseDto> adminViewCoupons(Pageable pageable, int couponStatusId) {
         CouponStatus couponStatus = findCouponStatus(couponStatusId);
-        return couponRepository.findByCouponStatus_CouponStatusId(couponStatus.getCouponStatusId(),
-            pageable);
+        return couponRepository.findByCouponStatus(couponStatus, pageable);
     }
 
 
@@ -399,7 +396,8 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     public Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable) {
-        return couponRepository.findByCouponStatus_CouponStatusId(COUPON_NORMAL, pageable);
+        return couponRepository.findByCouponStatus_CouponStatusIdAndIsBirthFalse(COUPON_NORMAL,
+            pageable);
     }
 
     /**
