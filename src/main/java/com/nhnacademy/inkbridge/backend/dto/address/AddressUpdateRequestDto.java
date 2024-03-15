@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.dto.address;
 
 import com.nhnacademy.inkbridge.backend.entity.GeneralAddress;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class AddressUpdateRequestDto {
-
-    @NotBlank
+    @NotNull
     private Long addressId;
 
     @NotBlank
@@ -43,10 +43,6 @@ public class AddressUpdateRequestDto {
     @Size(max = 11)
     private String receiverNumber;
 
-    public GeneralAddress toGeneralAddress() {
-        return GeneralAddress.builder().address(address).zipCode(zipCode).build();
-    }
-
     @Builder
     public AddressUpdateRequestDto(Long addressId, String zipCode, String address, String alias,
         String addressDetail, String receiverName, String receiverNumber) {
@@ -57,5 +53,9 @@ public class AddressUpdateRequestDto {
         this.addressDetail = addressDetail;
         this.receiverName = receiverName;
         this.receiverNumber = receiverNumber;
+    }
+
+    public GeneralAddress toGeneralAddress() {
+        return GeneralAddress.builder().address(address).zipCode(zipCode).build();
     }
 }
