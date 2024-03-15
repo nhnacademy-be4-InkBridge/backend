@@ -32,7 +32,7 @@ public class BookOrder {
 
     @Id
     @Column(name = "order_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
     @Column(name = "order_code")
