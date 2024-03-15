@@ -29,6 +29,8 @@ public interface BookRepositoryCustom {
      */
     Page<BooksPaginationReadResponseDto> findAllBooks(Pageable pageable);
 
+    Page<BooksPaginationReadResponseDto> findAllBooksByAuthor(Pageable pageable, Long authorId);
+
     /**
      * 카테고리 아이디에 대한 도서 목록 조회 메서드입니다.
      *

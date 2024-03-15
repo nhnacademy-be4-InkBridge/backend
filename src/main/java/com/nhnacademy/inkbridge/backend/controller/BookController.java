@@ -6,7 +6,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -81,9 +80,7 @@ public class BookController {
      */
     @GetMapping("/{bookId}")
     public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
-        HttpServletRequest request) {
-        Long memberId = request.getHeader("Authorization-Id") == null ? 0L
-            : Long.parseLong(request.getHeader("Authorization-Id"));
+        @RequestParam Long memberId) {
         BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }

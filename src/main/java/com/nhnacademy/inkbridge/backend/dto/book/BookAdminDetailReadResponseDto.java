@@ -23,8 +23,6 @@ public class BookAdminDetailReadResponseDto {
     List<BookStatusReadResponseDto> bookStatusReadResponseDtoList;
     List<TagReadResponseDto> tagReadResponseDtoList;
 
-    // builder
-
     @Builder
     public BookAdminDetailReadResponseDto(
         BookAdminSelectedReadResponseDto adminSelectedReadResponseDto,
