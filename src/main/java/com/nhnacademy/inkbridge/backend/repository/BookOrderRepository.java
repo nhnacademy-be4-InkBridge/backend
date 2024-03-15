@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author jangjaehun
  * @version 2024/03/11
  */
-public interface BookOrderRepository extends JpaRepository<BookOrder, String>,
+public interface BookOrderRepository extends JpaRepository<BookOrder, Long>,
     BookOrderRepositoryCustom {
 
 }

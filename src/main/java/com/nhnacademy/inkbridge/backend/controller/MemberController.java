@@ -10,6 +10,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -56,7 +58,13 @@ public class MemberController {
      * @return 회원가입 성공
      */
     @PostMapping("/members")
-    public ResponseEntity<HttpStatus> create(@RequestBody MemberCreateRequestDto memberCreateRequestDto) {
+    public ResponseEntity<HttpStatus> create(
+        @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
+        }
+
         memberService.createMember(memberCreateRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -64,15 +72,15 @@ public class MemberController {
 
     @PostMapping("/members/login")
     public ResponseEntity<MemberAuthLoginResponseDto> authLogin(
-            @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
-            BindingResult bindingResult) {
+        @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
-                memberService.loginInfoMember(memberAuthLoginRequestDto);
-
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
+            memberService.loginInfoMember(memberAuthLoginRequestDto);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberAuthLoginResponseDto);
     }
 
     @GetMapping("/auth/info")
@@ -84,13 +92,13 @@ public class MemberController {
             .body(memberService.getMemberInfo(memberId));
     }
 
-    @GetMapping("/members/{memberId}/order-coupons")
+    @GetMapping("/auth/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
         @PathVariable("memberId") Long memberId, @RequestParam("book-id") Long[] bookId) {
         return ResponseEntity.ok(couponService.getOrderCouponList(bookId, memberId));
     }
 
-    @GetMapping("/members/{memberId}/coupons")
+    @GetMapping("/auth/members/{memberId}/coupons")
     public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
         @PathVariable("memberId") Long memberId,
         @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
@@ -105,16 +113,30 @@ public class MemberController {
             ));
     }
 
+    @PostMapping("/auth/members/{memberId}/coupons/{couponId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void issueCoupon(@PathVariable("memberId") Long memberId,
+        @PathVariable("couponId") String couponId) {
+        couponService.issueCoupon(memberId, couponId);
+    }
+
 
     @PostMapping("/oauth/check")
-    public ResponseEntity<Boolean> oauthMemberCheck(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+    public ResponseEntity<Boolean> oauthMemberCheck(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
         boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
 
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/oauth")
-    public ResponseEntity<String> getOAuthEmail(@RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+    public ResponseEntity<String> getOAuthEmail(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+    }
+    @PostMapping("/members/checkEmail")
+    public ResponseEntity<Boolean> isDuplicatedEmail(@RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+        return ResponseEntity.ok().body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
     }
 }

@@ -25,7 +25,7 @@ public class GeneralAddress {
     @Id
     @Column(name = "general_address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long addressId;
+    private Long generalAddressId;
 
     @Column(name = "zip_code")
     private String zipCode;
@@ -34,8 +34,8 @@ public class GeneralAddress {
     private String address;
 
     @Builder
-    public GeneralAddress(Long addressId, String zipCode, String address) {
-        this.addressId = addressId;
+    public GeneralAddress(Long generalAddressId, String zipCode, String address) {
+        this.generalAddressId = generalAddressId;
         this.zipCode = zipCode;
         this.address = address;
     }

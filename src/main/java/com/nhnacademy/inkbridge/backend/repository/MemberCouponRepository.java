@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author JBum
  * @version 2024/02/19
  */
-public interface MemberCouponRepository extends JpaRepository<MemberCoupon, String>,
+public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long>,
     MemberCouponCustomRepository {
 
     /**
@@ -61,4 +61,13 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Stri
      */
     List<MemberCoupon> findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(Long memberId,
         LocalDate now);
+
+    /**
+     * 사용 처리할 쿠폰을 찾습니다. 찾을 때는 해당 쿠폰id와  맴버id로 찾습니다.
+     *
+     * @param memberCouponIds 맴버의 쿠폰id들
+     * @param memberId        맴버id
+     */
+    List<MemberCoupon> findAllByMemberCouponIdInAndMember_MemberId(List<Long> memberCouponIds,
+        Long memberId);
 }

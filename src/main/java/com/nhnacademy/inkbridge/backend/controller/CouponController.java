@@ -1,11 +1,13 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,4 +39,9 @@ public class CouponController {
         return ResponseEntity.ok(coupons);
     }
 
+    @GetMapping("/{couponId}")
+    public ResponseEntity<CouponDetailReadResponseDto> getCoupon(
+        @PathVariable("couponId") String couponId) {
+        return ResponseEntity.ok(couponService.getDetailCoupon(couponId));
+    }
 }

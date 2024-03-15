@@ -118,4 +118,9 @@ public class MemberServiceImpl implements MemberService {
         }
         return email.get().getEmail();
     }
+
+    @Override
+    public Boolean checkDuplicatedEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
 }

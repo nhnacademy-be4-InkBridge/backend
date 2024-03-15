@@ -54,7 +54,7 @@ class OrderFacadeTest {
         ReflectionTestUtils.setField(requestDto, "bookOrderList",
             List.of(new BookOrderDetailCreateRequestDto()));
         ReflectionTestUtils.setField(requestDto, "bookOrder", new BookOrderCreateRequestDto());
-        OrderCreateResponseDto responseDto = new OrderCreateResponseDto("orderId");
+        OrderCreateResponseDto responseDto = new OrderCreateResponseDto(1L, "orderCode");
 
         given(bookOrderService.createBookOrder(any())).willReturn(responseDto);
 
@@ -89,7 +89,7 @@ class OrderFacadeTest {
         ReflectionTestUtils.setField(requestDto, "bookOrderList",
             List.of(new BookOrderDetailCreateRequestDto()));
         ReflectionTestUtils.setField(requestDto, "bookOrder", new BookOrderCreateRequestDto());
-        OrderCreateResponseDto responseDto = new OrderCreateResponseDto("orderId");
+        OrderCreateResponseDto responseDto = new OrderCreateResponseDto(1L, "orderCode");
 
         given(bookOrderService.createBookOrder(any())).willReturn(responseDto);
         doThrow(new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage())).when(
@@ -108,7 +108,7 @@ class OrderFacadeTest {
         ReflectionTestUtils.setField(requestDto, "bookOrderList",
             List.of(new BookOrderDetailCreateRequestDto()));
         ReflectionTestUtils.setField(requestDto, "bookOrder", new BookOrderCreateRequestDto());
-        OrderCreateResponseDto responseDto = new OrderCreateResponseDto("orderId");
+        OrderCreateResponseDto responseDto = new OrderCreateResponseDto(1L, "orderCode");
 
         given(bookOrderService.createBookOrder(any())).willReturn(responseDto);
         doThrow(new NotFoundException(CouponMessageEnum.COUPON_NOT_FOUND.getMessage())).when(
@@ -127,7 +127,7 @@ class OrderFacadeTest {
         ReflectionTestUtils.setField(requestDto, "bookOrderList",
             List.of(new BookOrderDetailCreateRequestDto()));
         ReflectionTestUtils.setField(requestDto, "bookOrder", new BookOrderCreateRequestDto());
-        OrderCreateResponseDto responseDto = new OrderCreateResponseDto("orderId");
+        OrderCreateResponseDto responseDto = new OrderCreateResponseDto(1L, "orderCode");
 
         given(bookOrderService.createBookOrder(any())).willReturn(responseDto);
         doThrow(new NotFoundException(OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage())).when(
@@ -146,7 +146,7 @@ class OrderFacadeTest {
         ReflectionTestUtils.setField(requestDto, "bookOrderList",
             List.of(new BookOrderDetailCreateRequestDto()));
         ReflectionTestUtils.setField(requestDto, "bookOrder", new BookOrderCreateRequestDto());
-        OrderCreateResponseDto responseDto = new OrderCreateResponseDto("orderId");
+        OrderCreateResponseDto responseDto = new OrderCreateResponseDto(1L, "orderCode");
 
         given(bookOrderService.createBookOrder(any())).willReturn(responseDto);
         doThrow(new NotFoundException(OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage())).when(

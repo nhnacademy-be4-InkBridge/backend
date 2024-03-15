@@ -9,7 +9,8 @@ import com.nhnacademy.inkbridge.backend.entity.QCoupon;
 import com.nhnacademy.inkbridge.backend.entity.QMemberCoupon;
 import com.nhnacademy.inkbridge.backend.repository.custom.MemberCouponCustomRepository;
 import com.querydsl.core.types.Projections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
@@ -32,16 +33,16 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
      * {@inheritDoc}
      */
     @Override
-    public List<MemberCouponReadResponseDto> findOrderCoupons(Long memberId,
+    public Set<MemberCouponReadResponseDto> findOrderCoupons(Long memberId,
         BookCategoriesDto bookCategoriesDto) {
         QCoupon coupon = QCoupon.coupon;
         QBookCoupon bookCoupon = QBookCoupon.bookCoupon;
         QCategoryCoupon categoryCoupon = QCategoryCoupon.categoryCoupon;
         QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
-//        1. 맴버가 일치하고 책이 일치해야함.
-//        2. 맴버가 일치하고 카테고리가 일치해야함.
-//        3. 멤버가일치하고 카테고리 그리고 책이 일치하지않아야함
-        List<MemberCouponReadResponseDto> result = from(memberCoupon)
+
+        Set<MemberCouponReadResponseDto> result = new HashSet<>(); // HashSet으로 변경
+
+        result.addAll(from(memberCoupon)
             .leftJoin(coupon).on(memberCoupon.coupon.couponId.eq(coupon.couponId))
             .leftJoin(bookCoupon).on(coupon.couponId.eq(bookCoupon.coupon.couponId))
             .leftJoin(categoryCoupon).on(coupon.couponId.eq(categoryCoupon.coupon.couponId))
@@ -65,7 +66,8 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
                 coupon.isBirth,
                 coupon.couponStatus.couponStatusId,
                 coupon.couponStatus.couponStatusName))
-            .fetch();
+            .fetch());
+
         return result;
     }
 }

@@ -13,5 +13,6 @@ import lombok.Getter;
 @Getter
 public class OrderCreateResponseDto {
 
-    private String orderId;
+    private Long orderId;
+    private String orderCode;
 }

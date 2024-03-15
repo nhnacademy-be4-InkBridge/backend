@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,11 +26,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "book_order")
+@Builder
+@AllArgsConstructor
 public class BookOrder {
 
     @Id
     @Column(name = "order_id")
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+
+    @Column(name = "order_code")
+    private String orderCode;
+
 
     @Column(name = "order_name")
     private String orderName;
@@ -81,30 +91,4 @@ public class BookOrder {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder
-    public BookOrder(String orderId, String orderName, LocalDate shipDate, LocalDateTime orderAt,
-        LocalDate deliveryDate, String receiver, String receiverNumber, String zipCode,
-        String address,
-        String addressDetail, String orderer, String ordererNumber, String ordererEmail,
-        Long usePoint,
-        Long totalPrice, Boolean isPayment, Long deliveryPrice, Member member) {
-        this.orderId = orderId;
-        this.orderName = orderName;
-        this.shipDate = shipDate;
-        this.orderAt = orderAt;
-        this.deliveryDate = deliveryDate;
-        this.receiver = receiver;
-        this.receiverNumber = receiverNumber;
-        this.zipCode = zipCode;
-        this.address = address;
-        this.addressDetail = addressDetail;
-        this.orderer = orderer;
-        this.ordererNumber = ordererNumber;
-        this.ordererEmail = ordererEmail;
-        this.usePoint = usePoint;
-        this.totalPrice = totalPrice;
-        this.isPayment = isPayment;
-        this.deliveryPrice = deliveryPrice;
-        this.member = member;
-    }
 }

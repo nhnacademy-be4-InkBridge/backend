@@ -2,7 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
-import java.util.List;
+import java.util.Set;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -22,6 +22,6 @@ public interface MemberCouponCustomRepository {
      * @param bookCategoriesDto 책과 책의 카테고리
      * @return 쿠폰소유자의 각 책에 맞는 쿠폰리스트
      */
-    List<MemberCouponReadResponseDto> findOrderCoupons(Long memberId,
+    Set<MemberCouponReadResponseDto> findOrderCoupons(Long memberId,
         BookCategoriesDto bookCategoriesDto);
 }
