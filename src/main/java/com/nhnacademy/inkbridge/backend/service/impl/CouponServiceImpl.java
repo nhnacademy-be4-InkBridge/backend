@@ -18,7 +18,7 @@ import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
