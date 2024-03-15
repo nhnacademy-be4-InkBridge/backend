@@ -107,5 +107,5 @@ public interface CouponService {
      */
     CouponDetailReadResponseDto getDetailCoupon(String couponId);
 
-    void useCoupons(Long id, List<String> couponId);
+    void useCoupons(Long memberId, List<Long> memberCouponId);
 }

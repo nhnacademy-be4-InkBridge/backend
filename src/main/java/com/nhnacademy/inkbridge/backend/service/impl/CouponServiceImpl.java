@@ -202,26 +202,26 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void issueCoupon(Long memberId, String couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
                     couponId)));
-
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
                     memberId)));
-
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
-
         MemberCoupon memberCoupon = MemberCoupon.builder()
-            .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
+            .coupon(coupon)
+            .member(member)
             .build();
+        System.out.println("test1");
         memberCouponRepository.saveAndFlush(memberCoupon);
     }
 
@@ -429,9 +429,9 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     @Transactional
-    public void useCoupons(Long memberId, List<String> couponId) {
-        List<MemberCoupon> useCoupons = memberCouponRepository.findAllById(couponId);
-        if (useCoupons.size() != couponId.size()) {
+    public void useCoupons(Long memberId, List<Long> memberCouponId) {
+        List<MemberCoupon> useCoupons = memberCouponRepository.findAllById(memberCouponId);
+        if (useCoupons.size() != memberCouponId.size()) {
             throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
         }
         useCoupons.forEach(coupon -> {
