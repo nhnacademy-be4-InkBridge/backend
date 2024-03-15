@@ -51,4 +51,7 @@ public interface MemberService {
      * @return oauth 회원 이메일
      */
     String getOAuthMemberEmail(String id);
+    
+    Boolean checkDuplicatedEmail(String email);
+
 }

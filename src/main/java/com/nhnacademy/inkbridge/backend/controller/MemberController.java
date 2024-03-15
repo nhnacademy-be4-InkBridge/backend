@@ -135,4 +135,8 @@ public class MemberController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
             .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
+    @PostMapping("/members/checkEmail")
+    public ResponseEntity<Boolean> isDuplicatedEmail(@RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+        return ResponseEntity.ok().body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
+    }
 }
