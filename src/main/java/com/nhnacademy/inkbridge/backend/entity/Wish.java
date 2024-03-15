@@ -40,6 +40,12 @@ public class Wish {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    @Builder
+    public Wish(Pk pk, Member member, Book book) {
+        this.pk = pk;
+        this.member = member;
+        this.book = book;
+    }
 
     /**
      * class: Wish.Pk.

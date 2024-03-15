@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
+import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pointpolicy.PointPolicyReadResponseDto;
 import java.util.List;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -18,7 +19,7 @@ public interface PointPolicyRepositoryCustom {
      *
      * @return List - PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> findAllPointPolicyBy();
+    List<PointPolicyAdminReadResponseDto> findAllPointPolicyBy();
 
     /**
      * 포인트 정책 유형 내역을 조회하는 메소드입니다.
@@ -26,14 +27,15 @@ public interface PointPolicyRepositoryCustom {
      * @param pointPolicyTypeId Integer
      * @return PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> findAllPointPolicyByTypeId(Integer pointPolicyTypeId);
+    List<PointPolicyAdminReadResponseDto> findAllPointPolicyByTypeId(Integer pointPolicyTypeId);
 
     /**
-     * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다. <br/> 가장 마지막에 등록된 정책번호로 조회합니다. <br/> 정렬 순서는 정책 유형의 id 번호 순으로 정렬됩니다.
+     * 현재 적용중인 포인트 정책 목록을 조회하는 메소드입니다. <br/> 가장 마지막에 등록된 정책번호로 조회합니다. <br/> 정렬 순서는 정책 유형의 id 번호 순으로
+     * 정렬됩니다.
      *
      * @return List - PointPolicyReadResponseDto
      */
-    List<PointPolicyReadResponseDto> findAllCurrentPointPolicies();
+    List<PointPolicyAdminReadResponseDto> findAllCurrentPointPolicies();
 
     /**
      * 포인트 정책 유형에 맞는 현재 적용중인 정책을 조회하는 메소드입니다.

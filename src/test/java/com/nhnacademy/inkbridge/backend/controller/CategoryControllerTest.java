@@ -3,7 +3,6 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -49,12 +47,10 @@ class CategoryControllerTest {
     CategoryService categoryService;
 
     @Test
-    @WithMockUser
     @DisplayName("Category 데이터 생성 테스트 - 성공")
     void When_CreateCategory_Expect_Success() throws Exception {
         CategoryCreateRequestDto request = new CategoryCreateRequestDto();
-        mockMvc.perform(post("/api/category")
-                .with(csrf())
+        mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated());
@@ -63,14 +59,12 @@ class CategoryControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Category 데이터 생성 테스트- 10글자를 넘는 카테고리 유효성 검사")
     void When_CreateCategoryByInvalidName_Expect_Fail() throws Exception {
         CategoryCreateRequestDto request = new CategoryCreateRequestDto();
         ReflectionTestUtils.setField(request, "categoryName", "길이가 10이 넘는 카테고리");
 
-        mockMvc.perform(post("/api/category")
-                .with(csrf())
+        mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -79,7 +73,6 @@ class CategoryControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Category 단일데이터 조회 테스트")
     void When_ReadCategory_Expect_Success() throws Exception {
         CategoryReadResponseDto response = new CategoryReadResponseDto();
@@ -87,14 +80,13 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(response, "categoryName", "한국도서");
         when(categoryService.readCategory(response.getCategoryId())).thenReturn(response);
 
-        mockMvc.perform(get("/api/category/1"))
+        mockMvc.perform(get("/api/categories/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.categoryId").value(response.getCategoryId()))
             .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()));
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Category 모든 데이터 조회 테스트")
     void When_ReadAllCategory_Expect_Success() throws Exception {
         Category IT = Category.create().categoryName("IT").build();
@@ -111,8 +103,7 @@ class CategoryControllerTest {
         ParentCategoryReadResponseDto response = new ParentCategoryReadResponseDto(IT);
         when(categoryService.readAllCategory()).thenReturn(List.of(response));
 
-        mockMvc.perform(get("/api/category")
-                .with(csrf()))
+        mockMvc.perform(get("/api/categories"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.*.categoryId").value(1))
             .andExpect(jsonPath("$.*.categoryName").value("IT"))
@@ -125,7 +116,6 @@ class CategoryControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Category 수정 테스트 - 성공")
     void When_UpdateCategory_Expect_Success() throws Exception {
         Long categoryId = 1L;
@@ -139,8 +129,7 @@ class CategoryControllerTest {
 
         when(categoryService.updateCategory(categoryId, request)).thenReturn(response);
 
-        mockMvc.perform(put("/api/category/1")
-                .with(csrf())
+        mockMvc.perform(put("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -151,7 +140,6 @@ class CategoryControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Category 수정 테스트 - 10글자를 넘는 카테고리 유효성 검사")
     void When_UpdateCategoryByInvalidName_Expect_Fail() throws Exception {
         Long categoryId = 1L;
@@ -160,8 +148,7 @@ class CategoryControllerTest {
         CategoryUpdateRequestDto request = new CategoryUpdateRequestDto();
         ReflectionTestUtils.setField(request, "categoryName", categoryName);
 
-        mockMvc.perform(put("/api/category/1")
-                .with(csrf())
+        mockMvc.perform(put("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());

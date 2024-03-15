@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,12 @@ public class Author {
     @OneToOne
     @JoinColumn(name = "file_id")
     private File file;
+
+    @Builder
+    public Author(Long authorId, String authorName, String authorIntroduce, File file) {
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.authorIntroduce = authorIntroduce;
+        this.file = file;
+    }
 }

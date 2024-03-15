@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.accumulationratepolicy.AccumulationRatePolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.AccumulationRatePolicy;
 import com.nhnacademy.inkbridge.backend.enums.AccumulationRatePolicyMessageEnum;
@@ -28,11 +29,11 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
     /**
      * {@inheritDoc}
      *
-     * @return List - AccumulationRatePolicyReadResponseDto
+     * @return List - AccumulationRatePolicyAdminReadResponseDto
      */
     @Transactional(readOnly = true)
     @Override
-    public List<AccumulationRatePolicyReadResponseDto> getAccumulationRatePolicies() {
+    public List<AccumulationRatePolicyAdminReadResponseDto> getAccumulationRatePolicies() {
         return accumulationRatePolicyRepository.findAllAccumulationRatePolicies();
     }
 

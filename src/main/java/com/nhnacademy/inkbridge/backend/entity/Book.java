@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,6 +69,12 @@ public class Book {
     @Column(name = "is_packagable")
     private Boolean isPackagable;
 
+    @Column(name = "view")
+    private Long view;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "status_id")
     private BookStatus bookStatus;
@@ -83,7 +90,8 @@ public class Book {
     @Builder
     public Book(String bookTitle, String bookIndex, String description, LocalDate publicatedAt,
         String isbn, Long regularPrice, Long price, BigDecimal discountRatio, Integer stock,
-        Boolean isPackagable, BookStatus bookStatus, Publisher publisher, File thumbnailFile) {
+        Boolean isPackagable, LocalDateTime updatedAt, BookStatus bookStatus, Publisher publisher,
+        File thumbnailFile) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -94,6 +102,8 @@ public class Book {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
+        this.updatedAt = updatedAt;
+        this.view = 0L;
         this.bookStatus = bookStatus;
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;
@@ -112,6 +122,7 @@ public class Book {
         this.discountRatio = discountRatio;
         this.stock = stock;
         this.isPackagable = isPackagable;
+        this.updatedAt = LocalDateTime.now();
         this.bookStatus = bookStatus;
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;

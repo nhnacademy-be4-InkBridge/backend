@@ -1,7 +1,9 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 /**
  * class: BooksAdminReadResponse.
@@ -12,17 +14,14 @@ import lombok.Getter;
 @Getter
 public class BooksAdminReadResponseDto {
 
-    private final String bookTitle;
-    private final String authorName;
-    private final String publisherName;
-    private final String statusName;
+    private final Page<BooksAdminPaginationReadResponseDto> booksAdminPaginationReadResponseDtos;
+    private final List<AuthorPaginationReadResponseDto> authorPaginationReadResponseDtos;
 
     @Builder
-    public BooksAdminReadResponseDto(String bookTitle, String authorName, String publisherName,
-        String statusName) {
-        this.bookTitle = bookTitle;
-        this.authorName = authorName;
-        this.publisherName = publisherName;
-        this.statusName = statusName;
+    public BooksAdminReadResponseDto(
+        Page<BooksAdminPaginationReadResponseDto> booksAdminPaginationReadResponseDtos,
+        List<AuthorPaginationReadResponseDto> authorPaginationReadResponseDtos) {
+        this.booksAdminPaginationReadResponseDtos = booksAdminPaginationReadResponseDtos;
+        this.authorPaginationReadResponseDtos = authorPaginationReadResponseDtos;
     }
 }

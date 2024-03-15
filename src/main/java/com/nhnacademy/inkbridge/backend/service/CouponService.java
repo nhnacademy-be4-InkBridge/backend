@@ -5,10 +5,14 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDt
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponIssueRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
+import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyUsedException;
 import com.nhnacademy.inkbridge.backend.exception.InvalidPeriodException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -74,4 +78,23 @@ public interface CouponService {
     void createCategoryCoupon(
         CategoryCouponCreateRequestDto categoryCouponCreateRequestDto);
 
+    List<OrderCouponReadResponseDto> getOrderCouponList(Long[] bookId, Long memberId);
+
+    /**
+     * 사용자가 가진 쿠폰을 조회하는 메소드. 이 때 used를 이용해서 사용햇는쿠폰을 조회할 것인지 미사용쿠폰을 조회할 것인지 정한다.
+     *
+     * @param memberId 조회할 사용자Id
+     * @param used     사용여부
+     * @return 사용자가 가진 쿠폰
+     */
+    List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum used);
+
+    /**
+     * 발급가능한 쿠폰의 목록을 보여주는 메소드.
+     *
+     * @param pageable 페이지
+     * @return 발급가능한 쿠폰 목록.
+     */
+    Page<CouponReadResponseDto> getIssuableCoupons(Pageable pageable);
 }

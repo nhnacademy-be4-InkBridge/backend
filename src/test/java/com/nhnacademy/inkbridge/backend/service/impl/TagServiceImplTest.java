@@ -3,6 +3,10 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.inkbridge.backend.dto.tag.TagCreateRequestDto;
@@ -13,16 +17,15 @@ import com.nhnacademy.inkbridge.backend.dto.tag.TagUpdateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -36,6 +39,9 @@ class TagServiceImplTest {
 
     @Mock
     private TagRepository tagRepository;
+
+    @Mock
+    private BookTagRepository bookTagRepository;
 
     @InjectMocks
     private TagServiceImpl tagService;
@@ -127,7 +133,12 @@ class TagServiceImplTest {
     @Test
     void deleteTag() {
         when(tagRepository.existsById(testTagId1)).thenReturn(true);
+        doNothing().when(bookTagRepository).deleteAllByPk_TagId(anyLong());
+        doNothing().when(tagRepository).deleteById(anyLong());
         assertEquals(testTagId1 + " is deleted", tagService.deleteTag(testTagId1).getMessage());
+
+        verify(bookTagRepository, times(1)).deleteAllByPk_TagId(anyLong());
+        verify(tagRepository, times(1)).deleteById(anyLong());
     }
 
     @Test
