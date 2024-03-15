@@ -65,9 +65,9 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
     /**
      * 사용 처리할 쿠폰을 찾습니다. 찾을 때는 해당 쿠폰id와  맴버id로 찾습니다.
      *
-     * @param memberCouponId 맴버의 쿠폰id
-     * @param memberId       맴버id
+     * @param memberCouponIds 맴버의 쿠폰id들
+     * @param memberId        맴버id
      */
-    List<MemberCoupon> findAllByMemberCouponIdAndMember_MemberIdAnd(Long memberCouponId,
+    List<MemberCoupon> findAllByMemberCouponIdInAndMember_MemberId(List<Long> memberCouponIds,
         Long memberId);
 }
