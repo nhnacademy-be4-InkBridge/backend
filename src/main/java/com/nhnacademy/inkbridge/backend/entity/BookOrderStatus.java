@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,10 @@ public class BookOrderStatus {
 
     @Column(name = "order_status")
     private String orderStatus;
+
+    @Builder
+    public BookOrderStatus(Long orderStatusId, String orderStatus) {
+        this.orderStatusId = orderStatusId;
+        this.orderStatus = orderStatus;
+    }
 }

@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,9 +51,16 @@ public class MemberController {
     private final MemberService memberService;
     private final CouponService couponService;
 
+    /**
+     * 회원가입 하는 메서드입니다.
+     *
+     * @param memberCreateRequestDto 회원가입 폼 데이터
+     * @return 회원가입 성공
+     */
     @PostMapping("/members")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
-                                             BindingResult bindingResult) {
+    public ResponseEntity<HttpStatus> create(
+        @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
@@ -63,16 +72,15 @@ public class MemberController {
 
     @PostMapping("/members/login")
     public ResponseEntity<MemberAuthLoginResponseDto> authLogin(
-            @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
-            BindingResult bindingResult) {
+        @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
+        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.toString());
         }
-        log.info("login info start ->");
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
-                memberService.loginInfoMember(memberAuthLoginRequestDto);
-        log.info("login info end -> {}",memberAuthLoginResponseDto.getEmail());
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(memberAuthLoginResponseDto);
+            memberService.loginInfoMember(memberAuthLoginRequestDto);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberAuthLoginResponseDto);
     }
 
     @GetMapping("/auth/info")
@@ -84,13 +92,13 @@ public class MemberController {
             .body(memberService.getMemberInfo(memberId));
     }
 
-    @GetMapping("/members/{memberId}/order-coupons")
+    @GetMapping("/auth/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
         @PathVariable("memberId") Long memberId, @RequestParam("book-id") Long[] bookId) {
         return ResponseEntity.ok(couponService.getOrderCouponList(bookId, memberId));
     }
 
-    @GetMapping("/members/{memberId}/coupons")
+    @GetMapping("/auth/members/{memberId}/coupons")
     public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
         @PathVariable("memberId") Long memberId,
         @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
@@ -103,5 +111,28 @@ public class MemberController {
         return ResponseEntity.ok(
             couponService.getMemberCouponList(memberId, statusEnum
             ));
+    }
+
+    @PostMapping("/auth/members/{memberId}/coupons/{couponId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void issueCoupon(@PathVariable("memberId") Long memberId,
+        @PathVariable("couponId") String couponId) {
+        couponService.issueCoupon(memberId, couponId);
+    }
+
+
+    @PostMapping("/oauth/check")
+    public ResponseEntity<Boolean> oauthMemberCheck(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<String> getOAuthEmail(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 }

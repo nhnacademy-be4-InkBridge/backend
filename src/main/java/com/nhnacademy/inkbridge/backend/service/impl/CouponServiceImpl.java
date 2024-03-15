@@ -123,7 +123,6 @@ public class CouponServiceImpl implements CouponService {
     @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(couponCreateRequestDto.getCouponName());
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             couponCreateRequestDto.getBasicIssuedDate());
 
@@ -132,6 +131,7 @@ public class CouponServiceImpl implements CouponService {
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
             .basicIssuedDate(couponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(couponCreateRequestDto.getDiscountPrice())
+            .isBirth(false)
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
@@ -146,7 +146,6 @@ public class CouponServiceImpl implements CouponService {
     public void createCategoryCoupon(
         CategoryCouponCreateRequestDto categoryCouponCreateRequestDto) {
         CouponType couponType = findCouponType(categoryCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(categoryCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             categoryCouponCreateRequestDto.getBasicIssuedDate());
@@ -157,6 +156,7 @@ public class CouponServiceImpl implements CouponService {
             .basicIssuedDate(categoryCouponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(categoryCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(categoryCouponCreateRequestDto.getMaxDiscountPrice())
+            .isBirth(false)
             .minPrice(categoryCouponCreateRequestDto.getMinPrice())
             .validity(categoryCouponCreateRequestDto.getValidity()).couponStatus(couponStatus)
             .build();
@@ -176,15 +176,16 @@ public class CouponServiceImpl implements CouponService {
     @Transactional
     public void createBookCoupon(BookCouponCreateRequestDto bookCouponCreateRequestDto) {
         CouponType couponType = findCouponType(bookCouponCreateRequestDto.getCouponTypeId());
-        validDuplicatedCouponName(bookCouponCreateRequestDto.getCouponName());
 
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
             bookCouponCreateRequestDto.getBasicIssuedDate());
         Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
             .couponType(couponType).couponName(bookCouponCreateRequestDto.getCouponName())
             .basicIssuedDate(bookCouponCreateRequestDto.getBasicIssuedDate())
+            .basicExpiredDate(bookCouponCreateRequestDto.getBasicExpiredDate())
             .discountPrice(bookCouponCreateRequestDto.getDiscountPrice())
             .maxDiscountPrice(bookCouponCreateRequestDto.getMaxDiscountPrice())
+            .isBirth(false)
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
@@ -202,22 +203,21 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     @Transactional
-    public void issueCoupon(CouponIssueRequestDto issueCouponDto) {
-        Coupon coupon = couponRepository.findByCouponIdAndIsBirthFalse(issueCouponDto.getCouponId())
-            .orElseThrow(
-                () -> new NotFoundException(
-                    String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
-                        issueCouponDto.getCouponId())));
-        Member member = memberRepository.findById(issueCouponDto.getMemberId()).orElseThrow(
+    public void issueCoupon(Long memberId, String couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
+            () -> new NotFoundException(
+                String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
+                    couponId)));
+        Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
                 String.format("%s%s%d", MEMBER_NOT_FOUND.getMessage(), MEMBER_ID.getMessage(),
-                    issueCouponDto.getMemberId())));
+                    memberId)));
         validateCouponPeriod(coupon.getBasicIssuedDate(), coupon.getBasicExpiredDate());
         if (memberCouponRepository.existsByCouponAndMember(coupon, member)) {
             throw new AlreadyExistException(COUPON_ISSUED_EXIST.getMessage());
         }
         MemberCoupon memberCoupon = MemberCoupon.builder()
-            .memberCouponId(UUID.randomUUID().toString()).member(member).coupon(coupon)
+            .member(member).coupon(coupon)
             .issuedAt(LocalDate.now()).expiredAt(LocalDate.now().plusDays(coupon.getValidity()))
             .build();
         memberCouponRepository.saveAndFlush(memberCoupon);
@@ -413,5 +413,29 @@ public class CouponServiceImpl implements CouponService {
             .ifPresent(id -> {
                 throw new NotFoundException(BOOK_NOT_FOUND.getMessage());
             });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CouponDetailReadResponseDto getDetailCoupon(String couponId) {
+
+        return couponRepository.findDetailCoupon(couponId).orElseThrow(() -> new NotFoundException(
+            COUPON_NOT_FOUND.getMessage()));
+    }
+
+    @Override
+    @Transactional
+    public void useCoupons(Long memberId, List<Long> memberCouponId) {
+        List<MemberCoupon> useCoupons = memberCouponRepository.findAllByMemberCouponIdAndMember_MemberIdAnd(
+            memberCouponId, memberId);
+        if (useCoupons.size() != memberCouponId.size()) {
+            throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
+        }
+        useCoupons.forEach(coupon -> {
+            validateCouponUsed(coupon);
+            coupon.use();
+        });
     }
 }

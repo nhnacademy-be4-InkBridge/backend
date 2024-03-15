@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.coupon;
 
-import java.util.List;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,12 +16,13 @@ import lombok.NoArgsConstructor;
 public class OrderCouponReadResponseDto {
 
     private Long bookId;
-    private List<MemberCouponReadResponseDto> memberCouponReadResponseDtos;
+    private Set<MemberCouponReadResponseDto> memberCouponReadResponseDtos;
 
     @Builder
     public OrderCouponReadResponseDto(Long bookId,
-        List<MemberCouponReadResponseDto> memberCouponReadResponseDtos) {
+        Set<MemberCouponReadResponseDto> memberCouponReadResponseDtos) {
         this.bookId = bookId;
         this.memberCouponReadResponseDtos = memberCouponReadResponseDtos;
     }
+    
 }
