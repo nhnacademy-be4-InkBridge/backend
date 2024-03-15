@@ -23,9 +23,9 @@ public class CouponReadResponseDto {
     private String basicIssuedDate;
     private String basicExpiredDate;
     private Integer validity;
-    private CouponType couponType;
+    private Integer couponTypeId;
     private Boolean isBirth;
-    private CouponStatus couponStatus;
+    private Integer couponStatusId;
 
     public CouponReadResponseDto(String couponId, String couponName, Long minPrice,
         Long discountPrice,
@@ -42,8 +42,8 @@ public class CouponReadResponseDto {
         this.basicExpiredDate = basicExpiredDate
             .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         this.validity = validity;
-        this.couponType = couponType;
+        this.couponTypeId = couponType.getCouponTypeId();
         this.isBirth = isBirth;
-        this.couponStatus = couponStatus;
+        this.couponStatusId = couponStatus.getCouponStatusId();
     }
 }

@@ -48,7 +48,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
         List<BookOrderDetailCreateRequestDto> requestDtoList) {
 
         BookOrder bookOrder = bookOrderRepository.findById(orderId)
-            .orElseThrow(() -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+            .orElseThrow(
+                () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
 
         List<BookOrderDetail> bookOrderDetailList = requestDtoList.stream()
             .map(requestDto -> {
@@ -56,7 +57,7 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
                     .orElseThrow(
                         () -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
 
-                MemberCoupon coupon = !requestDto.getCouponId().isEmpty() ?
+                MemberCoupon coupon = Objects.nonNull(requestDto.getCouponId()) ?
                     memberCouponRepository.findById(requestDto.getCouponId())
                         .orElseThrow(() -> new NotFoundException(
                             CouponMessageEnum.COUPON_NOT_FOUND.getMessage())) : null;

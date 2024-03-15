@@ -39,6 +39,4 @@ public class CouponCreateRequestDto {
     private Integer validity;
     @NotNull(message = "쿠폰이 어떤 타입인지 고르지 않았습니다.")
     private Integer couponTypeId;
-    @NotNull(message = "생일쿠폰 여부를 선택하지 않았습니다")
-    private Boolean isBirth;
 }
