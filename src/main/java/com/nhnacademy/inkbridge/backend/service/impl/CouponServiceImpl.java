@@ -121,6 +121,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponType couponType = findCouponType(couponCreateRequestDto.getCouponTypeId());
         CouponStatus couponStatus = findCouponStatusByIssuedDate(
