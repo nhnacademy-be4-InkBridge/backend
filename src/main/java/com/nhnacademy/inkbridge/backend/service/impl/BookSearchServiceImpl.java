@@ -1,0 +1,21 @@
+package com.nhnacademy.inkbridge.backend.service.impl;
+
+import com.nhnacademy.inkbridge.backend.repository.BookSearchRepository;
+import com.nhnacademy.inkbridge.backend.service.BookSearchService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+/**
+ * class: BookSearchServiceImpl.
+ *
+ * @author choijaehun
+ * @version 2024/03/11
+ */
+
+@Service
+@RequiredArgsConstructor
+public class BookSearchServiceImpl implements BookSearchService {
+
+    private final BookSearchRepository bookSearchRepository;
+
+}
