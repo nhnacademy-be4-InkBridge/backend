@@ -78,8 +78,8 @@ public class BookOrderServiceImpl implements BookOrderService {
      */
     @Transactional(readOnly = true)
     @Override
-    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderCode) {
-        return bookOrderRepository.findOrderPayByOrderId(orderCode).orElseThrow(
+    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderCode(String orderCode) {
+        return bookOrderRepository.findOrderPayByOrderCode(orderCode).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
         );
     }

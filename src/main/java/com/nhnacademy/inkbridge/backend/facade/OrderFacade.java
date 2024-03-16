@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.service.impl;
+package com.nhnacademy.inkbridge.backend.facade;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;

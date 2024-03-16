@@ -28,4 +28,6 @@ public interface BookOrderService {
      * @return 주문 결제 정보
      */
     OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId);
+
+    Long updateBookOrderPayStatusByOrderCode(String orderCode);
 }
