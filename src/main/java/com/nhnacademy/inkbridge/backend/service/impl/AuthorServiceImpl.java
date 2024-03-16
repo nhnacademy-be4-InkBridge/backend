@@ -79,7 +79,7 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Transactional
     @Override
-    public void update(MultipartFile authorFile,
+    public void updateAuthor(MultipartFile authorFile,
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto,
         Long authorId) {
         Author author = authorRepository.findById(authorId)

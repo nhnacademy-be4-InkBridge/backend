@@ -48,6 +48,7 @@ public interface AuthorService {
      * @param authorCreateUpdateRequestDto AuthorCreateUpdateRequestDto
      * @param authorId                     Long
      */
-    void update(MultipartFile authorFile, AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto,
+    void updateAuthor(MultipartFile authorFile,
+        AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto,
         Long authorId);
 }

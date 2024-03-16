@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,7 +72,12 @@ public class AuthorController {
     @PostMapping("/api/admin/authors")
     public ResponseEntity<HttpStatus> createAuthor(
         @RequestPart("image") MultipartFile authorFile, @Valid @RequestPart("author")
-    AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto) {
+    AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(
+                bindingResult.getFieldErrors().get(0).getDefaultMessage());
+        }
+
         authorService.createAuthor(authorFile, authorCreateUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -86,8 +93,14 @@ public class AuthorController {
     @PutMapping("/api/admin/authors/{authorId}")
     public ResponseEntity<HttpStatus> updateAuthor(@PathVariable Long authorId,
         @RequestPart(value = "image", required = false) MultipartFile authorFile,
-        @Valid @RequestPart("author") AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto) {
-        authorService.update(authorFile, authorCreateUpdateRequestDto, authorId);
+        @Valid @RequestPart("author") AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(
+                bindingResult.getFieldErrors().get(0).getDefaultMessage());
+        }
+
+        authorService.updateAuthor(authorFile, authorCreateUpdateRequestDto, authorId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
