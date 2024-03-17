@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author minm063
  * @version 2024/02/14
  */
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -107,10 +109,12 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public BooksReadResponseDto readBooks(Pageable pageable) {
+        log.debug("service!!!");
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooks(pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.stream().map(BooksPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
+        log.debug("result!!!; {}", authors.get(0).getAuthorName().size());
         return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
             .authorPaginationReadResponseDto(authors).build();
     }
@@ -133,7 +137,7 @@ public class BookServiceImpl implements BookService {
         Pageable pageable) {
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByCategory(
             pageable, categoryId);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
                 .collect(Collectors.toList()));
         return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
@@ -162,7 +166,7 @@ public class BookServiceImpl implements BookService {
     public BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable) {
         Page<BooksAdminPaginationReadResponseDto> books = bookRepository.findAllBooksByAdmin(
             pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksAdminPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
         return BooksAdminReadResponseDto.builder().booksAdminPaginationReadResponseDtos(books)

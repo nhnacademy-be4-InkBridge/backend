@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -29,4 +31,12 @@ public interface AuthorRepositoryCustom {
      * @return AuthorInfoReadResponseDto
      */
     Page<AuthorInfoReadResponseDto> findAllAuthors(Pageable pageable);
+
+    /**
+     * 도서 아이디에 대해 작가 이름을 조회하는 메서드입니다.
+     *
+     * @param bookId List
+     * @return AuthorPaginationReadResponseDto
+     */
+    List<AuthorPaginationReadResponseDto> findAuthorNameByBookId(List<Long> bookId);
 }

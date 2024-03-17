@@ -1,12 +1,19 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
+import com.nhnacademy.inkbridge.backend.entity.QBook;
+import com.nhnacademy.inkbridge.backend.entity.QBookAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.repository.custom.AuthorRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +25,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author minm063
  * @version 2024/03/15
  */
+@Slf4j
 public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements
     AuthorRepositoryCustom {
 
@@ -60,6 +68,28 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements
             .fetch();
 
         return new PageImpl<>(authors, pageable, getCount());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<AuthorPaginationReadResponseDto> findAuthorNameByBookId(List<Long> bookId) {
+        QBook book = QBook.book;
+        QAuthor author = QAuthor.author;
+        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
+
+        return from(book)
+            .innerJoin(bookAuthor).on(bookAuthor.book.eq(book))
+            .innerJoin(author).on(author.eq(bookAuthor.author))
+            .where(book.bookId.in(bookId))
+            .orderBy(book.bookId.desc())
+            .select(Projections.constructor(AuthorPaginationReadResponseDto.class, book.bookId,
+                list(author.authorName)))
+            .transform(groupBy(book.bookId).list(
+                Projections.constructor(AuthorPaginationReadResponseDto.class, book.bookId,
+                    list(Projections.constructor(String.class, author.authorName))
+                )));
     }
 
     /**
