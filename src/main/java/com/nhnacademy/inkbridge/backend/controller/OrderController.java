@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
@@ -64,5 +65,16 @@ public class OrderController {
         @PathVariable String orderCode) {
         OrderPayInfoReadResponseDto orderPaymentInfo = orderFacade.getOrderPaymentInfo(orderCode);
         return ResponseEntity.status(HttpStatus.OK).body(orderPaymentInfo);
+    }
+
+    /**
+     * 주문 코드로 주문을 조회하는 메소드입니다.
+     * 
+     * @param orderCode 주문 코드
+     * @return 주문 내역
+     */
+    @GetMapping("/{orderCode}")
+    public ResponseEntity<BookOrderDetailResponseDto> getOrderByOrderCode(@PathVariable("orderCode") String orderCode) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderFacade.getOrderDetailByOrderCode(orderCode));
     }
 }

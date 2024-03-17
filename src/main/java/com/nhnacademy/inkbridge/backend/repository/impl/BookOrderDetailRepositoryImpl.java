@@ -1,5 +1,16 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
+import com.nhnacademy.inkbridge.backend.entity.QBook;
+import com.nhnacademy.inkbridge.backend.entity.QBookOrderDetail;
+import com.nhnacademy.inkbridge.backend.entity.QBookOrderStatus;
+import com.nhnacademy.inkbridge.backend.entity.QCoupon;
+import com.nhnacademy.inkbridge.backend.entity.QFile;
+import com.nhnacademy.inkbridge.backend.entity.QMemberCoupon;
+import com.nhnacademy.inkbridge.backend.entity.QWrapping;
+import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderDetailRepositoryCustom;
+import com.querydsl.core.types.Projections;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrderDetail;
@@ -11,7 +22,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * class: BookOrderDetailRepositoryImpl.
  *
  * @author jangjaehun
- * @version 2024/03/19
+ * @version 2024/03/17
  */
 public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport implements
     BookOrderDetailRepositoryCustom {
@@ -39,4 +50,102 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .select(bookOrderDetail.memberCoupon.memberCouponId)
             .fetch();
     }
+
+    @Override
+    public List<OrderDetailReadResponseDto> findAllByMemberIdAndOrderId(Long orderId) {
+        QBook book = QBook.book;
+        QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
+        QCoupon coupon = QCoupon.coupon;
+        QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
+        QBookOrderStatus bookOrderStatus = QBookOrderStatus.bookOrderStatus;
+        QWrapping wrapping = QWrapping.wrapping;
+        QFile file = QFile.file;
+
+        return from(bookOrderDetail)
+            .innerJoin(bookOrderStatus)
+            .on(bookOrderDetail.bookOrderStatus.eq(bookOrderStatus))
+            .innerJoin(book)
+            .on(bookOrderDetail.book.eq(book))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
+            .leftJoin(wrapping)
+            .on(bookOrderDetail.wrapping.eq(wrapping))
+            .leftJoin(memberCoupon)
+            .on(bookOrderDetail.memberCoupon.eq(memberCoupon))
+            .leftJoin(coupon)
+            .on(memberCoupon.coupon.eq(coupon))
+            .select(Projections.constructor(OrderDetailReadResponseDto.class,
+                bookOrderDetail.orderDetailId,
+                bookOrderDetail.bookPrice,
+                bookOrderDetail.wrappingPrice,
+                bookOrderDetail.amount,
+                wrapping.wrappingName,
+                bookOrderStatus.orderStatusId,
+                bookOrderStatus.orderStatus,
+                book.bookId,
+                file.fileUrl,
+                book.bookTitle,
+                memberCoupon.memberCouponId,
+                coupon.couponName,
+                coupon.maxDiscountPrice,
+                coupon.discountPrice))
+            .where(bookOrderDetail.bookOrder.orderId.eq(orderId))
+            .orderBy(bookOrderDetail.orderDetailId.asc())
+            .fetch();
+    }
+
+    @Override
+    public List<OrderDetailReadResponseDto> findAllByMemberIdAndOrderCode(String orderCode) {
+        QBook book = QBook.book;
+        QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
+        QCoupon coupon = QCoupon.coupon;
+        QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
+        QBookOrderStatus bookOrderStatus = QBookOrderStatus.bookOrderStatus;
+        QWrapping wrapping = QWrapping.wrapping;
+        QFile file = QFile.file;
+
+        return from(bookOrderDetail)
+            .innerJoin(bookOrderStatus)
+            .on(bookOrderDetail.bookOrderStatus.eq(bookOrderStatus))
+            .innerJoin(book)
+            .on(bookOrderDetail.book.eq(book))
+            .innerJoin(file)
+            .on(book.thumbnailFile.eq(file))
+            .leftJoin(wrapping)
+            .on(bookOrderDetail.wrapping.eq(wrapping))
+            .leftJoin(memberCoupon)
+            .on(bookOrderDetail.memberCoupon.eq(memberCoupon))
+            .leftJoin(coupon)
+            .on(memberCoupon.coupon.eq(coupon))
+            .select(Projections.constructor(OrderDetailReadResponseDto.class,
+                bookOrderDetail.orderDetailId,
+                bookOrderDetail.bookPrice,
+                bookOrderDetail.wrappingPrice,
+                bookOrderDetail.amount,
+                wrapping.wrappingName,
+                bookOrderStatus.orderStatusId,
+                bookOrderStatus.orderStatus,
+                book.bookId,
+                file.fileUrl,
+                book.bookTitle,
+                memberCoupon.memberCouponId,
+                coupon.couponName,
+                coupon.maxDiscountPrice,
+                coupon.discountPrice))
+            .where(bookOrderDetail.bookOrder.orderCode.eq(orderCode))
+            .orderBy(bookOrderDetail.orderDetailId.asc())
+            .fetch();
+
+    }
+
+    @Override
+    public List<BookOrderDetail> findAllByOrderId(Long orderId) {
+        QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
+
+        return from(bookOrderDetail)
+            .select(bookOrderDetail)
+            .where(bookOrderDetail.bookOrder.orderId.eq(orderId))
+            .fetch();
+    }
 }
+

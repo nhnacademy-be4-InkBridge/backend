@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -73,5 +74,12 @@ public class BookOrderDetail {
         this.bookOrder = bookOrder;
         this.book = book;
         this.memberCoupon = memberCoupon;
+    }
+
+    public void updateStatus(OrderStatusEnum status) {
+        this.bookOrderStatus = BookOrderStatus.builder()
+            .orderStatus(status.name())
+            .orderStatusId(status.getOrderStatusId())
+            .build();
     }
 }

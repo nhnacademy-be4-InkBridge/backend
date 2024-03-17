@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
@@ -10,6 +11,7 @@ import com.nhnacademy.inkbridge.backend.entity.Wrapping;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderDetailRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
@@ -46,7 +48,7 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     /**
      * {@inheritDoc}
      *
-     * @param orderId 주문 번호
+     * @param orderId        주문 번호
      * @param requestDtoList 주문 상세 정보 목록
      */
     @Override
@@ -65,9 +67,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
                 MemberCoupon coupon = Objects.nonNull(requestDto.getCouponId())
                     ? memberCouponRepository.findById(requestDto.getCouponId())
-
-                        .orElseThrow(() -> new NotFoundException(
-                            CouponMessageEnum.COUPON_NOT_FOUND.getMessage())) : null;
+                    .orElseThrow(() -> new NotFoundException(
+                        CouponMessageEnum.COUPON_NOT_FOUND.getMessage())) : null;
 
                 BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(1L)
                     .orElseThrow(() -> new NotFoundException(
@@ -75,8 +76,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
                 Wrapping wrapping = Objects.nonNull(requestDto.getWrappingId())
                     ? wrappingRepository.findById(requestDto.getWrappingId())
-                        .orElseThrow(() -> new NotFoundException(
-                            OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage())) : null;
+                    .orElseThrow(() -> new NotFoundException(
+                        OrderMessageEnum.WRAPPING_NOT_FOUND.getMessage())) : null;
 
                 return BookOrderDetail.builder()
                     .bookPrice(requestDto.getPrice())
@@ -104,4 +105,43 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     public List<Long> getUsedCouponIdByOrderCode(String orderCode) {
         return bookOrderDetailRepository.findAllByOrderCode(orderCode);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId  주문 번호
+     * @return 주문 상세 목록
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<OrderDetailReadResponseDto> getOrderDetailListByOrderId(Long orderId) {
+        return bookOrderDetailRepository.findAllByMemberIdAndOrderId(orderId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 주문 상세 목록
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<OrderDetailReadResponseDto> getOrderDetailByOrderCode(String orderCode) {
+        return bookOrderDetailRepository.getOrderDetailByOrderCode(orderCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문번호
+     * @param status 주문 상태
+     */
+    @Transactional
+    @Override
+    public void changeOrderStatus(Long orderId, OrderStatusEnum status) {
+        List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findAllByOrderId(orderId);
+
+        bookOrderDetailList.forEach(bookOrder -> bookOrder.updateStatus(status));
+    }
+
 }
