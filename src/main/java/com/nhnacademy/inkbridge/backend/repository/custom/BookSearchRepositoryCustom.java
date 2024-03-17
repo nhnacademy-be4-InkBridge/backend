@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
-import com.nhnacademy.inkbridge.backend.entity.BookSearch;
+import com.nhnacademy.inkbridge.backend.entity.Search;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
  */
 public interface BookSearchRepositoryCustom {
 
-    Page<BookSearch> searchByText(String text, Pageable pageable);
+    Page<Search> searchByText(String text, Pageable pageable);
+
+    Page<Search> searchByAll(String field, Pageable pageable);
 
 }

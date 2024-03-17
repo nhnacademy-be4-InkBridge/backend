@@ -1,16 +1,21 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
-import com.nhnacademy.inkbridge.backend.entity.BookSearch;
+import com.nhnacademy.inkbridge.backend.entity.Search;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookSearchRepositoryCustom;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -28,14 +33,41 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
     private final ElasticsearchOperations elasticsearchOperations;
 
     @Override
-    public Page<BookSearch> searchByText(String text, Pageable pageable) {
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-            .withQuery(QueryBuilders.multiMatchQuery(text,"book_title^100","book_title.nori^100","book_title.ngram^100","description","description.nori^50","description.ngram^50","book_index^10","book_index.nori^10","book_index.ngram^10")).build();
+    public Page<Search> searchByText(String text, Pageable pageable) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
+            .should(QueryBuilders.matchQuery("book_title", text))
+            .should(QueryBuilders.matchQuery("book_title.nori", text))
+            .should(QueryBuilders.matchQuery("book_title.ngram", text))
+            .should(QueryBuilders.matchQuery("description", text))
+            .should(QueryBuilders.matchQuery("description.nori", text))
+            .should(QueryBuilders.matchQuery("description.ngram", text))
+            .should(QueryBuilders.nestedQuery("tags",
+                QueryBuilders.queryStringQuery(text).field("tags.tag_name"),
+                ScoreMode.None))
+            .should(QueryBuilders.nestedQuery("authors",
+                QueryBuilders.queryStringQuery(text).field("authors.author_name"), ScoreMode.None));
 
-        SearchHits<BookSearch> searchHits = elasticsearchOperations.search(searchQuery,BookSearch.class);
+        Query searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(boolQueryBuilder)
+            .withPageable(pageable)
+            .build();
 
+        SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery,
+            Search.class);
+        List<Search> books = searchHits.get().map(SearchHit::getContent)
+            .collect(Collectors.toList());
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
+    }
 
+    @Override
+    public Page<Search> searchByAll(String field, Pageable pageable) {
+        Query searchQuery = new NativeSearchQueryBuilder()
+            .withPageable(pageable)
+            .build();
 
-        return (Page<BookSearch>) searchHits.map(SearchHit::getContent);
+        SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery, Search.class);
+        List<Search> books = searchHits.get().map(SearchHit::getContent)
+            .collect(Collectors.toList());
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
     }
 }

@@ -1,11 +1,18 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.search.AuthorBySearch;
+import com.nhnacademy.inkbridge.backend.dto.search.TagBySearch;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.Id;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * class: BookSearch.
@@ -18,24 +25,38 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Document(indexName="#{elasticsearch.index-name}")
 @Document(indexName = "inkbridge_book_dev")
-public class BookSearch {
+@Builder
+@AllArgsConstructor
+public class Search {
+
     @Id
     private Long id;
+    @Field("book_title")
     private String bookTitle;
-    private String description;
+    @Field("publicated_at")
     private LocalDateTime publicatedAt;
+    @Field("regular_price")
     private Long regularPrice;
+    @Field("price")
     private Long price;
+    @Field("discount_ratio")
     private Double discountRatio;
+    @Field("view")
     private Long view;
+    @Field("score")
     private Double score;
+    @Field("review_quantity")
     private Long reviewQuantity;
+    @Field("publisher_id")
     private Long publisherId;
+    @Field("publisher_name")
     private String publisherName;
+    @Field("state_name")
     private String statusName;
+    @Field("file_name")
     private String fileName;
-    private Long authorId;
-    private String authorName;
-    private Long tagId;
-    private String tagName;
+    @Field(name = "authors",type= FieldType.Nested)
+    private List<AuthorBySearch> authors;
+    @Field("tags")
+    private List<TagBySearch> tags;
 }
