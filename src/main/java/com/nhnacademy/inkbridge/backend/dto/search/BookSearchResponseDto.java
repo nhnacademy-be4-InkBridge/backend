@@ -31,7 +31,7 @@ public class BookSearchResponseDto {
     private Long publisherId;
     private String publisherName;
     private String statusName;
-    private String fileName;
+    private String fileUrl;
     private List<AuthorBySearch> authors;
     private List<TagBySearch> tags;
 
@@ -49,7 +49,7 @@ public class BookSearchResponseDto {
             .publisherId(search.getPublisherId())
             .publisherName(search.getPublisherName())
             .statusName(search.getStatusName())
-            .fileName(search.getFileName())
+            .fileUrl(search.getFileUrl())
             .authors(search.getAuthors())
             .tags(search.getTags())
             .build();

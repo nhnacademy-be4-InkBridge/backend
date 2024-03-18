@@ -53,8 +53,8 @@ public class Search {
     private String publisherName;
     @Field("state_name")
     private String statusName;
-    @Field("file_name")
-    private String fileName;
+    @Field("file_url")
+    private String fileUrl;
     @Field(name = "authors",type= FieldType.Nested)
     private List<AuthorBySearch> authors;
     @Field("tags")
