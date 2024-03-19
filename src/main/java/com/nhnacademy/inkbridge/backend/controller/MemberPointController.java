@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/mypage/point")
+@RequestMapping("/api/mypage/points")
 @RequiredArgsConstructor
 public class MemberPointController {
 
