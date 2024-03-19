@@ -2,16 +2,14 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.enums.AuthorMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
-import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,13 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final BookRepository bookRepository;
     private final FileService fileService;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository,
-        FileService fileService) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, FileService fileService) {
         this.authorRepository = authorRepository;
-        this.bookRepository = bookRepository;
         this.fileService = fileService;
     }
 
@@ -43,12 +38,21 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Transactional(readOnly = true)
     @Override
-    public AuthorReadResponseDto getAuthor(Long authorId, Pageable pageable) {
-        Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByAuthor(pageable,
-            authorId);
-        AuthorInfoReadResponseDto author = authorRepository.findByAuthorId(authorId);
-        return AuthorReadResponseDto.builder().booksPaginationReadResponseDtos(books)
-            .authorInfoReadResponseDto(author).build();
+    public AuthorInfoReadResponseDto getAuthor(Long authorId) {
+        if (!authorRepository.existsById(authorId)) {
+            throw new NotFoundException(AuthorMessageEnum.AUTHOR_NOT_FOUND.getMessage());
+        }
+
+        return authorRepository.findByAuthorId(authorId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<AuthorInfoReadResponseDto> getAuthorByName(String authorName) {
+        return authorRepository.findByAuthorName(authorName);
     }
 
     /**

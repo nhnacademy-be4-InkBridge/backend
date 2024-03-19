@@ -25,6 +25,14 @@ public interface AuthorRepositoryCustom {
     AuthorInfoReadResponseDto findByAuthorId(Long authorId);
 
     /**
+     * 작가 이름으로 작가 정보를 조회하는 메서드입니다.
+     *
+     * @param authorName String
+     * @return AuthorInfoReadResponseDto
+     */
+    List<AuthorInfoReadResponseDto> findByAuthorName(String authorName);
+
+    /**
      * 작가 전체 목록을 조회하는 메서드입니다.
      *
      * @param pageable Pageable

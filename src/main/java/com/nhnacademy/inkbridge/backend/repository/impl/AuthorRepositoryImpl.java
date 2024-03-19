@@ -54,6 +54,22 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements
      * {@inheritDoc}
      */
     @Override
+    public List<AuthorInfoReadResponseDto> findByAuthorName(String authorName) {
+        QAuthor author = QAuthor.author;
+        QFile file = QFile.file;
+
+        return from(author)
+            .innerJoin(file).on(file.eq(author.file))
+            .where(author.authorName.eq(authorName))
+            .select(Projections.constructor(AuthorInfoReadResponseDto.class, author.authorId,
+                author.authorName, author.authorIntroduce, file.fileUrl))
+            .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<AuthorInfoReadResponseDto> findAllAuthors(Pageable pageable) {
         QAuthor author = QAuthor.author;
         QFile file = QFile.file;

@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
@@ -112,12 +112,10 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public BooksReadResponseDto readBooks(Pageable pageable) {
-        log.debug("service!!!");
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooks(pageable);
         List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.stream().map(BooksPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
-        log.debug("result!!!; {}", authors.get(0).getAuthorName().size());
         return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
             .authorPaginationReadResponseDto(authors).build();
     }

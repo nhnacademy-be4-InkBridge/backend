@@ -2,9 +2,9 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,10 +45,23 @@ public class AuthorController {
      * @return AuthorReadResponseDto
      */
     @GetMapping("/api/authors/{authorId}")
-    public ResponseEntity<AuthorReadResponseDto> getAuthor(@PathVariable Long authorId,
+    public ResponseEntity<AuthorInfoReadResponseDto> getAuthor(@PathVariable Long authorId,
         Pageable pageable) {
-        AuthorReadResponseDto authorReadResponseDto = authorService.getAuthor(authorId, pageable);
-        return new ResponseEntity<>(authorReadResponseDto, HttpStatus.OK);
+        AuthorInfoReadResponseDto author = authorService.getAuthor(authorId);
+        return new ResponseEntity<>(author, HttpStatus.OK);
+    }
+
+    /**
+     * 작가 이름으로 작가 정보를 조회하는 api입니다.
+     *
+     * @param authorName String
+     * @return AuthorInfoReadResponseDto
+     */
+    @GetMapping("/api/authors")
+    public ResponseEntity<List<AuthorInfoReadResponseDto>> getAuthorByName(
+        @RequestParam(name = "authorName") String authorName) {
+        List<AuthorInfoReadResponseDto> author = authorService.getAuthorByName(authorName);
+        return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
     /**
