@@ -46,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public Long createMember(MemberCreateRequestDto memberCreateRequestDto) {
+    public Member createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
         if (memberRepository.existsByEmail(memberCreateRequestDto.getEmail())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
@@ -81,8 +81,7 @@ public class MemberServiceImpl implements MemberService {
                 .memberPoint(0L)
                 .build();
 
-        Member result = memberRepository.save(member);
-        return result.getMemberId();
+        return memberRepository.save(member);
     }
 
     /**
