@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,6 +43,7 @@ class MemberPointControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization-Id", 1L))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("point", equalTo(100)));
+            .andExpect(jsonPath("point", equalTo(100)))
+            .andDo(document("docs"));
     }
 }
