@@ -53,8 +53,7 @@ public class PayFacade {
         // 멤버 포인트 차감 - 회원이면
         // 사용 쿠폰 상태 변경
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                orderedResponseDto.getUsePoint());
+            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(), orderedResponseDto.getUsePoint() * -1);
             List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(requestDto.getOrderCode());
             couponService.useCoupons(orderedResponseDto.getMemberId(), usedCouponIdList);
         }
