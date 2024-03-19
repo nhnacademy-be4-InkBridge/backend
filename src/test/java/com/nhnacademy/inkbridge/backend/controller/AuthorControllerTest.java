@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.when;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -29,6 +30,7 @@ import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,11 +71,64 @@ class AuthorControllerTest {
     @MockBean
     Pageable pageable;
 
+    AuthorInfoReadResponseDto authorInfoReadResponseDto;
+
+    @BeforeEach
+    void setup() {
+        authorInfoReadResponseDto = AuthorInfoReadResponseDto.builder()
+            .authorId(1L).authorName("name").authorIntroduce("introduce").fileUrl("url").build();
+
+    }
+
+    @Test
+    @DisplayName("작가 아이디로 작가 정보 조회")
+    void getAuthor() throws Exception {
+        when(authorService.getAuthor(anyLong())).thenReturn(authorInfoReadResponseDto);
+
+        mockMvc.perform(get("/api/authors/{authorId}", 1L))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.authorId", equalTo(1)))
+            .andExpect(jsonPath("$.authorName", equalTo("name")))
+            .andExpect(jsonPath("$.authorIntroduce", equalTo("introduce")))
+            .andExpect(jsonPath("$.fileUrl", equalTo("url")))
+            .andDo(document("author/get-author",
+                preprocessResponse(prettyPrint()),
+                relaxedResponseFields(
+                    fieldWithPath("authorId").description("작가 번호"),
+                    fieldWithPath("authorName").description("작가 이름"),
+                    fieldWithPath("authorIntroduce").description("작가 설명"),
+                    fieldWithPath("fileUrl").description("작가 사진")
+                )));
+    }
+
+    @Test
+    @DisplayName("작가 이름으로 작가 정보 조회")
+    void getAuthorByName() throws Exception {
+        when(authorService.getAuthorByName(anyString())).thenReturn(
+            List.of(authorInfoReadResponseDto));
+
+        mockMvc.perform(get("/api/authors")
+                .param("authorName", "name"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[0].authorId", equalTo(1)))
+            .andExpect(jsonPath("$.[0].authorName", equalTo("name")))
+            .andExpect(jsonPath("$.[0].authorIntroduce", equalTo("introduce")))
+            .andExpect(jsonPath("$.[0].fileUrl", equalTo("url")))
+            .andDo(document("author/get-author-byName",
+                preprocessResponse(prettyPrint()),
+                relaxedResponseFields(
+                    fieldWithPath("[].authorId").description("작가 번호"),
+                    fieldWithPath("[].authorName").description("작가 이름"),
+                    fieldWithPath("[].authorIntroduce").description("작가 설명"),
+                    fieldWithPath("[].fileUrl").description("작가 사진")
+                )));
+    }
+
     @Test
     @DisplayName("전체 작가 목록 조회")
     void getAuthors() throws Exception {
-        AuthorInfoReadResponseDto authorInfoReadResponseDto = AuthorInfoReadResponseDto.builder()
-            .authorId(1L).authorName("name").authorIntroduce("introduce").fileUrl("url").build();
         Page<AuthorInfoReadResponseDto> page = new PageImpl<>(List.of(authorInfoReadResponseDto));
 
         when(authorService.getAuthors(any(Pageable.class))).thenReturn(page);
