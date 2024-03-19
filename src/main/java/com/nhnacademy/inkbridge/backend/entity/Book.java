@@ -128,6 +128,11 @@ public class Book {
         this.thumbnailFile = thumbnailFile;
     }
 
+    /**
+     * 도서 재고를 수정하는 메서드입니다.
+     *
+     * @param stock Integer
+     */
     public void updateBookStock(Integer stock) {
         this.stock = stock;
     }
