@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -12,11 +13,10 @@ import lombok.Getter;
 @Getter
 public class AuthorPaginationReadResponseDto {
 
-    private final Long bookId;
     private final List<String> authorName;
 
-    public AuthorPaginationReadResponseDto(Long bookId, List<String> authorName) {
-        this.bookId = bookId;
+    @Builder
+    public AuthorPaginationReadResponseDto(List<String> authorName) {
         this.authorName = authorName;
     }
 }

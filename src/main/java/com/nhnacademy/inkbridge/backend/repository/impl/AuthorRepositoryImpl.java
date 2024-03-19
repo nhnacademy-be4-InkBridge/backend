@@ -84,10 +84,10 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements
             .innerJoin(author).on(author.eq(bookAuthor.author))
             .where(book.bookId.in(bookId))
             .orderBy(book.bookId.desc())
-            .select(Projections.constructor(AuthorPaginationReadResponseDto.class, book.bookId,
+            .select(Projections.constructor(AuthorPaginationReadResponseDto.class,
                 list(author.authorName)))
             .transform(groupBy(book.bookId).list(
-                Projections.constructor(AuthorPaginationReadResponseDto.class, book.bookId,
+                Projections.constructor(AuthorPaginationReadResponseDto.class,
                     list(Projections.constructor(String.class, author.authorName))
                 )));
     }
