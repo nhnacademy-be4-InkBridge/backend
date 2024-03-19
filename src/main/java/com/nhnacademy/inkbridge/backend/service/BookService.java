@@ -8,6 +8,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ public interface BookService {
      * @param pageable   Pageable
      * @return BooksReadResponseDto page
      */
-    BooksReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
+    BooksByCategoryReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
 
     /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을

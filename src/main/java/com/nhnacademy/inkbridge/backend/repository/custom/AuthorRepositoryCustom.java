@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

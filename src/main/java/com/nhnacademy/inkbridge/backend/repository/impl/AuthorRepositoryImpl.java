@@ -4,7 +4,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -45,8 +45,8 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport implements
         return from(author)
             .innerJoin(file).on(file.eq(author.file))
             .where(author.authorId.eq(authorId))
-            .select(Projections.constructor(AuthorInfoReadResponseDto.class, author.authorName,
-                author.authorIntroduce, file.fileUrl))
+            .select(Projections.constructor(AuthorInfoReadResponseDto.class, author.authorId,
+                author.authorName, author.authorIntroduce, file.fileUrl))
             .fetchOne();
     }
 
