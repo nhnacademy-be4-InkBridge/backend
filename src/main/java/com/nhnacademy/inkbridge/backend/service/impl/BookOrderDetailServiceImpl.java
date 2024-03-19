@@ -70,7 +70,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
                     .orElseThrow(() -> new NotFoundException(
                         CouponMessageEnum.COUPON_NOT_FOUND.getMessage())) : null;
 
-                BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(1L)
+                BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(
+                        OrderStatusEnum.WAITING.getOrderStatusId())
                     .orElseThrow(() -> new NotFoundException(
                         OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
 
@@ -109,13 +110,13 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     /**
      * {@inheritDoc}
      *
-     * @param orderId  주문 번호
+     * @param orderId 주문 번호
      * @return 주문 상세 목록
      */
     @Transactional(readOnly = true)
     @Override
     public List<OrderDetailReadResponseDto> getOrderDetailListByOrderId(Long orderId) {
-        return bookOrderDetailRepository.findAllByMemberIdAndOrderId(orderId);
+        return bookOrderDetailRepository.findAllByOrderId(orderId);
     }
 
     /**
@@ -127,21 +128,26 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     @Transactional(readOnly = true)
     @Override
     public List<OrderDetailReadResponseDto> getOrderDetailByOrderCode(String orderCode) {
-        return bookOrderDetailRepository.getOrderDetailByOrderCode(orderCode);
+        return bookOrderDetailRepository.findAllByOrderCode(orderCode);
     }
 
     /**
      * {@inheritDoc}
      *
      * @param orderId 주문번호
-     * @param status 주문 상태
+     * @param status  주문 상태
      */
     @Transactional
     @Override
     public void changeOrderStatus(Long orderId, OrderStatusEnum status) {
-        List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findAllByOrderId(orderId);
+        List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findOrderDetailByOrderId(
+            orderId);
 
-        bookOrderDetailList.forEach(bookOrder -> bookOrder.updateStatus(status));
+        BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(
+            status.getOrderStatusId()).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
+
+        bookOrderDetailList.forEach(bookOrder -> bookOrder.updateStatus(bookOrderStatus));
     }
 
 }

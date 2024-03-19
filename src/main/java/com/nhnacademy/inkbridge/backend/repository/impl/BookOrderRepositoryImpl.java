@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
- * class: BookOrderRepositoryimpl.
+ * class: BookOrderRepositoryImpl.
  *
  * @author jangjaehun
  * @version 2024/03/12
@@ -46,7 +46,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
-        return Optional.of(orderPayInfoReadResponseDto).or(Optional::empty);
+        return Optional.ofNullable(orderPayInfoReadResponseDto);
     }
 
     /**
@@ -123,7 +123,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @param orderId 주문 번호
      * @return 주문 상세 내역
      */

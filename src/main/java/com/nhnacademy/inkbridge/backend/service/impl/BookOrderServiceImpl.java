@@ -168,11 +168,11 @@ public class BookOrderServiceImpl implements BookOrderService {
         BookOrder bookOrder = bookOrderRepository.findById(orderId).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
 
-        if (Boolean.FALSE.equals(bookOrder.getIsPayment())) {
-            bookOrder.udpatePayStatus();
+        if (Boolean.TRUE.equals(bookOrder.getIsPayment())) {
+            throw new AlreadyProcessedException(OrderMessageEnum.ALREADY_PROCESSED.getMessage());
         }
 
-        throw new AlreadyProcessedException(OrderMessageEnum.ALREADY_PROCESSED.getMessage());
+        bookOrder.udpatePayStatus();
     }
 
     /**

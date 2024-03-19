@@ -52,7 +52,7 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<OrderDetailReadResponseDto> findAllByMemberIdAndOrderId(Long orderId) {
+    public List<OrderDetailReadResponseDto> findAllByOrderId(Long orderId) {
         QBook book = QBook.book;
         QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
         QCoupon coupon = QCoupon.coupon;
@@ -94,8 +94,14 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 주문 상세 목록
+     */
     @Override
-    public List<OrderDetailReadResponseDto> findAllByMemberIdAndOrderCode(String orderCode) {
+    public List<OrderDetailReadResponseDto> findAllByOrderCode(String orderCode) {
         QBook book = QBook.book;
         QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
         QCoupon coupon = QCoupon.coupon;
@@ -138,8 +144,14 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 주문 상세 목록
+     */
     @Override
-    public List<BookOrderDetail> findAllByOrderId(Long orderId) {
+    public List<BookOrderDetail> findOrderDetailByOrderId(Long orderId) {
         QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
 
         return from(bookOrderDetail)
