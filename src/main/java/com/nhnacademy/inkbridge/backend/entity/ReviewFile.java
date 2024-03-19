@@ -40,8 +40,9 @@ public class ReviewFile {
     private Review review;
 
     @Builder
-    public ReviewFile(Long fileId, Review review) {
+    public ReviewFile(Long fileId, File file, Review review) {
         this.fileId = fileId;
+        this.file = file;
         this.review = review;
     }
 }

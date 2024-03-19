@@ -7,6 +7,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
@@ -16,6 +17,8 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -42,6 +45,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
+import com.nhnacademy.inkbridge.backend.repository.ReviewRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.FileService;
@@ -76,6 +80,7 @@ public class BookServiceImpl implements BookService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookFileRepository bookFileRepository;
+    private final ReviewRepository reviewRepository;
     private final FileService fileService;
 
 
@@ -85,7 +90,7 @@ public class BookServiceImpl implements BookService {
         AuthorRepository authorRepository, BookTagRepository bookTagRepository,
         BookCategoryRepository bookCategoryRepository,
         BookAuthorRepository bookAuthorRepository, BookFileRepository bookFileRepository,
-        FileService fileService) {
+        ReviewRepository reviewRepository, FileService fileService) {
         this.bookRepository = bookRepository;
         this.bookStatusRepository = bookStatusRepository;
         this.fileRepository = fileRepository;
@@ -97,6 +102,7 @@ public class BookServiceImpl implements BookService {
         this.bookCategoryRepository = bookCategoryRepository;
         this.bookAuthorRepository = bookAuthorRepository;
         this.bookFileRepository = bookFileRepository;
+        this.reviewRepository = reviewRepository;
         this.fileService = fileService;
     }
 
@@ -150,8 +156,15 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
 
-        return bookRepository.findByBookId(bookId, memberId)
+        BookDetailReadResponseDto bookDetail = bookRepository.findByBookId(bookId,
+                memberId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
+        List<ReviewReadResponseDto> reviews = reviewRepository.findByBookId(bookId);
+        ReviewAverageReadResponseDto avgReview = reviewRepository.avgReview(
+            bookId);
+
+        return BookReadResponseDto.builder().bookDetailReadResponseDto(bookDetail)
+            .reviewReadResponseDtos(reviews).reviewAverageReadResponseDto(avgReview).build();
     }
 
     /**
