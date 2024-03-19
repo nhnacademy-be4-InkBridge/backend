@@ -59,7 +59,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.totalPrice))
             .where(bookOrder.orderId.eq(orderId))
             .fetchOne();
-        return Optional.of(orderPayInfoReadResponseDto).or(Optional::empty);
+        return Optional.ofNullable(orderPayInfoReadResponseDto);
     }
 
     /**
@@ -72,12 +72,12 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
     public Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        return Optional.of(from(bookOrder)
+        return Optional.ofNullable(from(bookOrder)
             .select(Projections.constructor(OrderedMemberPointReadResponseDto.class,
                 bookOrder.member.memberId,
                 bookOrder.usePoint,
                 bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
-            .fetchOne()).or(Optional::empty);
+            .fetchOne());
     }
 }
