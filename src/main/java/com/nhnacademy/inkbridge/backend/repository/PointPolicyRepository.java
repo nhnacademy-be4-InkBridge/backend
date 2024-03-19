@@ -2,9 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository;
 
 
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
-import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.repository.custom.PointPolicyRepositoryCustom;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -15,6 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface PointPolicyRepository extends JpaRepository<PointPolicy, Long>,
     PointPolicyRepositoryCustom {
-    Optional<PointPolicy> findByPointPolicyType(PointPolicyType pointPolicyType);
 
 }

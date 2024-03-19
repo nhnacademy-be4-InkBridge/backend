@@ -1,7 +1,5 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.entity.Member;
-
 /**
  * class: PointHistoryService.
  *
@@ -9,5 +7,5 @@ import com.nhnacademy.inkbridge.backend.entity.Member;
  * @version 3/19/24
  */
 public interface PointHistoryService {
-    void accumulatePointAtSignup(Member member,Integer pointTypeId);
+    void accumulatePointAtSignup(Long memberId);
 }
