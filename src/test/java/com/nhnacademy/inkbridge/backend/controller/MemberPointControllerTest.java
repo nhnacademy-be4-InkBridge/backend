@@ -39,7 +39,7 @@ class MemberPointControllerTest {
 
         when(memberPointService.getMemberPoint(anyLong())).thenReturn(100L);
 
-        mvc.perform(get("/api/mypage/point")
+        mvc.perform(get("/api/mypage/points")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization-Id", 1L))
             .andExpect(status().isOk())
