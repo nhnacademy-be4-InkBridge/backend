@@ -25,6 +25,7 @@ import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
+import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,14 +49,10 @@ public class MemberServiceImpl implements MemberService {
     private final MemberAuthRepository memberAuthRepository;
     private final MemberStatusRepository memberStatusRepository;
     private final MemberGradeRepository memberGradeRepository;
-    private final PointPolicyRepository pointPolicyRepository;
-    private final PointPolicyTypeRepository pointPolicyTypeRepository;
-    private final PointHistoryRepository pointHistoryRepository;
-    private static final Integer REGISTER = 1;
+    private final PointHistoryService pointHistoryService;
     private static final Integer ONE = 1;
-    private static final Integer SOCIAL = 3;
-    private static final Integer DORMANT = 2;
-    private static final Integer CLOSE = 3;
+    private static final Integer THREE = 3;
+    private static final String SOCIAL = "SOCIAL ";
 
     /**
      * {@inheritDoc}
@@ -69,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
 
         MemberAuth memberAuth = memberAuthRepository.findById(ONE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
-        MemberAuth socialAuth = memberAuthRepository.findById(SOCIAL)
+        MemberAuth socialAuth = memberAuthRepository.findById(THREE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
         MemberStatus memberStatus = memberStatusRepository.findById(ONE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
@@ -77,19 +74,11 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
 
         String email = memberCreateRequestDto.getEmail();
-        if (email.startsWith("SOCIAL ")) {
+        if (email.startsWith(SOCIAL)) {
             memberAuth = socialAuth;
             email = email.substring(7);
         }
 
-
-        // 회원가입시 축하금 지급
-        PointPolicyType pointType =
-                pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
-                        PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
-        PointPolicy pointPolicy =
-                pointPolicyRepository.findByPointPolicyType(pointType).orElseThrow(
-                        () -> new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
 
         Member member = Member.create()
                 .createdAt(LocalDateTime.now())
@@ -101,18 +90,10 @@ public class MemberServiceImpl implements MemberService {
                 .phoneNumber(memberCreateRequestDto.getPhoneNumber())
                 .memberStatus(memberStatus)
                 .email(email)
-                .memberPoint(pointPolicy.getAccumulatePoint())
+                .memberPoint(0L)
                 .build();
 
-        // 포인트 내역 추가
-        PointHistory pointHistory = PointHistory.builder()
-                .reason(PointHistoryReason.REGISTER_MSG.getMessage())
-                .point(pointPolicy.getAccumulatePoint())
-                .accruedAt(LocalDateTime.now())
-                .member(member)
-                .build();
-
-        pointHistoryRepository.save(pointHistory);
+        pointHistoryService.accumulatePointAtSignup(member, ONE);
         memberRepository.save(member);
 
     }
@@ -124,18 +105,12 @@ public class MemberServiceImpl implements MemberService {
     public MemberAuthLoginResponseDto loginInfoMember(MemberAuthLoginRequestDto memberAuthLoginRequestDto) {
         Member member = memberRepository.findByEmail(memberAuthLoginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
-        MemberStatus sleep = memberStatusRepository.findById(DORMANT)
-                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
-        MemberStatus active = memberStatusRepository.findById(ONE)
-                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
-        MemberStatus close = memberStatusRepository.findById(CLOSE)
+
+        MemberStatus close = memberStatusRepository.findById(THREE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
 
         member.updateLastLoginDate();
 
-        if (member.getMemberStatus().getMemberStatusName().equals(sleep.getMemberStatusName())) {
-            member.updateActive(active);
-        }
         if (member.getMemberStatus().getMemberStatusName().equals(close.getMemberStatusName())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
