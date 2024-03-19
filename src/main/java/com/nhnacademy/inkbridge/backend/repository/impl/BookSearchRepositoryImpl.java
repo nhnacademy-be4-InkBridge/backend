@@ -41,6 +41,7 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
             .should(QueryBuilders.matchQuery("description", text))
             .should(QueryBuilders.matchQuery("description.nori", text))
             .should(QueryBuilders.matchQuery("description.ngram", text))
+            .should(QueryBuilders.matchQuery("publisher_name", text))
             .should(QueryBuilders.nestedQuery("tags",
                 QueryBuilders.queryStringQuery(text).field("tags.tag_name"),
                 ScoreMode.None))
@@ -60,7 +61,7 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
     }
 
     @Override
-    public Page<Search> searchByAll(String field, Pageable pageable) {
+    public Page<Search> searchByAll(Pageable pageable) {
         Query searchQuery = new NativeSearchQueryBuilder()
             .withPageable(pageable)
             .build();

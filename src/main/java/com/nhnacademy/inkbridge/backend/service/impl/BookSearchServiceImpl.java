@@ -27,7 +27,7 @@ public class BookSearchServiceImpl implements BookSearchService {
     }
 
     @Override
-    public Page<Search> searchByAll(String field, Pageable pageable) {
-        return bookSearchRepository.searchByAll(field, pageable);
+    public Page<Search> searchByAll(Pageable pageable) {
+        return bookSearchRepository.searchByAll(pageable);
     }
 }

@@ -39,13 +39,10 @@ public class SearchController {
     }
 
     @GetMapping("/books/filter")
-    public ResponseEntity<Page<BookSearchResponseDto>> searchByAll(@RequestParam String field,
-        Pageable pageable) {
-        Page<Search> searchPage = bookSearchService.searchByAll(field, pageable);
+    public ResponseEntity<List<BookSearchResponseDto>> searchByAll(Pageable pageable) {
+        Page<Search> searchPage = bookSearchService.searchByAll(pageable);
 
-        Page<BookSearchResponseDto> books = searchPage.map(
-            BookSearchResponseDto::toBookSearchResponseDto);
-
+        List<BookSearchResponseDto> books =  searchPage.map(BookSearchResponseDto::toBookSearchResponseDto).getContent();
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }
