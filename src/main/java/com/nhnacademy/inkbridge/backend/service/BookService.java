@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import java.util.List;
@@ -96,4 +97,9 @@ public interface BookService {
      */
     void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto);
+
+    /**
+     * 재고를 수정하는 메서드입니다.
+     */
+    void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
 }

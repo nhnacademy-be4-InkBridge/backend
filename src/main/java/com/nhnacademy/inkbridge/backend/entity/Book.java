@@ -127,4 +127,8 @@ public class Book {
         this.publisher = publisher;
         this.thumbnailFile = thumbnailFile;
     }
+
+    public void updateBookStock(Integer stock) {
+        this.stock = stock;
+    }
 }

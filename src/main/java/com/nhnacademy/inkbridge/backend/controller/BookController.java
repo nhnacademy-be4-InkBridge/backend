@@ -54,7 +54,8 @@ public class BookController {
     @GetMapping("/orders")
     public ResponseEntity<List<BookOrderReadResponseDto>> getCartBooks(
         @RequestParam(name = "book-id", required = false) Set<Long> bookIdList) {
-        return new ResponseEntity<>(bookService.getCartBooks(bookIdList), HttpStatus.OK);
+        List<BookOrderReadResponseDto> cartBooks = bookService.getCartBooks(bookIdList);
+        return new ResponseEntity<>(cartBooks, HttpStatus.OK);
     }
 
     /**

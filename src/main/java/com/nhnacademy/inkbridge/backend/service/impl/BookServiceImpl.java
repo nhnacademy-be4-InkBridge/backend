@@ -9,6 +9,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDt
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
@@ -294,6 +295,21 @@ public class BookServiceImpl implements BookService {
         updateBookCategory(bookAdminUpdateRequestDto.getCategories(), book);
         updateBookTag(bookAdminUpdateRequestDto.getTags(), book);
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
+        List<Book> books = bookRepository.findByBookIdIn(
+            bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
+                Collectors.toList()));
+
+        for (int i = 0; i < books.size(); i++) {
+            books.get(i).updateBookStock(bookStockUpdateRequestDtos.get(i).getStock());
+        }
     }
 
     /**
