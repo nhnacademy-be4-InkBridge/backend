@@ -85,38 +85,6 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public Page<BooksPaginationReadResponseDto> findAllBooksByAuthor(Pageable pageable,
-        Long authorId) {
-        QBook book = QBook.book;
-        QPublisher publisher = QPublisher.publisher;
-        QBookStatus bookStatus = QBookStatus.bookStatus;
-        QAuthor author = QAuthor.author;
-        QBookAuthor bookAuthor = QBookAuthor.bookAuthor;
-        QFile file = QFile.file;
-
-        List<BooksPaginationReadResponseDto> content = from(book)
-            .innerJoin(publisher).on(book.publisher.eq(publisher))
-            .innerJoin(bookStatus).on(bookStatus.eq(book.bookStatus))
-            .innerJoin(file).on(book.thumbnailFile.eq(file))
-            .innerJoin(bookAuthor).on(bookAuthor.book.eq(book))
-            .innerJoin(author).on(author.eq(bookAuthor.author))
-            .where(bookStatus.statusId.in(SALE.getStatusId(), SOLD_OUT.getStatusId(),
-                OUT_OF_STOCK.getStatusId()).and(bookAuthor.pk.authorId.eq(authorId)))
-            .select(Projections.constructor(BooksPaginationReadResponseDto.class, book.bookId,
-                book.bookTitle,
-                book.price, publisher.publisherName, file.fileUrl))
-            .orderBy(book.bookId.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        return new PageImpl<>(content, pageable, getCount());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Page<BooksPaginationReadResponseDto> findAllBooksByCategory(Pageable pageable,
         Long categoryId) {
         QBook book = QBook.book;
