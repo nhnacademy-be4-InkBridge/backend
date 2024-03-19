@@ -33,8 +33,7 @@ public class Publisher {
     private String publisherName;
 
     @Builder
-    public Publisher(Long publisherId, String publisherName) {
-        this.publisherId = publisherId;
+    public Publisher(String publisherName) {
         this.publisherName = publisherName;
     }
 }
