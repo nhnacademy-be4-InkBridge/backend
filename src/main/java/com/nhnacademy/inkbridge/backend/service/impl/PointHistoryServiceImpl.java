@@ -35,7 +35,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     private static final Integer REGISTER = 1;
 
     @Override
-    public void accumulatePointAtSignup(Long memberId) {
+    public void accumulatePointAtSignup(Member member) {
         // 회원가입시 축하금 지급
         PointPolicyType pointType =
                 pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
@@ -43,8 +43,6 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         PointPolicy pointPolicy =
                 pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId())).orElseThrow(
                         () -> new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
 
         member.updateMemberPoint(pointPolicy.getAccumulatePoint());
 

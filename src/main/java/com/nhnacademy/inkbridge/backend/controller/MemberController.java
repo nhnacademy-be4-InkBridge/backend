@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberEmailRequestDt
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
@@ -75,8 +76,8 @@ public class MemberController {
             throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
 
-        Long memberId = memberService.createMember(memberCreateRequestDto);
-        pointHistoryService.accumulatePointAtSignup(memberId);
+        Member member = memberService.createMember(memberCreateRequestDto);
+        pointHistoryService.accumulatePointAtSignup(member);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
