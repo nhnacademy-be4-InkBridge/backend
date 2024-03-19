@@ -5,8 +5,10 @@ import com.nhnacademy.inkbridge.backend.entity.PointHistory;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointHistoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
@@ -14,7 +16,6 @@ import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,17 +31,20 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     private final PointPolicyRepository pointPolicyRepository;
     private final PointPolicyTypeRepository pointPolicyTypeRepository;
     private final PointHistoryRepository pointHistoryRepository;
+    private final MemberRepository memberRepository;
+    private static final Integer REGISTER = 1;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void accumulatePointAtSignup(Member member, Integer pointTypeId) {
+    public void accumulatePointAtSignup(Long memberId) {
         // 회원가입시 축하금 지급
         PointPolicyType pointType =
-                pointPolicyTypeRepository.findById(pointTypeId).orElseThrow(() -> new NotFoundException(
+                pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
                         PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
         PointPolicy pointPolicy =
-                pointPolicyRepository.findByPointPolicyType(pointType).orElseThrow(
+                pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId())).orElseThrow(
                         () -> new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
 
         member.updateMemberPoint(pointPolicy.getAccumulatePoint());
 

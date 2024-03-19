@@ -9,25 +9,14 @@ import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberAuth;
 import com.nhnacademy.inkbridge.backend.entity.MemberGrade;
 import com.nhnacademy.inkbridge.backend.entity.MemberStatus;
-import com.nhnacademy.inkbridge.backend.entity.PointHistory;
-import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
-import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
-import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
-import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.MemberAuthRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberGradeRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberStatusRepository;
-import com.nhnacademy.inkbridge.backend.repository.PointHistoryRepository;
-import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
-import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
-import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
-import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +38,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberAuthRepository memberAuthRepository;
     private final MemberStatusRepository memberStatusRepository;
     private final MemberGradeRepository memberGradeRepository;
-    private final PointHistoryService pointHistoryService;
     private static final Integer ONE = 1;
     private static final Integer THREE = 3;
     private static final String SOCIAL = "SOCIAL ";
@@ -58,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public void createMember(MemberCreateRequestDto memberCreateRequestDto) {
+    public Long createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
         if (memberRepository.existsByEmail(memberCreateRequestDto.getEmail())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
@@ -93,9 +81,8 @@ public class MemberServiceImpl implements MemberService {
                 .memberPoint(0L)
                 .build();
 
-        pointHistoryService.accumulatePointAtSignup(member, ONE);
-        memberRepository.save(member);
-
+        Member result = memberRepository.save(member);
+        return result.getMemberId();
     }
 
     /**

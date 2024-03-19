@@ -16,6 +16,7 @@ import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
+import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CouponService couponService;
+    private final PointHistoryService pointHistoryService;
 
     /**
      * 회원가입 하는 메서드입니다.
@@ -66,8 +68,8 @@ public class MemberController {
             throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
 
-        memberService.createMember(memberCreateRequestDto);
-
+        Long memberId = memberService.createMember(memberCreateRequestDto);
+        pointHistoryService.accumulatePointAtSignup(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
