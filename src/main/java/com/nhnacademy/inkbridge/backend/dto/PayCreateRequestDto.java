@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * class: PayCreateRequestDto.
@@ -18,7 +17,6 @@ import lombok.ToString;
  */
 @Getter
 @NoArgsConstructor
-@ToString
 public class PayCreateRequestDto {
 
     @NotBlank(message = "결제 키 값은 공백일 수 없습니다.")
