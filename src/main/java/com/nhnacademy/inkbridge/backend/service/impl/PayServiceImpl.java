@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.repository.PayRepository;
 import com.nhnacademy.inkbridge.backend.service.PayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -34,9 +35,11 @@ public class PayServiceImpl implements PayService {
      * @param requestDto 결제정보
      */
     @Override
-    public void createPay(PayCreateRequestDto requestDto) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Long createPay(PayCreateRequestDto requestDto) {
         BookOrder bookOrder = bookOrderRepository.findByOrderCode(requestDto.getOrderCode())
-            .orElseThrow(() -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+            .orElseThrow(
+                () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
 
         Pay pay = Pay.builder()
             .paymentKey(requestDto.getPayKey())
@@ -52,7 +55,9 @@ public class PayServiceImpl implements PayService {
             .provider(requestDto.getProvider())
             .build();
 
-        payRepository.save(pay);
+        pay = payRepository.save(pay);
+
+        return pay.getPayId();
     }
 
     /**
@@ -84,7 +89,7 @@ public class PayServiceImpl implements PayService {
     /**
      * {@inheritDoc}
      *
-     * @param payId 결제 번호
+     * @param payId        결제 번호
      * @param cancelAmount 취소 금액
      */
     @Override

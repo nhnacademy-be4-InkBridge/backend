@@ -2,7 +2,6 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 /**
  * class: PayService.
@@ -17,7 +16,7 @@ public interface PayService {
      *
      * @param requestDto 결제 정보
      */
-    void createPay(PayCreateRequestDto requestDto);
+    Long createPay(PayCreateRequestDto requestDto);
 
     /**
      * payId로 결제를 조회하는 메소드입니다.

@@ -40,6 +40,7 @@ public class PayFacade {
      * @param requestDto 결제 정보
      */
     public void doPay(PayCreateRequestDto requestDto) {
+
         // 결제 정보 저장
         payService.createPay(requestDto);
 
@@ -47,8 +48,7 @@ public class PayFacade {
         bookOrderService.updateBookOrderPayStatusByOrderCode(requestDto.getOrderCode());
 
         // 주문한 멤버 아이디, 사용한 포인트 금액 조회
-        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(
-            requestDto.getOrderCode());
+        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(requestDto.getOrderCode());
 
         // 멤버 포인트 차감 - 회원이면
         // 사용 쿠폰 상태 변경

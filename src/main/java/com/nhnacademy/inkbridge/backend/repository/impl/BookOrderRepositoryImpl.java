@@ -39,7 +39,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
-        return Optional.of(orderPayInfoReadResponseDto);
+        return Optional.of(orderPayInfoReadResponseDto).or(Optional::empty);
     }
 
     /**
@@ -59,7 +59,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.totalPrice))
             .where(bookOrder.orderId.eq(orderId))
             .fetchOne();
-        return Optional.of(orderPayInfoReadResponseDto);
+        return Optional.of(orderPayInfoReadResponseDto).or(Optional::empty);
     }
 
     /**
@@ -77,6 +77,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.member.memberId,
                 bookOrder.usePoint))
             .where(bookOrder.orderCode.eq(orderCode))
-            .fetchOne());
+            .fetchOne()).or(Optional::empty);
     }
 }
