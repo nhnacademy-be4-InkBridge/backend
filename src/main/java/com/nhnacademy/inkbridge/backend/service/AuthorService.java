@@ -29,7 +29,7 @@ public interface AuthorService {
      * @param authorName String
      * @return AuthorInfoReadResponseDto
      */
-    List<AuthorInfoReadResponseDto> getAuthorByName(String authorName);
+    List<AuthorInfoReadResponseDto> getAuthorsByName(String authorName);
 
     /**
      * 작가 전체 목록을 조회하는 메서드입니다.

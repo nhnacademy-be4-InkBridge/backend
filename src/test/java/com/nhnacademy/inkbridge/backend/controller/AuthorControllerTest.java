@@ -105,7 +105,7 @@ class AuthorControllerTest {
     @Test
     @DisplayName("작가 이름으로 작가 정보 조회")
     void getAuthorByName() throws Exception {
-        when(authorService.getAuthorByName(anyString())).thenReturn(
+        when(authorService.getAuthorsByName(anyString())).thenReturn(
             List.of(authorInfoReadResponseDto));
 
         mockMvc.perform(get("/api/authors")

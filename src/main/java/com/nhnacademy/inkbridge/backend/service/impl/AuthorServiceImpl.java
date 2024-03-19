@@ -51,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Transactional(readOnly = true)
     @Override
-    public List<AuthorInfoReadResponseDto> getAuthorByName(String authorName) {
+    public List<AuthorInfoReadResponseDto> getAuthorsByName(String authorName) {
         return authorRepository.findByAuthorName(authorName);
     }
 

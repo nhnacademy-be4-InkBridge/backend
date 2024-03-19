@@ -38,7 +38,7 @@ public class AuthorController {
     }
 
     /**
-     * 작가 아이디에 대해 작가 정보를 조회하는 api입니다.
+     * 작가 아이디로 작가 정보를 조회하는 api입니다.
      *
      * @param authorId Long
      * @param pageable Pageable
@@ -60,7 +60,7 @@ public class AuthorController {
     @GetMapping("/api/authors")
     public ResponseEntity<List<AuthorInfoReadResponseDto>> getAuthorByName(
         @RequestParam(name = "authorName") String authorName) {
-        List<AuthorInfoReadResponseDto> author = authorService.getAuthorByName(authorName);
+        List<AuthorInfoReadResponseDto> author = authorService.getAuthorsByName(authorName);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 

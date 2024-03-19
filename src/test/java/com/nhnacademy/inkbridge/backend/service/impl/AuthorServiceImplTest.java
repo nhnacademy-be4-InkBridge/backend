@@ -1,8 +1,10 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.when;
@@ -18,6 +20,7 @@ import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
 import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,10 +53,50 @@ class AuthorServiceImplTest {
     @Mock
     Pageable pageable;
 
+    AuthorInfoReadResponseDto authorInfoReadResponseDto;
+
+    @BeforeEach
+    void setup() {
+        authorInfoReadResponseDto = mock(AuthorInfoReadResponseDto.class);
+    }
+
+    @Test
+    @DisplayName("작가 번호로 작가 조회")
+    void getAuthor() {
+        when(authorRepository.existsById(anyLong())).thenReturn(true);
+        when(authorRepository.findByAuthorId(anyLong())).thenReturn(authorInfoReadResponseDto);
+
+        AuthorInfoReadResponseDto author = authorService.getAuthor(1L);
+
+        assertNotNull(author);
+        verify(authorRepository, times(1)).existsById(anyLong());
+        verify(authorRepository, times(1)).findByAuthorId(anyLong());
+    }
+
+    @Test
+    @DisplayName("작가 번호로 작가 조회 실패")
+    void givenInvalidInput_whenGetAuthor_thenThrowNotFoundException() {
+        when(authorRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(NotFoundException.class, () -> authorService.getAuthor(1L));
+        verify(authorRepository, times(1)).existsById(anyLong());
+    }
+
+    @Test
+    @DisplayName("작가 이름으로 작가 조회")
+    void getAuthorsByName() {
+        when(authorRepository.findByAuthorName(anyString())).thenReturn(
+            List.of(authorInfoReadResponseDto));
+
+        List<AuthorInfoReadResponseDto> authorsByName = authorService.getAuthorsByName("name");
+
+        assertEquals(1, authorsByName.size());
+        verify(authorRepository, times(1)).findByAuthorName(anyString());
+    }
+
     @Test
     @DisplayName("전체 작가 조회")
     void getAuthors() {
-        AuthorInfoReadResponseDto authorInfoReadResponseDto = mock(AuthorInfoReadResponseDto.class);
         Page<AuthorInfoReadResponseDto> page = new PageImpl<>(List.of(authorInfoReadResponseDto));
         when(authorRepository.findAllAuthors(any())).thenReturn(page);
 
