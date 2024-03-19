@@ -60,7 +60,7 @@ public class Member {
     @Column(name = "withdraw_at")
     private LocalDateTime withdrawAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_auth_id")
     private MemberAuth memberAuth;
 
@@ -91,5 +91,12 @@ public class Member {
 
     public void updateMemberPoint(Long pointValue) {
         this.memberPoint += pointValue;
+    }
+
+    public void updateLastLoginDate() {
+        this.lastLoginDate = LocalDateTime.now();
+    }
+    public void updateActive(MemberStatus active) {
+        this.memberStatus = active;
     }
 }
