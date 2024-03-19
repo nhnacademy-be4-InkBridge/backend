@@ -15,4 +15,5 @@ public class OrderedMemberPointReadResponseDto {
 
     private Long memberId;
     private Long usePoint;
+    private Long totalPrice;
 }

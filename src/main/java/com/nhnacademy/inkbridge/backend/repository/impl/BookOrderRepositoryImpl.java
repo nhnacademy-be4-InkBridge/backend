@@ -75,7 +75,8 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         return Optional.of(from(bookOrder)
             .select(Projections.constructor(OrderedMemberPointReadResponseDto.class,
                 bookOrder.member.memberId,
-                bookOrder.usePoint))
+                bookOrder.usePoint,
+                bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne()).or(Optional::empty);
     }

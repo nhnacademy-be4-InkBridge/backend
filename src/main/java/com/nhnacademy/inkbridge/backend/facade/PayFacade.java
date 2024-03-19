@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.facade;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.BookService;
@@ -33,6 +34,7 @@ public class PayFacade {
     private final BookService bookService;
     private final CouponService couponService;
     private final MemberPointService memberPointService;
+    private final AccumulationRatePolicyService accumulationRatePolicyService;
 
     /**
      * 결제 정보를 저장하고 결제를 진행합니다.
@@ -47,14 +49,23 @@ public class PayFacade {
         // 주문 결제 상태 변경
         bookOrderService.updateBookOrderPayStatusByOrderCode(requestDto.getOrderCode());
 
-        // 주문한 멤버 아이디, 사용한 포인트 금액 조회
-        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(requestDto.getOrderCode());
-
         // 멤버 포인트 차감 - 회원이면
-        // 사용 쿠폰 상태 변경
+        // 주문한 멤버 아이디, 사용한 포인트 금액 조회, 총 도서 결제 금액 조회
+        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(
+            requestDto.getOrderCode());
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(), orderedResponseDto.getUsePoint() * -1);
-            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(requestDto.getOrderCode());
+            // 포인트 차감
+            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
+                orderedResponseDto.getUsePoint() * -1);
+
+            // 도서 금액 결제 금액, 적립률 정책 조회 -> 포인트 적립
+            Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
+            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
+                Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100);
+
+            // 사용 쿠폰 상태 변경
+            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
+                requestDto.getOrderCode());
             couponService.useCoupons(orderedResponseDto.getMemberId(), usedCouponIdList);
         }
     }

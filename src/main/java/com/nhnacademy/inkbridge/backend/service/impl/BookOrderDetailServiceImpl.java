@@ -96,8 +96,8 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     /**
      * {@inheritDoc}
      *
-     * @param orderCode
-     * @return
+     * @param orderCode 주문 코드
+     * @return 적용 쿠폰 번호 목록
      */
     @Transactional(readOnly = true)
     @Override
