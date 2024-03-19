@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderRepositoryCustom;
@@ -28,7 +29,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
      * @return 주문 결제 정보
      */
     @Override
-    public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(String orderCode) {
+    public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderCode(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
         OrderPayInfoReadResponseDto orderPayInfoReadResponseDto = from(bookOrder)
@@ -39,5 +40,43 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
         return Optional.of(orderPayInfoReadResponseDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 코드
+     * @return 주문 결제 정보
+     */
+    @Override
+    public Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(Long orderId) {
+        QBookOrder bookOrder = QBookOrder.bookOrder;
+
+        OrderPayInfoReadResponseDto orderPayInfoReadResponseDto = from(bookOrder)
+            .select(Projections.constructor(OrderPayInfoReadResponseDto.class,
+                bookOrder.orderCode,
+                bookOrder.orderName,
+                bookOrder.totalPrice))
+            .where(bookOrder.orderId.eq(orderId))
+            .fetchOne();
+        return Optional.of(orderPayInfoReadResponseDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 사용한 포인트 정보
+     */
+    @Override
+    public Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode) {
+        QBookOrder bookOrder = QBookOrder.bookOrder;
+
+        return Optional.of(from(bookOrder)
+            .select(Projections.constructor(OrderedMemberPointReadResponseDto.class,
+                bookOrder.member.memberId,
+                bookOrder.usePoint))
+            .where(bookOrder.orderCode.eq(orderCode))
+            .fetchOne());
     }
 }

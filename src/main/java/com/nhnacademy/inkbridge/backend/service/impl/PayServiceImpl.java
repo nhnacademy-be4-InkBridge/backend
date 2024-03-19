@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.repository.PayRepository;
 import com.nhnacademy.inkbridge.backend.service.PayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * class: PayServiceImpl.
@@ -21,13 +22,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PayServiceImpl implements PayService {
 
     private final PayRepository payRepository;
     private final BookOrderRepository bookOrderRepository;
 
     /**
-     * 결제 정보를 저장하는 메소드입니다.
+     * {@inheritDoc}
      *
      * @param requestDto 결제정보
      */
@@ -45,6 +47,7 @@ public class PayServiceImpl implements PayService {
             .requestedAt(requestDto.getRequestedAt())
             .vat(requestDto.getVat())
             .method(requestDto.getMethod())
+            .isPartialCancelable(requestDto.getIsPartialCancelable())
             .status(requestDto.getStatus())
             .provider(requestDto.getProvider())
             .build();
@@ -52,18 +55,38 @@ public class PayServiceImpl implements PayService {
         payRepository.save(pay);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param payId 결제 번호
+     * @return 결제 정보
+     */
+    @Transactional(readOnly = true)
     @Override
     public PayReadResponseDto getPayByPayId(Long payId) {
         return payRepository.findPayByPayId(payId)
             .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문번호
+     * @return 결제 정보
+     */
+    @Transactional(readOnly = true)
     @Override
     public PayReadResponseDto getPayByOrderId(Long orderId) {
         return payRepository.findPayByOrderId(orderId)
             .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param payId 결제 번호
+     * @param cancelAmount 취소 금액
+     */
     @Override
     public void cancelPay(Long payId, Long cancelAmount) {
 

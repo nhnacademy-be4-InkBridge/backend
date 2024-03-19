@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.service;
 
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 
@@ -24,10 +25,31 @@ public interface BookOrderService {
     /**
      * 주문 결제 정보를 조회하는 메소드입니다.
      *
-     * @param orderId 주문 번호
+     * @param orderCode 주문 번호
      * @return 주문 결제 정보
      */
-    OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(String orderId);
+    OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderCode(String orderCode);
 
-    Long updateBookOrderPayStatusByOrderCode(String orderCode);
+    /**
+     * 주문 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderId 주문 코드
+     * @return 주문 결제 정보
+     */
+    OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(Long orderId);
+
+    /**
+     * 주문의 결제 상태를 변경하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     */
+    void updateBookOrderPayStatusByOrderCode(String orderCode);
+
+    /**
+     * 결제한 회원 정보와 사용한 포인트 정보를 조회하는 메소드입니다.
+     * @param orderCode 주문 번호
+     * @return 회원 번호, 사용 포인트
+     */
+    OrderedMemberPointReadResponseDto getOrderedPersonByOrderCode(String orderCode);
+
 }

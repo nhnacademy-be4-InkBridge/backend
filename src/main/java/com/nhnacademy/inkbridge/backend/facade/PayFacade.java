@@ -44,16 +44,18 @@ public class PayFacade {
         payService.createPay(requestDto);
 
         // 주문 결제 상태 변경
-        Long orderId = bookOrderService.updateBookOrderPayStatusByOrderCode(requestDto.getOrderCode());
+        bookOrderService.updateBookOrderPayStatusByOrderCode(requestDto.getOrderCode());
 
         // 주문한 멤버 아이디, 사용한 포인트 금액 조회
-        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(requestDto.getOrderCode());
+        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(
+            requestDto.getOrderCode());
 
         // 멤버 포인트 차감 - 회원이면
         // 사용 쿠폰 상태 변경
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(), orderedResponseDto.getUsePoint());
-            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderId(orderId);
+            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
+                orderedResponseDto.getUsePoint());
+            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(requestDto.getOrderCode());
             couponService.useCoupons(orderedResponseDto.getMemberId(), usedCouponIdList);
         }
     }

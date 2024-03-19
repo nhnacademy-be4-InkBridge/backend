@@ -113,12 +113,12 @@ class BookOrderServiceImplTest {
     @Test
     @DisplayName("주문 결제 정보 조회 - 주문번호에 맞는 도서번호가 없는 경우")
     void testGetOrderPaymentInfoByOrderId_not_found() {
-        given(bookOrderRepository.findOrderPayByOrderId("orderId")).willReturn(Optional.empty());
+        given(bookOrderRepository.findOrderPayByOrderCode("orderId")).willReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-            () -> bookOrderService.getOrderPaymentInfoByOrderId("orderId"));
+            () -> bookOrderService.getOrderPaymentInfoByOrderCode("orderId"));
 
-        verify(bookOrderRepository, times(1)).findOrderPayByOrderId("orderId");
+        verify(bookOrderRepository, times(1)).findOrderPayByOrderCode("orderId");
     }
 
     @Test
@@ -127,10 +127,10 @@ class BookOrderServiceImplTest {
         OrderPayInfoReadResponseDto responseDto = new OrderPayInfoReadResponseDto("orderId",
             "orderName", 10000L);
 
-        given(bookOrderRepository.findOrderPayByOrderId("orderId")).willReturn(
+        given(bookOrderRepository.findOrderPayByOrderCode("orderId")).willReturn(
             Optional.of(responseDto));
 
-        OrderPayInfoReadResponseDto result = bookOrderService.getOrderPaymentInfoByOrderId(
+        OrderPayInfoReadResponseDto result = bookOrderService.getOrderPaymentInfoByOrderCode(
             "orderId");
 
         assertAll(
@@ -139,6 +139,6 @@ class BookOrderServiceImplTest {
             () -> assertEquals(responseDto.getAmount(), result.getAmount())
         );
 
-        verify(bookOrderRepository, times(1)).findOrderPayByOrderId("orderId");
+        verify(bookOrderRepository, times(1)).findOrderPayByOrderCode("orderId");
     }
 }

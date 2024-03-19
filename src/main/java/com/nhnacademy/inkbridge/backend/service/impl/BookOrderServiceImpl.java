@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
@@ -61,8 +62,8 @@ public class BookOrderServiceImpl implements BookOrderService {
             .isPayment(false)
             .member(Objects.nonNull(requestDto.getMemberId())
                 ? memberRepository.findById(requestDto.getMemberId())
-                    .orElseThrow(() -> new NotFoundException(
-                        MemberMessageEnum.MEMBER_NOT_FOUND.getMessage())) : null)
+                .orElseThrow(() -> new NotFoundException(
+                    MemberMessageEnum.MEMBER_NOT_FOUND.getMessage())) : null)
             .build();
 
         bookOrder = bookOrderRepository.save(bookOrder);
@@ -82,6 +83,47 @@ public class BookOrderServiceImpl implements BookOrderService {
         return bookOrderRepository.findOrderPayByOrderCode(orderCode).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 코드
+     * @return 주문 결제 정보
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public OrderPayInfoReadResponseDto getOrderPaymentInfoByOrderId(Long orderId) {
+        return bookOrderRepository.findOrderPayByOrderId(orderId).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage())
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     */
+    @Transactional
+    @Override
+    public void updateBookOrderPayStatusByOrderCode(String orderCode) {
+        BookOrder bookOrder = bookOrderRepository.findByOrderCode(orderCode).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+
+        bookOrder.updateStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 번호
+     * @return 주문 사용 포인트
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public OrderedMemberPointReadResponseDto getOrderedPersonByOrderCode(String orderCode) {
+        return bookOrderRepository.findUsedPointByOrderCode(orderCode).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
     }
 
 }
