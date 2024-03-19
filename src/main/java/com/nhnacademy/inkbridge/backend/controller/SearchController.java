@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.search.BookSearchPageResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.search.BookSearchResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Search;
 import com.nhnacademy.inkbridge.backend.service.BookSearchService;
@@ -29,20 +30,24 @@ public class SearchController {
     private final BookSearchService bookSearchService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookSearchResponseDto>> searchByText(@RequestParam String text,
+    public ResponseEntity<BookSearchPageResponseDto> searchByText(@RequestParam String text,
         Pageable pageable) {
         Page<Search> searchPage = bookSearchService.searchByText(text,
             pageable);
+        List<BookSearchResponseDto> books = searchPage.map(
+            BookSearchResponseDto::toBookSearchResponseDto).getContent();
 
-        List<BookSearchResponseDto> books = searchPage.map(BookSearchResponseDto::toBookSearchResponseDto).getContent();
-        return new ResponseEntity<>(books, HttpStatus.OK);
+        BookSearchPageResponseDto pageableBooks = new BookSearchPageResponseDto(books,
+            searchPage.getTotalElements());
+        return new ResponseEntity<>(pageableBooks, HttpStatus.OK);
     }
 
     @GetMapping("/books/filter")
     public ResponseEntity<List<BookSearchResponseDto>> searchByAll(Pageable pageable) {
         Page<Search> searchPage = bookSearchService.searchByAll(pageable);
 
-        List<BookSearchResponseDto> books =  searchPage.map(BookSearchResponseDto::toBookSearchResponseDto).getContent();
+        List<BookSearchResponseDto> books = searchPage.map(
+            BookSearchResponseDto::toBookSearchResponseDto).getContent();
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }
