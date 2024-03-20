@@ -21,6 +21,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -38,13 +39,17 @@ public class MemberServiceImpl implements MemberService {
     private final MemberAuthRepository memberAuthRepository;
     private final MemberStatusRepository memberStatusRepository;
     private final MemberGradeRepository memberGradeRepository;
-    private static final Integer ONE = 1;
-    private static final Integer THREE = 3;
-    private static final String SOCIAL = "SOCIAL ";
+    private static final Integer MEMBER = 1;
+    private static final Integer STANDARD = 1;
+    private static final Integer ACTIVE = 1;
+    private static final Integer CLOSE = 3;
+    private static final Integer SOCIAL = 3;
+    private static final String SOCIAL_BEARER = "SOCIAL ";
 
     /**
      * {@inheritDoc}
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public Member createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
@@ -52,17 +57,17 @@ public class MemberServiceImpl implements MemberService {
             throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
         }
 
-        MemberAuth memberAuth = memberAuthRepository.findById(ONE)
+        MemberAuth memberAuth = memberAuthRepository.findById(MEMBER)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
-        MemberAuth socialAuth = memberAuthRepository.findById(THREE)
+        MemberAuth socialAuth = memberAuthRepository.findById(SOCIAL)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
-        MemberStatus memberStatus = memberStatusRepository.findById(ONE)
+        MemberStatus memberStatus = memberStatusRepository.findById(ACTIVE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
-        MemberGrade memberGrade = memberGradeRepository.findById(ONE)
+        MemberGrade memberGrade = memberGradeRepository.findById(STANDARD)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
 
         String email = memberCreateRequestDto.getEmail();
-        if (email.startsWith(SOCIAL)) {
+        if (email.startsWith(SOCIAL_BEARER)) {
             memberAuth = socialAuth;
             email = email.substring(7);
         }
@@ -92,7 +97,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(memberAuthLoginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
 
-        MemberStatus close = memberStatusRepository.findById(THREE)
+        MemberStatus close = memberStatusRepository.findById(CLOSE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
 
         member.updateLastLoginDate();

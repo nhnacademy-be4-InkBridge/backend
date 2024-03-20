@@ -5,7 +5,6 @@ import com.nhnacademy.inkbridge.backend.entity.PointHistory;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
-import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
@@ -54,6 +53,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
                 .member(member)
                 .build();
 
+        memberRepository.save(member);
         pointHistoryRepository.save(pointHistory);
 
     }
