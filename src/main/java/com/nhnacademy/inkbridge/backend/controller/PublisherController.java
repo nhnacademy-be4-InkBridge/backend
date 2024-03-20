@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/publishers")
 @RequiredArgsConstructor
 @Slf4j
 public class PublisherController {
@@ -44,7 +44,7 @@ public class PublisherController {
      * @param bindingResult 에러 확인
      * @return CREATED 상태코드
      */
-    @PostMapping("/publisher")
+    @PostMapping
     public ResponseEntity<HttpStatus> createPublisher(
         @Valid @RequestBody PublisherCreateRequestDto request,
         BindingResult bindingResult) {
@@ -62,7 +62,7 @@ public class PublisherController {
      * @param pageable 페이징 처리
      * @return 페이징 처리 된 출판사리스트
      */
-    @GetMapping("/publishers")
+    @GetMapping
     public ResponseEntity<Page<PublisherReadResponseDto>> readPublishers(Pageable pageable) {
         Page<PublisherReadResponseDto> response = publisherService.readPublishers(pageable);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -76,7 +76,7 @@ public class PublisherController {
      * @param bindingResult             에러 처리
      * @return OK 상태코드
      */
-    @PutMapping("/publisher/{publisherId}")
+    @PutMapping("/{publisherId}")
     public ResponseEntity<HttpStatus> updatePublisher(@PathVariable Long publisherId,
         @Valid @RequestBody PublisherUpdateRequestDto publisherUpdateRequestDto,
         BindingResult bindingResult) {

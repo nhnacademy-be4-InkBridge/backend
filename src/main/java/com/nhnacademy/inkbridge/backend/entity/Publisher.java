@@ -37,6 +37,10 @@ public class Publisher {
         this.publisherName = publisherName;
     }
 
+    /**
+     * 출판사명을 수정할 때 사용하는 메서드
+     * @param publisherName 출판사명
+     */
     public void updatePublisher(String publisherName) {
         this.publisherName = publisherName;
     }
