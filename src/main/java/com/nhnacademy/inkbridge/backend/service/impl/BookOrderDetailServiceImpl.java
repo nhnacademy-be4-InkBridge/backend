@@ -86,4 +86,16 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
         bookOrderDetailRepository.saveAll(bookOrderDetailList);
     }
+
+
+    /**
+     *
+     * @param bookIds
+     * @return
+     */
+    @Override
+    public Boolean validateBookStock(List<Long> bookIds) {
+        return null;
+    }
+
 }

@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 /**
  * class: ReviewService.
@@ -19,21 +20,25 @@ public interface ReviewService {
      * @param memberId Long
      * @return ReviewReadResponseDto
      */
-    List<ReviewReadResponseDto> getReviews(Long memberId);
+    ReviewReadResponseDto getReviewsByMember(Pageable pageable, Long memberId);
+
+
+    ReviewReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId);
 
     /**
-     *
+     * @param memberId
      * @param reviewCreateRequestDto ReviewCreateRequestDto
      * @param fileIds
      */
-    void createReview(ReviewCreateRequestDto reviewCreateRequestDto, List<File> fileIds);
+    void createReview(Long memberId, ReviewCreateRequestDto reviewCreateRequestDto,
+        List<File> fileIds);
 
     /**
-     *
+     * @param memberId
      * @param reviewId
      * @param reviewCreateRequestDto
      * @param files
      */
-    void updateReview(Long reviewId, ReviewCreateRequestDto reviewCreateRequestDto,
+    void updateReview(Long memberId, Long reviewId, ReviewCreateRequestDto reviewCreateRequestDto,
         List<File> files);
 }

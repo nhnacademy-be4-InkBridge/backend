@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
@@ -20,8 +21,11 @@ import com.nhnacademy.inkbridge.backend.repository.ReviewFileRepository;
 import com.nhnacademy.inkbridge.backend.repository.ReviewRepository;
 import com.nhnacademy.inkbridge.backend.service.ReviewService;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,12 +58,32 @@ public class ReviewServiceImpl implements ReviewService {
      * {@inheritDoc}
      */
     @Override
-    public List<ReviewReadResponseDto> getReviews(Long memberId) {
+    public ReviewReadResponseDto getReviewsByMember(Pageable pageable, Long memberId) {
         if (!memberRepository.existsById(memberId)) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
 
-        return reviewRepository.findByMemberId(memberId);
+        Page<ReviewDetailReadResponseDto> page = reviewRepository.findByMemberId(pageable,
+            memberId);
+
+        return ReviewReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
+            new HashMap<>()).build();
+    }
+
+    /**
+     *
+     * @param pageable
+     * @param bookId
+     * @return
+     */
+    @Override
+    public ReviewReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId) {
+        Page<ReviewDetailReadResponseDto> page = reviewRepository.findByBookId(pageable,
+            bookId);
+        // TODO: reviewFile
+
+        return ReviewReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
+            new HashMap<>()).build();
     }
 
     /**
@@ -67,8 +91,9 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Transactional
     @Override
-    public void createReview(ReviewCreateRequestDto reviewCreateRequestDto, List<File> files) {
-        Member member = memberRepository.findById(reviewCreateRequestDto.getMemberId())
+    public void createReview(Long memberId, ReviewCreateRequestDto reviewCreateRequestDto,
+        List<File> files) {
+        Member member = memberRepository.findById(memberId)
             .orElseThrow(
                 () -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
         Book book = bookRepository.findById(reviewCreateRequestDto.getBookId())
@@ -96,12 +121,13 @@ public class ReviewServiceImpl implements ReviewService {
      * {@inheritDoc}
      */
     @Override
-    public void updateReview(Long reviewId, ReviewCreateRequestDto reviewCreateRequestDto,
+    public void updateReview(Long memberId, Long reviewId,
+        ReviewCreateRequestDto reviewCreateRequestDto,
         List<File> files) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NotFoundException(
             ReviewMessageEnum.REVIEW_NOT_FOUND.getMessage()));
 
-        if (!memberRepository.existsById(reviewCreateRequestDto.getMemberId())) {
+        if (!memberRepository.existsById(memberId)) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
         if (!bookRepository.existsById(reviewCreateRequestDto.getBookId())) {

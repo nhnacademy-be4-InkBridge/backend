@@ -12,4 +12,7 @@ import java.util.List;
 public interface BookOrderDetailService {
 
     void createBookOrderDetail(Long orderId, List<BookOrderDetailCreateRequestDto> requestDtoList);
+
+    // TODO
+    public Boolean validateBookStock(List<Long> bookIds);
 }

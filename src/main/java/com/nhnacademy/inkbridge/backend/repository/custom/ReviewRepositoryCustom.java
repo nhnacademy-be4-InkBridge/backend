@@ -1,8 +1,9 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
-import java.util.List;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailReadResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -14,9 +15,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface ReviewRepositoryCustom {
 
-    List<ReviewReadResponseDto> findByBookId(Long bookId);
 
-    List<ReviewReadResponseDto> findByMemberId(Long memberId);
+    Page<ReviewDetailReadResponseDto> findByBookId(Pageable pageable, Long bookId);
+
+    Page<ReviewDetailReadResponseDto> findByMemberId(Pageable pageable, Long memberId);
 
     /**
      * 도서 번호로 리뷰 평점의 평균값을 계산하는 메서드입니다.

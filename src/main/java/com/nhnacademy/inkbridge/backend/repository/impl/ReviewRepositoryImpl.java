@@ -1,19 +1,19 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
 
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
-import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QMember;
 import com.nhnacademy.inkbridge.backend.entity.QReview;
-import com.nhnacademy.inkbridge.backend.entity.QReviewFile;
 import com.nhnacademy.inkbridge.backend.entity.Review;
 import com.nhnacademy.inkbridge.backend.repository.custom.ReviewRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
@@ -32,55 +32,49 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     /**
-     *
      * @param bookId
      * @return
      */
     @Override
-    public List<ReviewReadResponseDto> findByBookId(Long bookId) {
+    public Page<ReviewDetailReadResponseDto> findByBookId(Pageable pageable, Long bookId) {
         QBook book = QBook.book;
         QReview review = QReview.review;
-        QFile file = QFile.file;
-        QReviewFile reviewFile = QReviewFile.reviewFile;
 
-        return from(book)
+        List<ReviewDetailReadResponseDto> content = from(book)
             .innerJoin(review).on(review.book.eq(book))
-            .leftJoin(reviewFile).on(reviewFile.review.eq(review))
-            .leftJoin(file).on(file.eq(reviewFile.file))
             .where(book.bookId.eq(bookId))
-            .select(Projections.constructor(ReviewReadResponseDto.class, review.reviewTitle,
-                review.reviewContent, review.registeredAt, review.score,
-                list(file.fileUrl)))
-            .transform(groupBy(book.bookId)
-                .list(Projections.constructor(ReviewReadResponseDto.class, review.reviewTitle,
-                    review.reviewContent, review.registeredAt, review.score,
-                    list(Projections.constructor(String.class, file.fileUrl)))));
+            .select(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
+                review.reviewContent, review.registeredAt, review.score))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .transform(groupBy(review.reviewId)
+                .list(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
+                    review.reviewContent.coalesce(""), review.registeredAt, review.score)));
+
+        return new PageImpl<>(content, pageable, getCount());
     }
 
     /**
-     *
      * @param memberId
      * @return
      */
     @Override
-    public List<ReviewReadResponseDto> findByMemberId(Long memberId) {
+    public Page<ReviewDetailReadResponseDto> findByMemberId(Pageable pageable, Long memberId) {
         QMember member = QMember.member;
         QReview review = QReview.review;
-        QFile file = QFile.file;
-        QReviewFile reviewFile = QReviewFile.reviewFile;
 
-        return from(member)
+        List<ReviewDetailReadResponseDto> content = from(member)
             .innerJoin(review).on(review.member.eq(member))
-            .leftJoin(reviewFile).on(reviewFile.review.eq(review))
-            .leftJoin(file).on(file.eq(reviewFile.file))
             .where(member.memberId.eq(memberId))
-            .select(Projections.constructor(ReviewReadResponseDto.class, review.reviewTitle,
-                review.reviewContent, review.registeredAt, review.score,
-                list(file.fileUrl)))
-            .transform(groupBy(member.memberId)
-                .list(Projections.constructor(ReviewReadResponseDto.class, review.reviewTitle,
-                    review.reviewContent, review.registeredAt, review.score,
-                    list(Projections.constructor(String.class, file.fileUrl)))));
+            .select(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
+                review.reviewContent, review.registeredAt, review.score))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .transform(groupBy(review.reviewId)
+                .list(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
+                    review.reviewContent, review.registeredAt, review.score)));
+
+        return new PageImpl<>(content, pageable, getCount());
     }
 
     /**
@@ -99,4 +93,13 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
                     review.score.avg().coalesce(DEFAULT_AVG)))
             .fetchOne();
     }
+
+    private Long getCount() {
+        QReview review = QReview.review;
+
+        return from(review)
+            .select(review.count())
+            .fetchOne();
+    }
+
 }

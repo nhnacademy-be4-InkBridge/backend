@@ -158,20 +158,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                     publisher.publisherId, publisher.publisherName,
                     map(author.authorId, author.authorName),
                     wish.pk.memberId.coalesce(0L),
+                    book.view,
                     set(bookImage.fileUrl.coalesce("")),
                     set(tag.tagName.coalesce("")),
                     set(category.categoryName)))
             .transform(
                 groupBy(book.bookId).list(Projections.constructor(BookDetailReadResponseDto.class,
-                book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
-                book.regularPrice, book.price, book.discountRatio, book.isPackagable,
-                thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
-                publisher.publisherName, map(Projections.constructor(Long.class, author.authorId),
-                    Projections.constructor(String.class, author.authorName)),
-                wish.pk.memberId.coalesce(0L),
-                set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
-                set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
-                set(Projections.constructor(String.class, category.categoryName)))));
+                    book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                    book.regularPrice, book.price, book.discountRatio, book.isPackagable,
+                    thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
+                    publisher.publisherName,
+                    map(Projections.constructor(Long.class, author.authorId),
+                        Projections.constructor(String.class, author.authorName)),
+                    wish.pk.memberId.coalesce(0L), book.view,
+                    set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
+                    set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
+                    set(Projections.constructor(String.class, category.categoryName)))));
         if (result.isEmpty()) {
             return Optional.empty();
         }

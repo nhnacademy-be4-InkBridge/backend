@@ -33,6 +33,7 @@ public class BookDetailReadResponseDto {
     private String publisherName;
     private Map<Long, String> authors;
     private Long wish;
+    private Long view;
     private Set<String> fileUrl;
     private Set<String> tagName;
     private Set<String> categoryName;
@@ -42,7 +43,7 @@ public class BookDetailReadResponseDto {
         LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
         BigDecimal discountRatio, Boolean isPackagable, String thumbnail, String statusName,
         Long publisherId, String publisherName, Map<Long, String> authors, Long wish,
-        Set<String> fileUrl, Set<String> tagName, Set<String> categoryName) {
+        Long view, Set<String> fileUrl, Set<String> tagName, Set<String> categoryName) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
@@ -58,6 +59,7 @@ public class BookDetailReadResponseDto {
         this.publisherName = publisherName;
         this.authors = authors;
         this.wish = wish;
+        this.view = view;
         this.fileUrl = fileUrl;
         this.tagName = tagName;
         this.categoryName = categoryName;

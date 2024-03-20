@@ -18,7 +18,6 @@ import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -151,7 +150,7 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public BookReadResponseDto readBook(Long bookId, Long memberId) {
+    public BookReadResponseDto readBook(Pageable pageable, Long bookId, Long memberId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
         }
@@ -159,12 +158,11 @@ public class BookServiceImpl implements BookService {
         BookDetailReadResponseDto bookDetail = bookRepository.findByBookId(bookId,
                 memberId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
-        List<ReviewReadResponseDto> reviews = reviewRepository.findByBookId(bookId);
         ReviewAverageReadResponseDto avgReview = reviewRepository.avgReview(
             bookId);
 
         return BookReadResponseDto.builder().bookDetailReadResponseDto(bookDetail)
-            .reviewReadResponseDtos(reviews).reviewAverageReadResponseDto(avgReview).build();
+            .reviewAverageReadResponseDto(avgReview).build();
     }
 
     /**

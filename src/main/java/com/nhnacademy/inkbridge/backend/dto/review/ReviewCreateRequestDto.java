@@ -12,7 +12,6 @@ import lombok.Getter;
 @Getter
 public class ReviewCreateRequestDto {
 
-    private final Long memberId;
     private final Long bookId;
     private final Long orderDetailId;
     private final String reviewTitle;
@@ -20,10 +19,9 @@ public class ReviewCreateRequestDto {
     private final Integer score;
 
     @Builder
-    public ReviewCreateRequestDto(Long memberId, Long bookId, Long orderDetailId,
+    public ReviewCreateRequestDto(Long bookId, Long orderDetailId,
         String reviewTitle,
         String reviewContent, Integer score) {
-        this.memberId = memberId;
         this.bookId = bookId;
         this.orderDetailId = orderDetailId;
         this.reviewTitle = reviewTitle;

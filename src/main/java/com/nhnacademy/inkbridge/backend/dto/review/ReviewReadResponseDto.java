@@ -1,33 +1,27 @@
 package com.nhnacademy.inkbridge.backend.dto.review;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 /**
  *  class: ReviewReadResponseDto.
  *
  *  @author minm063
- *  @version 2024/03/19
+ *  @version 2024/03/20
  */
 @Getter
 public class ReviewReadResponseDto {
 
-    private final String reviewTitle;
-    private final String reviewContent;
-    private final LocalDateTime registeredAt;
-    private final Integer score;
-    private final List<String> fileUrls;
+    private final Page<ReviewDetailReadResponseDto> reviewDetailReadResponseDtos;
+    private final Map<Long, List<String>> reviewFiles;
 
     @Builder
-    public ReviewReadResponseDto(String reviewTitle, String reviewContent,
-        LocalDateTime registeredAt,
-        Integer score, List<String> fileUrls) {
-        this.reviewTitle = reviewTitle;
-        this.reviewContent = reviewContent;
-        this.registeredAt = registeredAt;
-        this.score = score;
-        this.fileUrls = fileUrls;
+    public ReviewReadResponseDto(Page<ReviewDetailReadResponseDto> reviewDetailReadResponseDtos,
+        Map<Long, List<String>> reviewFiles) {
+        this.reviewDetailReadResponseDtos = reviewDetailReadResponseDtos;
+        this.reviewFiles = reviewFiles;
     }
 }
