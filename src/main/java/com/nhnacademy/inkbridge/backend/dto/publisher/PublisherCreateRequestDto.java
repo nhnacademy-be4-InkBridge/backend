@@ -21,6 +21,11 @@ public class PublisherCreateRequestDto {
     @Size(min = 1, max = 30)
     private String publisherName;
 
+    /**
+     * 출판사 엔티티로 변경해주는 메소드
+     * @param request 생성요청 Dto
+     * @return 출판사 엔티티
+     */
     public static Publisher toPublisher(PublisherCreateRequestDto request) {
         return new Publisher(request.getPublisherName());
     }

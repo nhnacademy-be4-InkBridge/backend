@@ -34,6 +34,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublisherController {
     private final PublisherService publisherService;
 
+    /**
+     * 출판사등록 메소드
+     *
+     * @param request 출판사 이름이 들어있는 Dto
+     * @param bindingResult 에러 확인
+     * @return CREATED 상태코드
+     */
     @PostMapping("/publisher")
     public ResponseEntity<HttpStatus> createPublisher(@Valid @RequestBody PublisherCreateRequestDto request,
         BindingResult bindingResult){
@@ -46,12 +53,25 @@ public class PublisherController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * 출판사 조회 메소드
+     *
+     * @param pageable 페이징 처리
+     * @return 페이징 처리 된 출판사리스트
+     */
     @GetMapping("/publishers")
     public ResponseEntity<Page<PublisherReadResponseDto>> readPublishers(Pageable pageable){
         Page<PublisherReadResponseDto> response = publisherService.readPublishers(pageable);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    /**
+     * 출판사 수정 메소드
+     * @param publisherId 수정할 출판사 아이디
+     * @param publisherUpdateRequestDto 수정할 출판사 이름
+     * @param bindingResult 에러 처리
+     * @return OK 상태코드
+     */
     @PutMapping("/publisher/{publisherId}")
     public ResponseEntity<HttpStatus> updatePublisher(@PathVariable Long publisherId,@Valid @RequestBody PublisherUpdateRequestDto publisherUpdateRequestDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){

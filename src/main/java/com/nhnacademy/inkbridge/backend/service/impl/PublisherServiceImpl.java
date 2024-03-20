@@ -29,12 +29,18 @@ public class PublisherServiceImpl implements PublisherService {
 
     private final PublisherRepository publisherRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void createPublisher(PublisherCreateRequestDto request) {
         Publisher publisher = PublisherCreateRequestDto.toPublisher(request);
         publisherRepository.save(publisher);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<PublisherReadResponseDto> readPublishers(Pageable pageable) {
@@ -42,6 +48,9 @@ public class PublisherServiceImpl implements PublisherService {
             .map(PublisherReadResponseDto::toPublisherReadResponseDto);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updatePublisher(Long publisherId,
         PublisherUpdateRequestDto request) {
