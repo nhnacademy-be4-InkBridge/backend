@@ -3,6 +3,8 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.file.FileCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
+import java.util.List;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,5 +43,6 @@ public interface FileService {
      */
     ResponseEntity<byte[]> loadFileById(Long fileId);
 
+    Map<Long, List<String>> getAllFileByReviewId();
 }
 
