@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto.book;
+package com.nhnacademy.inkbridge.backend.dto.author;
 
 import lombok.Builder;
 import lombok.Getter;

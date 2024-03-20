@@ -43,6 +43,12 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     private final MemberCouponRepository memberCouponRepository;
     private final WrappingRepository wrappingRepository;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @param requestDtoList 주문 상세 정보 목록
+     */
     @Override
     public void createBookOrderDetail(Long orderId,
         List<BookOrderDetailCreateRequestDto> requestDtoList) {
@@ -85,6 +91,18 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
             }).collect(Collectors.toList());
 
         bookOrderDetailRepository.saveAll(bookOrderDetailList);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 적용 쿠폰 번호 목록
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<Long> getUsedCouponIdByOrderCode(String orderCode) {
+        return bookOrderDetailRepository.findAllByOrderCode(orderCode);
     }
 
 

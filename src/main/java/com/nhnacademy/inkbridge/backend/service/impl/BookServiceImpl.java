@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
@@ -10,12 +10,15 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.category.CategoryNameReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
@@ -53,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -65,6 +69,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author minm063
  * @version 2024/02/14
  */
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -113,7 +118,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BooksReadResponseDto readBooks(Pageable pageable) {
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooks(pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.stream().map(BooksPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
         return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
@@ -134,15 +139,18 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public BooksReadResponseDto readBooksByCategory(Long categoryId,
+    public BooksByCategoryReadResponseDto readBooksByCategory(Long categoryId,
         Pageable pageable) {
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByCategory(
             pageable, categoryId);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
                 .collect(Collectors.toList()));
-        return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
-            .authorPaginationReadResponseDto(authors).build();
+        CategoryNameReadResponseDto categoryByCategoryId = categoryRepository.findCategoryByCategoryId(
+            categoryId);
+        return BooksByCategoryReadResponseDto.builder().booksPaginationReadResponseDtos(books)
+            .authorPaginationReadResponseDto(authors)
+            .categoryNameReadResponseDto(categoryByCategoryId).build();
     }
 
     /**
@@ -173,7 +181,7 @@ public class BookServiceImpl implements BookService {
     public BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable) {
         Page<BooksAdminPaginationReadResponseDto> books = bookRepository.findAllBooksByAdmin(
             pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksAdminPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
         return BooksAdminReadResponseDto.builder().booksAdminPaginationReadResponseDtos(books)
@@ -301,6 +309,21 @@ public class BookServiceImpl implements BookService {
         updateBookCategory(bookAdminUpdateRequestDto.getCategories(), book);
         updateBookTag(bookAdminUpdateRequestDto.getTags(), book);
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
+        List<Book> books = bookRepository.findBookByBookIdIn(
+            bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
+                Collectors.toList()));
+
+        for (int i = 0; i < books.size(); i++) {
+            books.get(i).updateBookStock(bookStockUpdateRequestDtos.get(i).getStock());
+        }
     }
 
     /**

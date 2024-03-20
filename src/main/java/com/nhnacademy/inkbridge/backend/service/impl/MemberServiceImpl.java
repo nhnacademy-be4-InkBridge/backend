@@ -17,11 +17,11 @@ import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberStatusRepository;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -39,33 +39,39 @@ public class MemberServiceImpl implements MemberService {
     private final MemberAuthRepository memberAuthRepository;
     private final MemberStatusRepository memberStatusRepository;
     private final MemberGradeRepository memberGradeRepository;
+    private static final Integer MEMBER = 1;
+    private static final Integer STANDARD = 1;
+    private static final Integer ACTIVE = 1;
+    private static final Integer CLOSE = 3;
+    private static final Integer SOCIAL = 3;
+    private static final String SOCIAL_BEARER = "SOCIAL ";
 
     /**
      * {@inheritDoc}
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public void createMember(MemberCreateRequestDto memberCreateRequestDto) {
+    public Long createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
         if (memberRepository.existsByEmail(memberCreateRequestDto.getEmail())) {
-            log.error("이미 존재하는 이메일 입니다.");
             throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
         }
 
-        MemberAuth memberAuth = memberAuthRepository.findById(1).orElse(null);
-        MemberAuth socialAuth = memberAuthRepository.findById(3).orElse(null);
-        MemberStatus memberStatus = memberStatusRepository.findById(1).orElse(null);
-        MemberGrade memberGrade = memberGradeRepository.findById(1).orElse(null);
+        MemberAuth memberAuth = memberAuthRepository.findById(MEMBER)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
+        MemberAuth socialAuth = memberAuthRepository.findById(SOCIAL)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
+        MemberStatus memberStatus = memberStatusRepository.findById(ACTIVE)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
+        MemberGrade memberGrade = memberGradeRepository.findById(STANDARD)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_AUTH_NOT_FOUND.getMessage()));
 
-        if (Objects.isNull(memberAuth) || Objects.isNull(memberStatus) || Objects.isNull(memberGrade)||Objects.isNull(socialAuth)) {
-            throw new IllegalArgumentException();
-        }
         String email = memberCreateRequestDto.getEmail();
-        if (email.startsWith("SOCIAL ")) {
+        if (email.startsWith(SOCIAL_BEARER)) {
             memberAuth = socialAuth;
             email = email.substring(7);
-            log.info("email -> {}",email);
-            log.info("auth -> {}",memberAuth.getMemberAuthName());
         }
+
 
         Member member = Member.create()
                 .createdAt(LocalDateTime.now())
@@ -80,17 +86,30 @@ public class MemberServiceImpl implements MemberService {
                 .memberPoint(0L)
                 .build();
 
-
-        memberRepository.save(member);
-
+        Member result = memberRepository.save(member);
+        return result.getMemberId();
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public MemberAuthLoginResponseDto loginInfoMember(MemberAuthLoginRequestDto memberAuthLoginRequestDto) {
+        Member member = memberRepository.findByEmail(memberAuthLoginRequestDto.getEmail())
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+
+        MemberStatus close = memberStatusRepository.findById(CLOSE)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
+
+        member.updateLastLoginDate();
+
+        if (member.getMemberStatus().getMemberStatusName().equals(close.getMemberStatusName())) {
+            throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
+        }
+
         return memberRepository.findByMemberAuth(memberAuthLoginRequestDto.getEmail());
     }
+
     /**
      * {@inheritDoc}
      */
@@ -98,6 +117,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberInfoResponseDto getMemberInfo(Long memberId) {
         return memberRepository.findByMemberInfo(memberId).orElse(null);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -105,6 +125,7 @@ public class MemberServiceImpl implements MemberService {
     public boolean checkOAuthMember(String id) {
         return memberRepository.existsByPassword(id);
     }
+
     /**
      * {@inheritDoc}
      */

@@ -21,4 +21,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, BookRepositor
      * @return BookStockResponseDto
      */
     List<BookStockResponseDto> findByBookIdIn(List<Long> bookId); // 뭔 재고가 실패했는지 알려줘야되나?
+
+    List<Book> findBookByBookIdIn(List<Long> bookId);
 }
