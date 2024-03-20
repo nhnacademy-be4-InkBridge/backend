@@ -30,7 +30,7 @@ import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
-import com.nhnacademy.inkbridge.backend.service.impl.OrderFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;

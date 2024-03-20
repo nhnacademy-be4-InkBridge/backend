@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import java.util.Optional;
 
 /**
@@ -17,5 +18,21 @@ public interface BookOrderRepositoryCustom {
      * @param orderCode 주문 코드
      * @return 주문 결제 정보
      */
-    Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(String orderCode);
+    Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderCode(String orderCode);
+
+    /**
+     * 주문 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderId 주문 코드
+     * @return 주문 결제 정보
+     */
+    Optional<OrderPayInfoReadResponseDto> findOrderPayByOrderId(Long orderId);
+
+    /**
+     * 주문에 사용한 포인트를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 사용한 포인트
+     */
+    Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode);
 }

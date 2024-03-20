@@ -4,7 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
-import com.nhnacademy.inkbridge.backend.service.impl.OrderFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
