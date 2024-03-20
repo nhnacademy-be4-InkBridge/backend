@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
  * @version 2024/03/20
  */
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class PublisherCreateRequestDto {
 
