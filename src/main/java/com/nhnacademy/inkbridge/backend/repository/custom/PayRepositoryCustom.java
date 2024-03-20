@@ -15,4 +15,5 @@ public interface PayRepositoryCustom {
 
     Optional<PayReadResponseDto> findPayByOrderId(Long orderId);
 
+    Optional<PayReadResponseDto> findPayByOrderCode(String orderCode);
 }

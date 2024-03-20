@@ -86,6 +86,13 @@ public class PayServiceImpl implements PayService {
             .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public PayReadResponseDto getPayByOrderCode(String orderCode) {
+        return payRepository.findPayByOrderCode(orderCode)
+            .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
+    }
+
     /**
      * {@inheritDoc}
      *

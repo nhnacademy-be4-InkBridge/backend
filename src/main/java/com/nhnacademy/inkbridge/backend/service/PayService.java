@@ -34,6 +34,8 @@ public interface PayService {
      */
     PayReadResponseDto getPayByOrderId(Long orderId);
 
+    PayReadResponseDto getPayByOrderCode(String orderCode);
+
     /**
      * 결제를 취소하는 메소드입니다.
      *
