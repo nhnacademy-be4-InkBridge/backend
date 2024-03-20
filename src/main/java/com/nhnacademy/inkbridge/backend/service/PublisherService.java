@@ -1,6 +1,9 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherReadResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * class: PublisherService.
@@ -11,4 +14,6 @@ import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherCreateRequestDto;
 public interface PublisherService {
 
     void createPublisher(PublisherCreateRequestDto request);
+
+    Page<PublisherReadResponseDto> readPublishers(Pageable pageable);
 }
