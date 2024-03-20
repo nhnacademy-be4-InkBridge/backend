@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginRespo
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
@@ -20,6 +21,7 @@ import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
+import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
