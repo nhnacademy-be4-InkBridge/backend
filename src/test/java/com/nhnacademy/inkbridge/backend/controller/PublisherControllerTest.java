@@ -51,7 +51,7 @@ class PublisherControllerTest {
     void when_createPublisher_expect_success() throws Exception {
         PublisherCreateRequestDto request = new PublisherCreateRequestDto();
         ReflectionTestUtils.setField(request, "publisherName", "nhn 문고");
-        mockMvc.perform(post("/api/admin/publisher")
+        mockMvc.perform(post("/api/admin/publishers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated());
@@ -64,7 +64,7 @@ class PublisherControllerTest {
     void when_createPublisher_expect_fail_1() throws Exception {
         PublisherCreateRequestDto request = new PublisherCreateRequestDto();
         ReflectionTestUtils.setField(request, "publisherName", "");
-        mockMvc.perform(post("/api/admin/publisher")
+        mockMvc.perform(post("/api/admin/publishers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -76,7 +76,7 @@ class PublisherControllerTest {
     @DisplayName("Publisher 데이터 생성 테스트 - 글자수 유효성 검사: null")
     void when_createPublisher_expect_fail_2() throws Exception {
         PublisherCreateRequestDto request = new PublisherCreateRequestDto();
-        mockMvc.perform(post("/api/admin/publisher")
+        mockMvc.perform(post("/api/admin/publishers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -89,7 +89,7 @@ class PublisherControllerTest {
     void when_createPublisher_expect_fail_3() throws Exception {
         PublisherCreateRequestDto request = new PublisherCreateRequestDto();
         ReflectionTestUtils.setField(request, "publisherName", "1234567890123456789012345678901");
-        mockMvc.perform(post("/api/admin/publisher")
+        mockMvc.perform(post("/api/admin/publishers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -119,7 +119,7 @@ class PublisherControllerTest {
 
         ReflectionTestUtils.setField(request, "publisherName", publisherName);
 
-        mockMvc.perform(put("/api/admin/publisher/1")
+        mockMvc.perform(put("/api/admin/publishers/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -134,7 +134,7 @@ class PublisherControllerTest {
         Long publisherId = 1L;
         PublisherUpdateRequestDto request = new PublisherUpdateRequestDto();
         ReflectionTestUtils.setField(request, "publisherName", "");
-        mockMvc.perform(put("/api/admin/publisher/1")
+        mockMvc.perform(put("/api/admin/publishers/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -148,7 +148,7 @@ class PublisherControllerTest {
         Long publisherId = 1L;
         PublisherUpdateRequestDto request = new PublisherUpdateRequestDto();
         ReflectionTestUtils.setField(request, "publisherName", "1234567890123456789012345678901");
-        mockMvc.perform(put("/api/admin/publisher/1")
+        mockMvc.perform(put("/api/admin/publishers/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
@@ -161,7 +161,7 @@ class PublisherControllerTest {
     void when_updatePublisher_expect_fail_3() throws Exception {
         Long publisherId = 1L;
         PublisherUpdateRequestDto request = new PublisherUpdateRequestDto();
-        mockMvc.perform(put("/api/admin/publisher/1")
+        mockMvc.perform(put("/api/admin/publishers/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
