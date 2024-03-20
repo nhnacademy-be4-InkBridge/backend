@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;

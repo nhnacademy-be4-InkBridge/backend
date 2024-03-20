@@ -91,4 +91,10 @@ public class BookOrder {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    /**
+     * 결제 상태를 변경하는 메소드입니다.
+     */
+    public void updateStatus() {
+        this.isPayment = true;
+    }
 }

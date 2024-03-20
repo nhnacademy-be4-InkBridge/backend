@@ -58,7 +58,7 @@ class BookOrderRepositoryImplTest {
 
     @Test
     void testFindOrderPayByOrderId() {
-        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderId("orderCode")
+        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderCode("orderCode")
             .orElse(null);
 
         assertAll(

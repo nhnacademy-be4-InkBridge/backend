@@ -18,7 +18,7 @@ public interface MemberService {
      *
      * @param memberCreateRequestDto 회원가입 폼 데이터
      */
-    void createMember(MemberCreateRequestDto memberCreateRequestDto);
+    Long createMember(MemberCreateRequestDto memberCreateRequestDto);
 
     /**
      * auth 서버에서 로그인 인증시 필요한 로그인 정보를 가져오는 메서드.
