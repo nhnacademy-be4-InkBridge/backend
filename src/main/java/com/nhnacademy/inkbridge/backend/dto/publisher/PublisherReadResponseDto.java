@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.dto.publisher;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * class: PublisherReadResponseDto.

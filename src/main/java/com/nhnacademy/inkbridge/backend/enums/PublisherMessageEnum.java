@@ -15,7 +15,8 @@ import lombok.RequiredArgsConstructor;
 public enum PublisherMessageEnum {
 
     PUBLISHER_VALID_FAIL("출판사 유효성 검사에 실패하였습니다."),
-    PUBLISHER_ALREADY_EXIST("이미 존재하는 멤버입니다.");
+    PUBLISHER_ALREADY_EXIST("이미 존재하는 멤버입니다."),
+    PUBLISHER_NOT_FOUND("조재하지 않는 아이디입니다.");
 
     private final String message;
 

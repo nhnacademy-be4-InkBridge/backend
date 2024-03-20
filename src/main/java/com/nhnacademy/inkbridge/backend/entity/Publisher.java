@@ -35,4 +35,8 @@ public class Publisher {
     public Publisher(String publisherName) {
         this.publisherName = publisherName;
     }
+
+    public void updatePublisher(String publisherName) {
+        this.publisherName = publisherName;
+    }
 }

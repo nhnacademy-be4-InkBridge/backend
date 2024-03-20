@@ -2,10 +2,11 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.publisher.PublisherUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.enums.PublisherMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.PublisherService;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +50,16 @@ public class PublisherController {
     public ResponseEntity<Page<PublisherReadResponseDto>> readPublishers(Pageable pageable){
         Page<PublisherReadResponseDto> response = publisherService.readPublishers(pageable);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PutMapping("/publisher/{publisherId}")
+    public ResponseEntity<HttpStatus> updatePublisher(@PathVariable Long publisherId,@Valid @RequestBody PublisherUpdateRequestDto publisherUpdateRequestDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(PublisherMessageEnum.PUBLISHER_VALID_FAIL.getMessage());
+        }
+
+        publisherService.updatePublisher(publisherId,publisherUpdateRequestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
