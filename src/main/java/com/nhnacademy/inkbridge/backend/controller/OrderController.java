@@ -56,13 +56,13 @@ public class OrderController {
     /**
      * 주문 결제 정보를 조회하는 메소드입니다.
      *
-     * @param orderId 주문 번호
+     * @param orderCode 주문 번호
      * @return 주문 결제 정보
      */
-    @GetMapping("/{orderId}/order-pays")
+    @GetMapping("/{orderCode}/order-pays")
     public ResponseEntity<OrderPayInfoReadResponseDto> getOrderPaymentInfo(
-        @PathVariable String orderId) {
-        OrderPayInfoReadResponseDto orderPaymentInfo = orderFacade.getOrderPaymentInfo(orderId);
+        @PathVariable String orderCode) {
+        OrderPayInfoReadResponseDto orderPaymentInfo = orderFacade.getOrderPaymentInfo(orderCode);
         return ResponseEntity.status(HttpStatus.OK).body(orderPaymentInfo);
     }
 }
