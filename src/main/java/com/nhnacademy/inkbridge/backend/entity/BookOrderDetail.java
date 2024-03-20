@@ -74,4 +74,8 @@ public class BookOrderDetail {
         this.book = book;
         this.memberCoupon = memberCoupon;
     }
+
+    public void updateStatus(BookOrderStatus bookOrderStatus) {
+        this.bookOrderStatus = bookOrderStatus;
+    }
 }

@@ -82,15 +82,19 @@ public class PayServiceImpl implements PayService {
     @Transactional(readOnly = true)
     @Override
     public PayReadResponseDto getPayByOrderId(Long orderId) {
-        return payRepository.findPayByOrderId(orderId)
-            .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
+        return payRepository.findPayByOrderId(orderId);
     }
 
+    /**
+     * 주문 코드로 결제를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 결제 정보
+     */
     @Transactional(readOnly = true)
     @Override
     public PayReadResponseDto getPayByOrderCode(String orderCode) {
-        return payRepository.findPayByOrderCode(orderCode)
-            .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
+        return payRepository.findPayByOrderCode(orderCode);
     }
 
     /**
