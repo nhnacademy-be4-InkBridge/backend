@@ -7,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +32,7 @@ public class Publisher {
     @Column(name = "publisher_name")
     private String publisherName;
 
+    @Builder
     public Publisher(String publisherName) {
         this.publisherName = publisherName;
     }
@@ -40,4 +40,5 @@ public class Publisher {
     public void updatePublisher(String publisherName) {
         this.publisherName = publisherName;
     }
+
 }

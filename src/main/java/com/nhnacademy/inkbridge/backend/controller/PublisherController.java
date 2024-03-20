@@ -53,7 +53,6 @@ public class PublisherController {
         }
 
         publisherService.createPublisher(request);
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
