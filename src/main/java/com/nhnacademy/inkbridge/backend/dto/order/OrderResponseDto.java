@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.order;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,6 +14,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class OrderResponseDto {
+
+    private Long orderId;
 
     private String orderCode;
 
@@ -41,4 +44,8 @@ public class OrderResponseDto {
     private Long payAmount;
 
     private Long deliveryPrice;
+
+    private LocalDateTime orderAt;
+
+    private LocalDate shipDate;
 }

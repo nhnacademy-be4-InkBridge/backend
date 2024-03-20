@@ -19,7 +19,6 @@ public class OrderReadResponseDto {
     private String orderCode;
     private String orderName;
     private LocalDateTime orderAt;
-    private LocalDate shipDate;
     private LocalDate deliveryDate;
     private Long totalPrice;
 }

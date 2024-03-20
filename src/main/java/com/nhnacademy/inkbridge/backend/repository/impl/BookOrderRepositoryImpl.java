@@ -1,10 +1,9 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderRepositoryCustom;
@@ -105,10 +104,10 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.orderAt,
-                bookOrder.shipDate,
                 bookOrder.deliveryDate,
                 bookOrder.totalPrice))
             .where(bookOrder.member.memberId.eq(memberId))
+            .orderBy(bookOrder.orderId.desc())
             .limit(pageable.getPageSize())
             .offset(pageable.getOffset())
             .fetch();
@@ -123,7 +122,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param orderId 주문 번호
      * @return 주문 상세 내역
      */
@@ -133,6 +132,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
         return from(bookOrder)
             .select(Projections.constructor(OrderResponseDto.class,
+                bookOrder.orderId,
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.receiver,
@@ -146,7 +146,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.deliveryDate,
                 bookOrder.usePoint,
                 bookOrder.totalPrice,
-                bookOrder.deliveryPrice))
+                bookOrder.deliveryPrice,
+                bookOrder.orderAt,
+                bookOrder.shipDate))
             .where(bookOrder.orderId.eq(orderId))
             .fetchOne();
     }
@@ -163,6 +165,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
         return from(bookOrder)
             .select(Projections.constructor(OrderResponseDto.class,
+                bookOrder.orderId,
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.receiver,
@@ -176,7 +179,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.deliveryDate,
                 bookOrder.usePoint,
                 bookOrder.totalPrice,
-                bookOrder.deliveryPrice))
+                bookOrder.deliveryPrice,
+                bookOrder.orderAt,
+                bookOrder.shipDate))
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
     }
@@ -197,9 +202,9 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.orderAt,
-                bookOrder.shipDate,
                 bookOrder.deliveryDate,
                 bookOrder.totalPrice))
+            .orderBy(bookOrder.orderId.desc())
             .limit(pageable.getPageSize())
             .offset(pageable.getOffset())
             .fetch();

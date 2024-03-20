@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
@@ -12,6 +12,7 @@ import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
+import com.nhnacademy.inkbridge.backend.exception.AlreadyProcessedException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderDetailRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
     private final BookOrderRepository bookOrderRepository;
@@ -116,7 +119,7 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     @Transactional(readOnly = true)
     @Override
     public List<OrderDetailReadResponseDto> getOrderDetailListByOrderId(Long orderId) {
-        return bookOrderDetailRepository.findAllByOrderId(orderId);
+        return bookOrderDetailRepository.findAllOrderDetailByOrderId(orderId);
     }
 
     /**
@@ -128,7 +131,7 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     @Transactional(readOnly = true)
     @Override
     public List<OrderDetailReadResponseDto> getOrderDetailByOrderCode(String orderCode) {
-        return bookOrderDetailRepository.findAllByOrderCode(orderCode);
+        return bookOrderDetailRepository.findAllOrderDetailByOrderCode(orderCode);
     }
 
     /**
@@ -147,7 +150,15 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
             status.getOrderStatusId()).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
 
-        bookOrderDetailList.forEach(bookOrder -> bookOrder.updateStatus(bookOrderStatus));
+        bookOrderDetailList.forEach(bookOrder -> {
+            if (bookOrder.getBookOrderStatus() == bookOrderStatus) {
+                throw new AlreadyProcessedException(
+                    OrderMessageEnum.ALREADY_PROCESSED.getMessage());
+            }
+
+            bookOrder.updateStatus(bookOrderStatus);
+        });
+
     }
 
 }

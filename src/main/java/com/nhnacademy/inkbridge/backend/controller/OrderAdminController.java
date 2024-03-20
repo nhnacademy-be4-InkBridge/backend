@@ -4,7 +4,7 @@ import static com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum.SHIPPING;
 
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.service.impl.OrderFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,8 +37,7 @@ public class OrderAdminController {
      * @return 주문 목록
      */
     @GetMapping
-    public ResponseEntity<Page<OrderReadResponseDto>> getOrderList(@PageableDefault(page = 0)
-        Pageable pageable) {
+    public ResponseEntity<Page<OrderReadResponseDto>> getOrderList(@PageableDefault Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(orderFacade.getOrderList(pageable));
     }
 
@@ -49,8 +48,10 @@ public class OrderAdminController {
      * @return 주문 상세 내역
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<BookOrderDetailResponseDto> getOrderDetailByOrderId(@PathVariable("orderId") Long orderId) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderFacade.getOrderDetailByOrderId(orderId));
+    public ResponseEntity<BookOrderDetailResponseDto> getOrderDetailByOrderId(
+        @PathVariable("orderId") Long orderId) {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(orderFacade.getOrderDetailByOrderId(orderId));
     }
 
     /**
@@ -60,7 +61,7 @@ public class OrderAdminController {
      * @return void
      */
     @PutMapping("/{orderId}")
-    public ResponseEntity<Void> udpateOrderStatus(@PathVariable("orderId") Long orderId) {
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable("orderId") Long orderId) {
         orderFacade.updateStatus(orderId, SHIPPING);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

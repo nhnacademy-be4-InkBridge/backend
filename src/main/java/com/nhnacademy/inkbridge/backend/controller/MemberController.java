@@ -2,8 +2,6 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TYPE_NOT_FOUND;
 
-import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
@@ -12,16 +10,16 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberEmailRequestDt
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
-import com.nhnacademy.inkbridge.backend.entity.Member;
+import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
-import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
-import com.nhnacademy.inkbridge.backend.service.impl.OrderFacade;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -170,9 +168,9 @@ public class MemberController {
      *
      * @return 주문 상세 내역
      */
-    @GetMapping("/members/{memberId}/orders/{orderId}")
+    @GetMapping("/members/{memberId}/orders/{orderCode}")
     public ResponseEntity<BookOrderDetailResponseDto> getOrder(
-        @PathVariable("memberId") Long memberId, @PathVariable("orderId") Long orderId) {
-        return ResponseEntity.ok(orderFacade.getOrderDetailByOrderId(orderId));
+        @PathVariable("memberId") Long memberId, @PathVariable("orderCode") String orderCode) {
+        return ResponseEntity.ok(orderFacade.getOrderDetailByOrderCode(orderCode));
     }
 }

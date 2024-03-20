@@ -3,7 +3,6 @@ package com.nhnacademy.inkbridge.backend.repository.custom;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

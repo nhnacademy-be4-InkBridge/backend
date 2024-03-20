@@ -3,18 +3,16 @@ package com.nhnacademy.inkbridge.backend.repository.impl;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
+import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.QBookOrderStatus;
 import com.nhnacademy.inkbridge.backend.entity.QCoupon;
+import com.nhnacademy.inkbridge.backend.entity.QCouponType;
 import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QMemberCoupon;
 import com.nhnacademy.inkbridge.backend.entity.QWrapping;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderDetailRepositoryCustom;
 import com.querydsl.core.types.Projections;
-import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
-import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
-import com.nhnacademy.inkbridge.backend.entity.QBookOrderDetail;
-import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderDetailRepositoryCustom;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -51,12 +49,19 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 주문 상세 목록
+     */
     @Override
-    public List<OrderDetailReadResponseDto> findAllByOrderId(Long orderId) {
+    public List<OrderDetailReadResponseDto> findAllOrderDetailByOrderId(Long orderId) {
         QBook book = QBook.book;
         QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
         QCoupon coupon = QCoupon.coupon;
         QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
+        QCouponType couponType = QCouponType.couponType;
         QBookOrderStatus bookOrderStatus = QBookOrderStatus.bookOrderStatus;
         QWrapping wrapping = QWrapping.wrapping;
         QFile file = QFile.file;
@@ -74,6 +79,7 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .on(bookOrderDetail.memberCoupon.eq(memberCoupon))
             .leftJoin(coupon)
             .on(memberCoupon.coupon.eq(coupon))
+            .leftJoin(coupon.couponType, couponType)
             .select(Projections.constructor(OrderDetailReadResponseDto.class,
                 bookOrderDetail.orderDetailId,
                 bookOrderDetail.bookPrice,
@@ -86,6 +92,7 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
                 file.fileUrl,
                 book.bookTitle,
                 memberCoupon.memberCouponId,
+                couponType.typeName,
                 coupon.couponName,
                 coupon.maxDiscountPrice,
                 coupon.discountPrice))
@@ -101,10 +108,11 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
      * @return 주문 상세 목록
      */
     @Override
-    public List<OrderDetailReadResponseDto> findAllByOrderCode(String orderCode) {
+    public List<OrderDetailReadResponseDto> findAllOrderDetailByOrderCode(String orderCode) {
         QBook book = QBook.book;
         QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
         QCoupon coupon = QCoupon.coupon;
+        QCouponType couponType = QCouponType.couponType;
         QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
         QBookOrderStatus bookOrderStatus = QBookOrderStatus.bookOrderStatus;
         QWrapping wrapping = QWrapping.wrapping;
@@ -123,6 +131,7 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .on(bookOrderDetail.memberCoupon.eq(memberCoupon))
             .leftJoin(coupon)
             .on(memberCoupon.coupon.eq(coupon))
+            .leftJoin(coupon.couponType, couponType)
             .select(Projections.constructor(OrderDetailReadResponseDto.class,
                 bookOrderDetail.orderDetailId,
                 bookOrderDetail.bookPrice,
@@ -135,6 +144,7 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
                 file.fileUrl,
                 book.bookTitle,
                 memberCoupon.memberCouponId,
+                couponType.typeName,
                 coupon.couponName,
                 coupon.maxDiscountPrice,
                 coupon.discountPrice))

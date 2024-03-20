@@ -1,13 +1,12 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 
-import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -52,6 +51,7 @@ public interface BookOrderService {
 
     /**
      * 결제한 회원 정보와 사용한 포인트 정보를 조회하는 메소드입니다.
+     *
      * @param orderCode 주문 번호
      * @return 회원 번호, 사용 포인트
      */
@@ -69,19 +69,15 @@ public interface BookOrderService {
 
     /**
      * 주문 내역을 조회하는 메소드입니다.
+     *
      * @param orderId 주문 번호
      * @return 주문 내역
      */
     OrderResponseDto getOrderByOrderId(Long orderId);
 
     /**
-     * 주문의 결제 상태를 변경하는 메소드입니다.
-     * @param orderId 주문 번호
-     */
-    void changeStatus(Long orderId);
-
-    /**
      * 주문 내역을 조회하는 메소드입니다.
+     *
      * @param orderCode 주문 번호
      * @return 주문 내역
      */
@@ -90,8 +86,16 @@ public interface BookOrderService {
 
     /**
      * 전체 주문 목록을 조회하는 메소드입니다.
+     *
      * @param pageable 페이지 정보
      * @return 주문 목록 페이지
      */
     Page<OrderReadResponseDto> getOrderList(Pageable pageable);
+
+    /**
+     * 주문의 출고일을 설정합니다.
+     *
+     * @param orderId 주문 번호
+     */
+    void updateOrderShipDate(Long orderId);
 }

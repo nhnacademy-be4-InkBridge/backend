@@ -24,6 +24,7 @@ public class OrderDetailReadResponseDto {
     private String thumbnailUrl;
     private String bookTitle;
     private Long memberCouponId;
+    private String couponTypeName;
     private String couponName;
     private Long maxDiscountPrice;
     private Long discountPrice;
