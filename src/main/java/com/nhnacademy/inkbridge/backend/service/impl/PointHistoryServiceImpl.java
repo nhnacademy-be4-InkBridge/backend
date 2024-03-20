@@ -5,6 +5,7 @@ import com.nhnacademy.inkbridge.backend.entity.PointHistory;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicyType;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.PointPolicyMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
@@ -33,19 +34,23 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     private final MemberRepository memberRepository;
     private static final Integer REGISTER = 1;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void accumulatePointAtSignup(Member member) {
-        // 회원가입시 축하금 지급
+    public void accumulatePointAtSignup(Long memberId) {
         PointPolicyType pointType =
                 pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
                         PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
         PointPolicy pointPolicy =
                 pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId())).orElseThrow(
                         () -> new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
+        Member member =
+                memberRepository.findById(memberId)
+                        .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
 
         member.updateMemberPoint(pointPolicy.getAccumulatePoint());
 
-        // 포인트 내역 추가
         PointHistory pointHistory = PointHistory.builder()
                 .reason(PointHistoryReason.REGISTER_MSG.getMessage())
                 .point(pointPolicy.getAccumulatePoint())
@@ -53,7 +58,6 @@ public class PointHistoryServiceImpl implements PointHistoryService {
                 .member(member)
                 .build();
 
-        memberRepository.save(member);
         pointHistoryRepository.save(pointHistory);
 
     }

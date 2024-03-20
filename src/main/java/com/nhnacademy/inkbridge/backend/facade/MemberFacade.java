@@ -1,7 +1,6 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
 import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class MemberFacade {
      * @param memberCreateRequestDto 회원가입 정보
      */
     public void signupFacade(MemberCreateRequestDto memberCreateRequestDto) {
-        Member member = memberService.createMember(memberCreateRequestDto);
-        pointHistoryService.accumulatePointAtSignup(member);
+        Long memberId = memberService.createMember(memberCreateRequestDto);
+        pointHistoryService.accumulatePointAtSignup(memberId);
     }
 }

@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public Member createMember(MemberCreateRequestDto memberCreateRequestDto) {
+    public Long createMember(MemberCreateRequestDto memberCreateRequestDto) {
 
         if (memberRepository.existsByEmail(memberCreateRequestDto.getEmail())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
@@ -86,7 +86,8 @@ public class MemberServiceImpl implements MemberService {
                 .memberPoint(0L)
                 .build();
 
-        return memberRepository.save(member);
+        Member result = memberRepository.save(member);
+        return result.getMemberId();
     }
 
     /**

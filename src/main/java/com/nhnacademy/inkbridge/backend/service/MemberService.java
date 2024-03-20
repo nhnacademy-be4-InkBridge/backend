@@ -4,7 +4,6 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginReque
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
-import com.nhnacademy.inkbridge.backend.entity.Member;
 
 /**
  * class: MemberService.
@@ -19,7 +18,7 @@ public interface MemberService {
      *
      * @param memberCreateRequestDto 회원가입 폼 데이터
      */
-    Member createMember(MemberCreateRequestDto memberCreateRequestDto);
+    Long createMember(MemberCreateRequestDto memberCreateRequestDto);
 
     /**
      * auth 서버에서 로그인 인증시 필요한 로그인 정보를 가져오는 메서드.
