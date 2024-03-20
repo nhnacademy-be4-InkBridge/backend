@@ -15,6 +15,7 @@ import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
+import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
 import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
@@ -53,7 +54,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CouponService couponService;
-    private final PointHistoryService pointHistoryService;
+    private final MemberFacade memberFacade;
 
     /**
      * 회원가입 하는 메서드입니다.
@@ -68,9 +69,8 @@ public class MemberController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
         }
+        memberFacade.signupFacade(memberCreateRequestDto);
 
-        Member member = memberService.createMember(memberCreateRequestDto);
-        pointHistoryService.accumulatePointAtSignup(member);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
