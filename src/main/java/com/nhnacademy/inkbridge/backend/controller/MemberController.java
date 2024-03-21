@@ -10,9 +10,13 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberEmailRequestDt
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
 import java.util.List;
@@ -20,6 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +56,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final CouponService couponService;
+    private final OrderFacade orderFacade;
     private final MemberFacade memberFacade;
 
     /**
@@ -167,6 +175,39 @@ public class MemberController {
         couponService.issueCoupon(memberId, couponId);
     }
 
+    @PostMapping("/oauth")
+    public ResponseEntity<String> getOAuthEmail(
+        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+    }
 
+    @PostMapping("/members/checkEmail")
+    public ResponseEntity<Boolean> isDuplicatedEmail(
+        @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+        return ResponseEntity.ok()
+            .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
+    }
 
+    /**
+     * 회원의 주문 목록을 조회하는 메소드입니다.
+     *
+     * @return 페이지에 맞는 주문 목록
+     */
+    @GetMapping("/members/{memberId}/orders")
+    public ResponseEntity<Page<OrderReadResponseDto>> getOrder(@PathVariable Long memberId,
+        @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(orderFacade.getOrderListByMemberId(memberId, pageable));
+    }
+
+    /**
+     * 회원의 주문 상세 내역을 조회하는 메소드입니다.
+     *
+     * @return 주문 상세 내역
+     */
+    @GetMapping("/members/{memberId}/orders/{orderCode}")
+    public ResponseEntity<BookOrderDetailResponseDto> getOrder(
+        @PathVariable("memberId") Long memberId, @PathVariable("orderCode") String orderCode) {
+        return ResponseEntity.ok(orderFacade.getOrderDetailByOrderCode(orderCode));
+    }
 }

@@ -1,9 +1,11 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
@@ -11,11 +13,14 @@ import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +109,6 @@ public class BookOrderServiceImpl implements BookOrderService {
      *
      * @param orderCode 주문 코드
      */
-    @Transactional
     @Override
     public void updateBookOrderPayStatusByOrderCode(String orderCode) {
         BookOrder bookOrder = bookOrderRepository.findByOrderCode(orderCode).orElseThrow(
@@ -125,5 +129,67 @@ public class BookOrderServiceImpl implements BookOrderService {
         return bookOrderRepository.findUsedPointByOrderCode(orderCode).orElseThrow(
             () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param memberId 회원 번호
+     * @param pageable 페이지 정보
+     * @return 주문 목록
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OrderReadResponseDto> getOrderListByMemberId(Long memberId, Pageable pageable) {
+        return bookOrderRepository.findOrderByMemberId(memberId, pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 주문 정보
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public OrderResponseDto getOrderByOrderId(Long orderId) {
+        return bookOrderRepository.findOrderByOrderId(orderId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 번호
+     * @return 주문 내역
+     */
+    @Override
+    public OrderResponseDto getOrderByOrderCode(String orderCode) {
+        return bookOrderRepository.findOrderByOrderCode(orderCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param pageable 페이지 정보
+     * @return 전체 주문목록 페이지
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Page<OrderReadResponseDto> getOrderList(Pageable pageable) {
+        return bookOrderRepository.findOrderBy(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     */
+    @Override
+    public void updateOrderShipDate(Long orderId) {
+        BookOrder bookOrder = bookOrderRepository.findById(orderId).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+
+        bookOrder.updateShipDate(LocalDate.now());
+    }
+
 
 }
