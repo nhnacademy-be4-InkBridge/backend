@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
 import java.time.LocalDate;
@@ -58,7 +58,7 @@ class BookOrderRepositoryImplTest {
 
     @Test
     void testFindOrderPayByOrderId() {
-        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderId("orderCode")
+        OrderPayInfoReadResponseDto result = bookOrderRepository.findOrderPayByOrderCode("orderCode")
             .orElse(null);
 
         assertAll(

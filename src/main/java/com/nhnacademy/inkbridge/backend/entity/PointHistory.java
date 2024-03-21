@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,7 +41,16 @@ public class PointHistory {
     @Column(name = "accrued_at")
     private LocalDateTime accruedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public PointHistory(Long pointId, String reason, Long point, LocalDateTime accruedAt, Member member) {
+        this.pointId = pointId;
+        this.reason = reason;
+        this.point = point;
+        this.accruedAt = accruedAt;
+        this.member = member;
+    }
 }

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -51,7 +52,33 @@ public class Pay {
     @Column(name = "balance_Amount")
     private Long balanceAmount;
 
+    @Column(name = "vat")
+    private Long vat;
+
+    @Column(name = "is_partial_cancelable")
+    private Boolean isPartialCancelable;
+
+    @Column(name = "provider")
+    private String provider;
+
     @OneToOne
     @JoinColumn(name = "order_id")
     private BookOrder order;
+
+    @Builder
+    public Pay(String paymentKey, String method, String status, LocalDateTime requestedAt,
+        LocalDateTime approvedAt, Long totalAmount, Long balanceAmount, Long vat,
+        Boolean isPartialCancelable, String provider, BookOrder order) {
+        this.paymentKey = paymentKey;
+        this.method = method;
+        this.status = status;
+        this.requestedAt = requestedAt;
+        this.approvedAt = approvedAt;
+        this.totalAmount = totalAmount;
+        this.balanceAmount = balanceAmount;
+        this.vat = vat;
+        this.isPartialCancelable = isPartialCancelable;
+        this.provider = provider;
+        this.order = order;
+    }
 }

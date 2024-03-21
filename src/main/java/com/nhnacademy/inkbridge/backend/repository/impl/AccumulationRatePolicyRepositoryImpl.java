@@ -76,4 +76,20 @@ public class AccumulationRatePolicyRepositoryImpl extends QuerydslRepositorySupp
             .limit(1)
             .fetchOne();
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return 적립률
+     */
+    @Override
+    public Integer findByCurrentAccumulationRate() {
+        QAccumulationRatePolicy accumulationRatePolicy = QAccumulationRatePolicy.accumulationRatePolicy;
+
+        return from(accumulationRatePolicy)
+            .select(accumulationRatePolicy.accumulationRate)
+            .orderBy(accumulationRatePolicy.accumulationRatePolicyId.desc())
+            .limit(1)
+            .fetchOne();
+    }
 }

@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum OrderMessageEnum {
     WRAPPING_NOT_FOUND("포장지가 없습니다."),
     ORDER_NOT_FOUND("주문 정보가 없습니다."),
-    ORDER_STATUS_NOT_FOUND("주문 상태가 없습니다.");
+    ORDER_STATUS_NOT_FOUND("주문 상태가 없습니다."),
+    ALREADY_PROCESSED("이미 처리된 주문입니다.");
+
     private String message;
 
     OrderMessageEnum(String message) {

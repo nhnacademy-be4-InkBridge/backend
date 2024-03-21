@@ -240,7 +240,7 @@ public class CouponServiceImpl implements CouponService {
      * @throws AlreadyUsedException 사용한 쿠폰이라면 예외 발생
      */
     private void validateCouponUsed(MemberCoupon memberCoupon) {
-        if (memberCoupon.getUsedAt() == null) {
+        if (memberCoupon.getUsedAt() != null) {
             throw new AlreadyUsedException(COUPON_ALREADY_USED.getMessage());
         }
     }

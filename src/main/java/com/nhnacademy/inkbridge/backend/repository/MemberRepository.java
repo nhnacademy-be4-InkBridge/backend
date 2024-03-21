@@ -31,6 +31,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
      */
     boolean existsByPassword(String password);
 
+    Optional<Member> findByEmail(String email);
+
     @Query("select new com.nhnacademy.inkbridge.backend.dto.member.response.MemberEmailResponseDto(m.email) " +
             "from Member m where m.password = :password")
     Optional<MemberEmailResponseDto> findByPassword(@QueryParam("password") String password);

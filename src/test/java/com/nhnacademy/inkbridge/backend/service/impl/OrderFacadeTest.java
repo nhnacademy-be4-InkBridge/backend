@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
@@ -18,6 +18,7 @@ import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import java.util.List;
@@ -161,12 +162,12 @@ class OrderFacadeTest {
     @Test
     @DisplayName("주문 결제 정보 조회 - 주문 번호에 맞는 주문이 없는 경우")
     void testGetOrderPaymentInfo_not_found() {
-        given(bookOrderService.getOrderPaymentInfoByOrderId("orderId")).willThrow(
+        given(bookOrderService.getOrderPaymentInfoByOrderCode("orderId")).willThrow(
             new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
 
         assertThrows(NotFoundException.class, () -> orderFacade.getOrderPaymentInfo("orderId"));
 
-        verify(bookOrderService, times(1)).getOrderPaymentInfoByOrderId("orderId");
+        verify(bookOrderService, times(1)).getOrderPaymentInfoByOrderCode("orderId");
     }
     
     @Test
@@ -175,10 +176,10 @@ class OrderFacadeTest {
         OrderPayInfoReadResponseDto responseDto = new OrderPayInfoReadResponseDto("orderId",
             "orderName", 10000L);
 
-        given(bookOrderService.getOrderPaymentInfoByOrderId("orderId")).willReturn(responseDto);
+        given(bookOrderService.getOrderPaymentInfoByOrderCode("orderId")).willReturn(responseDto);
 
         OrderPayInfoReadResponseDto result = orderFacade.getOrderPaymentInfo("orderId");
 
-        verify(bookOrderService, times(1)).getOrderPaymentInfoByOrderId("orderId");
+        verify(bookOrderService, times(1)).getOrderPaymentInfoByOrderCode("orderId");
     }
 }
