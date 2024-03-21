@@ -17,12 +17,14 @@ public class ReviewMemberReadResponseDto {
 
     private final Page<ReviewDetailByMemberReadResponseDto> reviewDetailReadResponseDtos;
     private final Map<Long, List<String>> reviewFiles;
+    private final Long count;
 
     @Builder
     public ReviewMemberReadResponseDto(
         Page<ReviewDetailByMemberReadResponseDto> reviewDetailReadResponseDtos,
-        Map<Long, List<String>> reviewFiles) {
+        Map<Long, List<String>> reviewFiles, Long count) {
         this.reviewDetailReadResponseDtos = reviewDetailReadResponseDtos;
         this.reviewFiles = reviewFiles;
+        this.count = count;
     }
 }

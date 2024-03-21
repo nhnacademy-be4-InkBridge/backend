@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -47,9 +48,9 @@ public interface ReviewService {
      *
      * @param memberId Long
      * @param reviewId Long
-     * @param reviewCreateRequestDto ReviewCreateRequestDto
+     * @param reviewUpdateRequestDto ReviewUpdateRequestDto
      * @param files File List
      */
-    void updateReview(Long memberId, Long reviewId, ReviewCreateRequestDto reviewCreateRequestDto,
+    void updateReview(Long memberId, Long reviewId, ReviewUpdateRequestDto reviewUpdateRequestDto,
         List<File> files);
 }

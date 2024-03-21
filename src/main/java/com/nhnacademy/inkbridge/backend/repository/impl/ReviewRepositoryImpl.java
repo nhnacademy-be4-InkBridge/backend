@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailByMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailOnBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
+import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QMember;
 import com.nhnacademy.inkbridge.backend.entity.QReview;
 import com.nhnacademy.inkbridge.backend.entity.Review;
@@ -43,6 +44,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
             .innerJoin(review).on(review.book.eq(book))
             .innerJoin(member).on(member.eq(review.member))
             .where(book.bookId.eq(bookId))
+            .orderBy(review.reviewId.desc())
             .select(
                 Projections.constructor(ReviewDetailOnBookReadResponseDto.class, review.reviewId,
                     member.email, review.reviewTitle, review.reviewContent.coalesce(""),
@@ -62,13 +64,19 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
         Long memberId) {
         QMember member = QMember.member;
         QReview review = QReview.review;
+        QBook book = QBook.book;
+        QFile file = QFile.file;
 
         List<ReviewDetailByMemberReadResponseDto> content = from(member)
             .innerJoin(review).on(review.member.eq(member))
+            .innerJoin(book).on(book.eq(review.book))
+            .innerJoin(file).on(book.thumbnailFile.eq(file))
             .where(member.memberId.eq(memberId))
+            .orderBy(review.reviewId.desc())
             .select(
                 Projections.constructor(ReviewDetailByMemberReadResponseDto.class, review.reviewId,
-                    review.reviewTitle, review.reviewContent, review.registeredAt, review.score))
+                    review.reviewTitle, review.reviewContent, review.registeredAt, review.score,
+                    book.bookId, book.bookTitle, file.fileUrl))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();

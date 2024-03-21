@@ -5,6 +5,7 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailByMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailOnBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.File;
@@ -77,8 +78,10 @@ public class ReviewServiceImpl implements ReviewService {
             page.getContent().stream().map(ReviewDetailByMemberReadResponseDto::getReviewId)
                 .collect(
                     Collectors.toList()));
+        Long count = reviewRepository.countByMember_MemberId(memberId);
+
         return ReviewMemberReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
-            files).build();
+            files).count(count).build();
     }
 
     /**
@@ -122,11 +125,14 @@ public class ReviewServiceImpl implements ReviewService {
             .score(reviewCreateRequestDto.getScore()).build();
         reviewRepository.save(review);
 
-        List<ReviewFile> reviewFiles = files.stream().map(
-                file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review).build())
-            .collect(
-                Collectors.toList());
-        reviewFileRepository.saveAll(reviewFiles);
+        if (!files.isEmpty()) {
+            List<ReviewFile> reviewFiles = files.stream().map(
+                    file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review)
+                        .build())
+                .collect(
+                    Collectors.toList());
+            reviewFileRepository.saveAll(reviewFiles);
+        }
     }
 
     /**
@@ -135,32 +141,29 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public void updateReview(Long memberId, Long reviewId,
-        ReviewCreateRequestDto reviewCreateRequestDto,
-        List<File> files) {
+        ReviewUpdateRequestDto reviewUpdateRequestDto, List<File> files) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NotFoundException(
             ReviewMessageEnum.REVIEW_NOT_FOUND.getMessage()));
 
         if (!memberRepository.existsById(memberId)) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
-        if (!bookRepository.existsById(reviewCreateRequestDto.getBookId())) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
+
+        review.updateReview(reviewUpdateRequestDto.getReviewTitle(),
+            reviewUpdateRequestDto.getReviewContent(), LocalDateTime.now(),
+            reviewUpdateRequestDto.getScore());
+
+        if (!files.isEmpty()) {
+            if (reviewFileRepository.countByReview_ReviewId(reviewId) > 0) {
+                reviewFileRepository.deleteByFile_FileIdInAndReview_ReviewId(
+                    files.stream().map(File::getFileId).collect(Collectors.toList()), reviewId);
+            }
+            List<ReviewFile> reviewFiles = files.stream().map(
+                    file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review)
+                        .build())
+                .collect(Collectors.toList());
+            reviewFileRepository.saveAll(reviewFiles);
         }
-        if (!bookOrderDetailRepository.existsById(reviewCreateRequestDto.getOrderDetailId())) {
-            throw new NotFoundException(
-                BookOrderDetailMessageEnum.BOOK_ORDER_DETAIL_NOT_FOUND.getMessage());
-        }
 
-        review.updateReview(reviewCreateRequestDto.getReviewTitle(),
-            reviewCreateRequestDto.getReviewContent(), LocalDateTime.now(),
-            reviewCreateRequestDto.getScore());
-
-        reviewFileRepository.deleteByFile_FileIdInAndReview_ReviewId(
-            files.stream().map(File::getFileId).collect(Collectors.toList()), reviewId);
-
-        List<ReviewFile> reviewFiles = files.stream().map(
-                file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review).build())
-            .collect(Collectors.toList());
-        reviewFileRepository.saveAll(reviewFiles);
     }
 }

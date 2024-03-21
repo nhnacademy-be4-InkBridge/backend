@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.FileService;
@@ -108,15 +109,15 @@ public class ReviewController {
      * @param reviewId Long
      * @param memberId Long
      * @param reviewImages MultipartFile List
-     * @param reviewCreateRequestDto ReviewCreateRequestDto
+     * @param reviewUpdateRequestDto ReviewUpdateRequestDto
      * @param bindingResult BindingResult
      * @return HttpStatus
      */
     @PutMapping("/{reviewId}")
     public ResponseEntity<HttpStatus> updateReview(@PathVariable(name = "reviewId") Long reviewId,
         @RequestParam(name = "memberId") Long memberId,
-        @RequestPart(name = "reviewImages", required = false) List<MultipartFile> reviewImages,
-        @Valid @RequestPart(name = "review") ReviewCreateRequestDto reviewCreateRequestDto,
+        @RequestPart(name = "images", required = false) List<MultipartFile> reviewImages,
+        @Valid @RequestPart(name = "review") ReviewUpdateRequestDto reviewUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
@@ -127,7 +128,7 @@ public class ReviewController {
                 .map(fileService::saveThumbnail).collect(
                     Collectors.toList());
 
-        reviewService.updateReview(memberId, reviewId, reviewCreateRequestDto, files);
+        reviewService.updateReview(memberId, reviewId, reviewUpdateRequestDto, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

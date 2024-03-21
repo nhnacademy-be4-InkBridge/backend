@@ -18,14 +18,21 @@ public class ReviewDetailByMemberReadResponseDto {
     private final String reviewContent;
     private final LocalDateTime registeredAt;
     private final Integer score;
+    private final Long bookId;
+    private final String bookTitle;
+    private final String thumbnail;
 
     @Builder
     public ReviewDetailByMemberReadResponseDto(Long reviewId, String reviewTitle,
-        String reviewContent, LocalDateTime registeredAt, Integer score) {
+        String reviewContent, LocalDateTime registeredAt, Integer score, Long bookId,
+        String bookTitle, String thumbnail) {
         this.reviewId = reviewId;
         this.reviewTitle = reviewTitle;
         this.reviewContent = reviewContent;
         this.registeredAt = registeredAt;
         this.score = score;
+        this.bookId = bookId;
+        this.bookTitle = bookTitle;
+        this.thumbnail = thumbnail;
     }
 }

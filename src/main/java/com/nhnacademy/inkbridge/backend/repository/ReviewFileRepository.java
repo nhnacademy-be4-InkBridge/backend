@@ -13,4 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ReviewFileRepository extends JpaRepository<ReviewFile, Long> {
 
     void deleteByFile_FileIdInAndReview_ReviewId(List<Long> fileId, Long reviewId);
+
+    Long countByReview_ReviewId(Long reviewId);
 }
