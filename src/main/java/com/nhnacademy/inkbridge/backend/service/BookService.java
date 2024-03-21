@@ -10,10 +10,10 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookService.
@@ -87,7 +87,7 @@ public interface BookService {
      * @param thumbnail                 MultipartFile
      * @param bookAdminCreateRequestDto BookAdminCreateRequestDto
      */
-    void createBook(MultipartFile thumbnail, BookAdminCreateRequestDto bookAdminCreateRequestDto);
+    void createBook(File thumbnail, BookAdminCreateRequestDto bookAdminCreateRequestDto);
 
     /**
      * 입력값에 대해 도서 정보를 수정하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
@@ -96,7 +96,7 @@ public interface BookService {
      * @param bookId                    Long
      * @param bookAdminUpdateRequestDto BookAdminUpdateResponseDto
      */
-    void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
+    void updateBookByAdmin(Long bookId, File thumbnail,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto);
 
     /**

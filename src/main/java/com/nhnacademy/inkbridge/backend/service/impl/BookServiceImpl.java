@@ -50,10 +50,10 @@ import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
 import com.nhnacademy.inkbridge.backend.repository.ReviewRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookServiceImpl.
@@ -85,7 +84,6 @@ public class BookServiceImpl implements BookService {
     private final BookAuthorRepository bookAuthorRepository;
     private final BookFileRepository bookFileRepository;
     private final ReviewRepository reviewRepository;
-    private final FileService fileService;
 
 
     public BookServiceImpl(BookRepository bookRepository, BookStatusRepository bookStatusRepository,
@@ -94,7 +92,7 @@ public class BookServiceImpl implements BookService {
         AuthorRepository authorRepository, BookTagRepository bookTagRepository,
         BookCategoryRepository bookCategoryRepository,
         BookAuthorRepository bookAuthorRepository, BookFileRepository bookFileRepository,
-        ReviewRepository reviewRepository, FileService fileService) {
+        ReviewRepository reviewRepository) {
         this.bookRepository = bookRepository;
         this.bookStatusRepository = bookStatusRepository;
         this.fileRepository = fileRepository;
@@ -107,7 +105,6 @@ public class BookServiceImpl implements BookService {
         this.bookAuthorRepository = bookAuthorRepository;
         this.bookFileRepository = bookFileRepository;
         this.reviewRepository = reviewRepository;
-        this.fileService = fileService;
     }
 
 
@@ -244,14 +241,12 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional
     @Override
-    public void createBook(MultipartFile thumbnail,
+    public void createBook(File savedThumbnail,
         BookAdminCreateRequestDto bookAdminCreateRequestDto) {
         Publisher publisher = publisherRepository.findById(
                 bookAdminCreateRequestDto.getPublisherId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
-
-        File savedThumbnail = fileService.saveThumbnail(thumbnail);
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
@@ -283,7 +278,7 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional
     @Override
-    public void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
+    public void updateBookByAdmin(Long bookId, File file,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto) {
         Book book = bookRepository.findById(bookId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
@@ -295,8 +290,9 @@ public class BookServiceImpl implements BookService {
                 bookAdminUpdateRequestDto.getStatusId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
+
         File savedThumbnail =
-            (thumbnail != null) ? fileService.saveThumbnail(thumbnail) : book.getThumbnailFile();
+            Objects.nonNull(file) ? file : book.getThumbnailFile();
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),
