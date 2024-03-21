@@ -20,6 +20,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberIdNoRequestDto
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
+import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
 import java.time.LocalDate;
@@ -49,6 +50,8 @@ class MemberControllerTest {
     private MemberFacade memberFacade;
     @MockBean
     private MemberService memberService;
+    @MockBean
+    private OrderFacade orderFacade;
     @MockBean
     private CouponService couponService;
     private ObjectMapper objectMapper;
