@@ -104,16 +104,4 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     public List<Long> getUsedCouponIdByOrderCode(String orderCode) {
         return bookOrderDetailRepository.findAllByOrderCode(orderCode);
     }
-
-
-    /**
-     *
-     * @param bookIds
-     * @return
-     */
-    @Override
-    public Boolean validateBookStock(List<Long> bookIds) {
-        return null;
-    }
-
 }

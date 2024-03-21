@@ -27,8 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
+import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +51,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: AuthorControllerTest.
@@ -67,6 +68,9 @@ class AuthorControllerTest {
 
     @MockBean
     AuthorService authorService;
+
+    @MockBean
+    FileService fileService;
 
     @MockBean
     Pageable pageable;
@@ -169,13 +173,15 @@ class AuthorControllerTest {
             asString.getBytes());
 
         MockMultipartFile authorFile = new MockMultipartFile(
-            "image",
+            "authorFile",
             "authorFile",
             MediaType.IMAGE_PNG_VALUE,
             "authorFile".getBytes()
         );
 
-        doNothing().when(authorService).createAuthor(authorFile, authorCreateUpdateRequestDto);
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).createAuthor(any(File.class), any(
+            AuthorCreateUpdateRequestDto.class));
 
         mockMvc.perform(multipart("/api/admin/authors")
                 .file(authorFile)
@@ -189,7 +195,7 @@ class AuthorControllerTest {
                 preprocessResponse(prettyPrint()),
                 requestParts(
                     partWithName("author").description("작가"),
-                    partWithName("image").description("작가 사진")
+                    partWithName("authorFile").description("작가 사진")
                 )
             ));
     }
@@ -205,13 +211,15 @@ class AuthorControllerTest {
             asString.getBytes());
 
         MockMultipartFile authorFile = new MockMultipartFile(
-            "image",
+            "authorFile",
             "authorFile",
             MediaType.IMAGE_PNG_VALUE,
             "authorFile".getBytes()
         );
 
-        doNothing().when(authorService).createAuthor(authorFile, authorCreateUpdateRequestDto);
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).createAuthor(any(File.class), any(
+            AuthorCreateUpdateRequestDto.class));
 
         mockMvc.perform(multipart("/api/admin/authors")
                 .file(authorFile)
@@ -250,10 +258,11 @@ class AuthorControllerTest {
         String asString = objectMapper.writeValueAsString(authorCreateUpdateRequestDto);
         MockMultipartFile author = new MockMultipartFile("author", "author", "application/json",
             asString.getBytes());
-        MockMultipartFile authorFile = new MockMultipartFile("image", "authorFile",
+        MockMultipartFile authorFile = new MockMultipartFile("authorFile", "authorFile",
             MediaType.IMAGE_PNG_VALUE, "authorFile".getBytes());
 
-        doNothing().when(authorService).updateAuthor(any(MultipartFile.class), any(
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).updateAuthor(any(File.class), any(
             AuthorCreateUpdateRequestDto.class), anyLong());
 
         mockMvc.perform(builders
@@ -266,7 +275,7 @@ class AuthorControllerTest {
                 pathParameters(parameterWithName("authorId").description("작가 번호")),
                 requestParts(
                     partWithName("author").description("작가"),
-                    partWithName("image").description("작가 사진")
+                    partWithName("authorFile").description("작가 사진")
                 )));
     }
 
@@ -286,10 +295,11 @@ class AuthorControllerTest {
         String asString = objectMapper.writeValueAsString(authorCreateUpdateRequestDto);
         MockMultipartFile author = new MockMultipartFile("author", "author", "application/json",
             asString.getBytes());
-        MockMultipartFile authorFile = new MockMultipartFile("image", "authorFile",
+        MockMultipartFile authorFile = new MockMultipartFile("authorFile", "authorFile",
             MediaType.IMAGE_PNG_VALUE, "authorFile".getBytes());
 
-        doNothing().when(authorService).updateAuthor(any(MultipartFile.class), any(
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).updateAuthor(any(File.class), any(
             AuthorCreateUpdateRequestDto.class), anyLong());
 
         mockMvc.perform(builders

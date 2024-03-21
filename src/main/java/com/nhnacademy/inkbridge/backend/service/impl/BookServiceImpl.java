@@ -35,6 +35,7 @@ import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
 import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.BookStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
@@ -84,7 +85,6 @@ public class BookServiceImpl implements BookService {
     private final BookAuthorRepository bookAuthorRepository;
     private final BookFileRepository bookFileRepository;
     private final ReviewRepository reviewRepository;
-
 
     public BookServiceImpl(BookRepository bookRepository, BookStatusRepository bookStatusRepository,
         FileRepository fileRepository, PublisherRepository publisherRepository,
@@ -143,8 +143,8 @@ public class BookServiceImpl implements BookService {
         List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
                 .collect(Collectors.toList()));
-        CategoryNameReadResponseDto categoryByCategoryId = categoryRepository.findCategoryByCategoryId(
-            categoryId);
+        CategoryNameReadResponseDto categoryByCategoryId =
+            categoryRepository.findCategoryByCategoryId(categoryId);
         return BooksByCategoryReadResponseDto.builder().booksPaginationReadResponseDtos(books)
             .authorPaginationReadResponseDto(authors)
             .categoryNameReadResponseDto(categoryByCategoryId).build();
@@ -316,9 +316,21 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookRepository.findBookByBookIdIn(
             bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
                 Collectors.toList()));
+        BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.SOLD_OUT.getStatusId())
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
 
         for (int i = 0; i < books.size(); i++) {
-            books.get(i).updateBookStock(bookStockUpdateRequestDtos.get(i).getStock());
+            Integer amount = bookStockUpdateRequestDtos.get(i).getAmount();
+            int subtraction = books.get(i).getStock() - amount;
+            if (subtraction < 0) {
+                throw new RuntimeException(); // TODO: errorMessage로 도서 재고 부족한 도서 이름 리스트를 반환
+                // 하나는 재고 체킹만, 하나는 차감까지 => 409로
+            }
+            books.get(i).updateBookStock(subtraction);
+            if (subtraction == 0) {
+                books.get(i).updateStatus(bookStatus);
+            }
         }
     }
 

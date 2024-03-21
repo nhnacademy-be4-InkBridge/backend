@@ -1,7 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -20,24 +21,34 @@ public interface ReviewService {
      * @param memberId Long
      * @return ReviewReadResponseDto
      */
-    ReviewReadResponseDto getReviewsByMember(Pageable pageable, Long memberId);
-
-
-    ReviewReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId);
+    ReviewMemberReadResponseDto getReviewsByMember(Pageable pageable, Long memberId);
 
     /**
-     * @param memberId
+     * 도서 번호로 리뷰 목록을 조회하는 메서드입니다.
+     *
+     * @param pageable Pageable
+     * @param bookId Long
+     * @return ReviewBookReadResponseDto
+     */
+    ReviewBookReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId);
+
+    /**
+     * 리뷰를 등록하는 메서드입니다.
+     *
+     * @param memberId Long
      * @param reviewCreateRequestDto ReviewCreateRequestDto
-     * @param fileIds
+     * @param fileIds File List
      */
     void createReview(Long memberId, ReviewCreateRequestDto reviewCreateRequestDto,
         List<File> fileIds);
 
     /**
-     * @param memberId
-     * @param reviewId
-     * @param reviewCreateRequestDto
-     * @param files
+     * 리뷰를 수정하는 메서드입니다.
+     *
+     * @param memberId Long
+     * @param reviewId Long
+     * @param reviewCreateRequestDto ReviewCreateRequestDto
+     * @param files File List
      */
     void updateReview(Long memberId, Long reviewId, ReviewCreateRequestDto reviewCreateRequestDto,
         List<File> files);

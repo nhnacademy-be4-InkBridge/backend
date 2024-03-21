@@ -11,16 +11,18 @@ import lombok.Getter;
  *  @version 2024/03/19
  */
 @Getter
-public class ReviewDetailReadResponseDto {
+public class ReviewDetailByMemberReadResponseDto {
 
+    private final Long reviewId;
     private final String reviewTitle;
     private final String reviewContent;
     private final LocalDateTime registeredAt;
     private final Integer score;
 
     @Builder
-    public ReviewDetailReadResponseDto(String reviewTitle, String reviewContent,
-        LocalDateTime registeredAt, Integer score) {
+    public ReviewDetailByMemberReadResponseDto(Long reviewId, String reviewTitle,
+        String reviewContent, LocalDateTime registeredAt, Integer score) {
+        this.reviewId = reviewId;
         this.reviewTitle = reviewTitle;
         this.reviewContent = reviewContent;
         this.registeredAt = registeredAt;

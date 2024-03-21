@@ -13,13 +13,14 @@ import org.springframework.data.domain.Page;
  *  @version 2024/03/20
  */
 @Getter
-public class ReviewReadResponseDto {
+public class ReviewMemberReadResponseDto {
 
-    private final Page<ReviewDetailReadResponseDto> reviewDetailReadResponseDtos;
+    private final Page<ReviewDetailByMemberReadResponseDto> reviewDetailReadResponseDtos;
     private final Map<Long, List<String>> reviewFiles;
 
     @Builder
-    public ReviewReadResponseDto(Page<ReviewDetailReadResponseDto> reviewDetailReadResponseDtos,
+    public ReviewMemberReadResponseDto(
+        Page<ReviewDetailByMemberReadResponseDto> reviewDetailReadResponseDtos,
         Map<Long, List<String>> reviewFiles) {
         this.reviewDetailReadResponseDtos = reviewDetailReadResponseDtos;
         this.reviewFiles = reviewFiles;

@@ -1,9 +1,8 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailByMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailOnBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
 import com.nhnacademy.inkbridge.backend.entity.QMember;
 import com.nhnacademy.inkbridge.backend.entity.QReview;
@@ -32,47 +31,47 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     /**
-     * @param bookId
-     * @return
+     * {@inheritDoc}
      */
     @Override
-    public Page<ReviewDetailReadResponseDto> findByBookId(Pageable pageable, Long bookId) {
+    public Page<ReviewDetailOnBookReadResponseDto> findByBookId(Pageable pageable, Long bookId) {
         QBook book = QBook.book;
         QReview review = QReview.review;
+        QMember member = QMember.member;
 
-        List<ReviewDetailReadResponseDto> content = from(book)
+        List<ReviewDetailOnBookReadResponseDto> content = from(book)
             .innerJoin(review).on(review.book.eq(book))
+            .innerJoin(member).on(member.eq(review.member))
             .where(book.bookId.eq(bookId))
-            .select(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
-                review.reviewContent, review.registeredAt, review.score))
+            .select(
+                Projections.constructor(ReviewDetailOnBookReadResponseDto.class, review.reviewId,
+                    member.email, review.reviewTitle, review.reviewContent.coalesce(""),
+                    review.registeredAt, review.score))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .transform(groupBy(review.reviewId)
-                .list(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
-                    review.reviewContent.coalesce(""), review.registeredAt, review.score)));
+            .fetch();
 
         return new PageImpl<>(content, pageable, getCount());
     }
 
     /**
-     * @param memberId
-     * @return
+     * {@inheritDoc}
      */
     @Override
-    public Page<ReviewDetailReadResponseDto> findByMemberId(Pageable pageable, Long memberId) {
+    public Page<ReviewDetailByMemberReadResponseDto> findByMemberId(Pageable pageable,
+        Long memberId) {
         QMember member = QMember.member;
         QReview review = QReview.review;
 
-        List<ReviewDetailReadResponseDto> content = from(member)
+        List<ReviewDetailByMemberReadResponseDto> content = from(member)
             .innerJoin(review).on(review.member.eq(member))
             .where(member.memberId.eq(memberId))
-            .select(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
-                review.reviewContent, review.registeredAt, review.score))
+            .select(
+                Projections.constructor(ReviewDetailByMemberReadResponseDto.class, review.reviewId,
+                    review.reviewTitle, review.reviewContent, review.registeredAt, review.score))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .transform(groupBy(review.reviewId)
-                .list(Projections.constructor(ReviewDetailReadResponseDto.class, review.reviewTitle,
-                    review.reviewContent, review.registeredAt, review.score)));
+            .fetch();
 
         return new PageImpl<>(content, pageable, getCount());
     }
@@ -90,10 +89,15 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements
             .where(book.bookId.eq(bookId))
             .select(
                 Projections.constructor(ReviewAverageReadResponseDto.class,
-                    review.score.avg().coalesce(DEFAULT_AVG)))
+                    review.score.avg().coalesce(DEFAULT_AVG), review.count()))
             .fetchOne();
     }
 
+    /**
+     * 리뷰 전체 개수를 조회하는 메서드입니다.
+     *
+     * @return Long count
+     */
     private Long getCount() {
         QReview review = QReview.review;
 

@@ -1,7 +1,8 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.FileService;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -43,24 +45,43 @@ public class ReviewController {
         this.fileService = fileService;
     }
 
-    // 마이페이지에서 리뷰 목록 보기 -> 리뷰 수정
-    // 결제 내역 페이지에서 리뷰 등록
-    // 도서 페이지에서 리뷰 보기 -> 도서에서
-
+    /**
+     * 회원 번호로 리뷰를 조회하는 api입니다.
+     *
+     * @param memberId Long
+     * @param pageable Pageable
+     * @return ReviewReadResponseDto
+     */
     @GetMapping
-    public ResponseEntity<ReviewReadResponseDto> getReviews(
+    public ResponseEntity<ReviewMemberReadResponseDto> getReviewsByMember(
         @RequestParam(name = "memberId") Long memberId, Pageable pageable) {
-        ReviewReadResponseDto reviews = reviewService.getReviewsByMember(pageable, memberId);
+        ReviewMemberReadResponseDto reviews = reviewService.getReviewsByMember(pageable, memberId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    /**
+     * 도서 번호로 리뷰를 조회하는 api입니다.
+     *
+     * @param bookId Long
+     * @param pageable Long
+     * @return ReviewReadResponseDto
+     */
     @GetMapping("/books/{bookId}")
-    public ResponseEntity<ReviewReadResponseDto> getReviewsByBookId(@PathVariable Long bookId,
-        Pageable pageable) {
-        ReviewReadResponseDto reviews = reviewService.getReviewsByBookId(pageable, bookId);
+    public ResponseEntity<ReviewBookReadResponseDto> getReviewsByBookId(@PathVariable Long bookId,
+        @PageableDefault(size = 5) Pageable pageable) {
+        ReviewBookReadResponseDto reviews = reviewService.getReviewsByBookId(pageable, bookId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    /**
+     * 리뷰를 등록하는 api입니다.
+     *
+     * @param reviewImages MultipartFile List
+     * @param memberId Long
+     * @param reviewCreateRequestDto ReviewCreateRequestDto
+     * @param bindingResult BindingResult
+     * @return ResponseEntity HttpStatus
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> createReview(
         @RequestPart(name = "images", required = false) List<MultipartFile> reviewImages,
@@ -81,6 +102,16 @@ public class ReviewController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * 리뷰를 수정하는 api입니다.
+     *
+     * @param reviewId Long
+     * @param memberId Long
+     * @param reviewImages MultipartFile List
+     * @param reviewCreateRequestDto ReviewCreateRequestDto
+     * @param bindingResult BindingResult
+     * @return HttpStatus
+     */
     @PutMapping("/{reviewId}")
     public ResponseEntity<HttpStatus> updateReview(@PathVariable(name = "reviewId") Long reviewId,
         @RequestParam(name = "memberId") Long memberId,

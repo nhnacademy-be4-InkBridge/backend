@@ -26,7 +26,4 @@ public interface BookOrderDetailService {
      * @return 사용한 쿠폰 번호 목록
      */
     List<Long> getUsedCouponIdByOrderCode(String orderCode);
-
-    // TODO
-    public Boolean validateBookStock(List<Long> bookIds);
 }

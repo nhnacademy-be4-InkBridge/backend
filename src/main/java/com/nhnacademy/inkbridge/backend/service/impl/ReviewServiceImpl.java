@@ -1,8 +1,10 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.review.ReviewReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailByMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailOnBookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.File;
@@ -16,14 +18,16 @@ import com.nhnacademy.inkbridge.backend.enums.ReviewMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderDetailRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookRepository;
+import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
 import com.nhnacademy.inkbridge.backend.repository.ReviewFileRepository;
 import com.nhnacademy.inkbridge.backend.repository.ReviewRepository;
 import com.nhnacademy.inkbridge.backend.service.ReviewService;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author minm063
  * @version 2024/03/19
  */
+@Slf4j
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
@@ -43,47 +48,54 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final BookOrderDetailRepository bookOrderDetailRepository;
+    private final FileRepository fileRepository;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository, MemberRepository memberRepository,
         ReviewFileRepository reviewFileRepository, BookRepository bookRepository,
-        BookOrderDetailRepository bookOrderDetailRepository) {
+        BookOrderDetailRepository bookOrderDetailRepository, FileRepository fileRepository) {
         this.reviewRepository = reviewRepository;
         this.memberRepository = memberRepository;
         this.reviewFileRepository = reviewFileRepository;
         this.bookRepository = bookRepository;
         this.bookOrderDetailRepository = bookOrderDetailRepository;
+        this.fileRepository = fileRepository;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
-    public ReviewReadResponseDto getReviewsByMember(Pageable pageable, Long memberId) {
+    public ReviewMemberReadResponseDto getReviewsByMember(Pageable pageable, Long memberId) {
         if (!memberRepository.existsById(memberId)) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
 
-        Page<ReviewDetailReadResponseDto> page = reviewRepository.findByMemberId(pageable,
+        Page<ReviewDetailByMemberReadResponseDto> page = reviewRepository.findByMemberId(pageable,
             memberId);
-
-        return ReviewReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
-            new HashMap<>()).build();
+        Map<Long, List<String>> files = fileRepository.getAllFileByReviewId(
+            page.getContent().stream().map(ReviewDetailByMemberReadResponseDto::getReviewId)
+                .collect(
+                    Collectors.toList()));
+        return ReviewMemberReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
+            files).build();
     }
 
     /**
-     *
-     * @param pageable
-     * @param bookId
-     * @return
+     * {@inheritDoc}
      */
+    @Transactional(readOnly = true)
     @Override
-    public ReviewReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId) {
-        Page<ReviewDetailReadResponseDto> page = reviewRepository.findByBookId(pageable,
+    public ReviewBookReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId) {
+        Page<ReviewDetailOnBookReadResponseDto> page = reviewRepository.findByBookId(pageable,
             bookId);
-        // TODO: reviewFile
+        Map<Long, List<String>> files = fileRepository.getAllFileByReviewId(
+            page.getContent().stream().map(ReviewDetailOnBookReadResponseDto::getReviewId)
+                .collect(
+                    Collectors.toList()));
 
-        return ReviewReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
-            new HashMap<>()).build();
+        return ReviewBookReadResponseDto.builder().reviewDetailReadResponseDtos(page).reviewFiles(
+            files).build();
     }
 
     /**
@@ -120,6 +132,7 @@ public class ReviewServiceImpl implements ReviewService {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     @Override
     public void updateReview(Long memberId, Long reviewId,
         ReviewCreateRequestDto reviewCreateRequestDto,
