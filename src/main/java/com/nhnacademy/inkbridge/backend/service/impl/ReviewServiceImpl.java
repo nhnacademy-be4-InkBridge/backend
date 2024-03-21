@@ -127,7 +127,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (!files.isEmpty()) {
             List<ReviewFile> reviewFiles = files.stream().map(
-                    file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review)
+                    file -> ReviewFile.builder().fileId(file.getFileId()).review(review)
                         .build())
                 .collect(
                     Collectors.toList());
@@ -159,7 +159,7 @@ public class ReviewServiceImpl implements ReviewService {
                     files.stream().map(File::getFileId).collect(Collectors.toList()), reviewId);
             }
             List<ReviewFile> reviewFiles = files.stream().map(
-                    file -> ReviewFile.builder().fileId(file.getFileId()).file(file).review(review)
+                    file -> ReviewFile.builder().fileId(file.getFileId()).review(review)
                         .build())
                 .collect(Collectors.toList());
             reviewFileRepository.saveAll(reviewFiles);
