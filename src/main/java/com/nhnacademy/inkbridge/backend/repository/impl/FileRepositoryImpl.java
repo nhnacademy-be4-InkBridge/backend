@@ -23,6 +23,9 @@ public class FileRepositoryImpl extends QuerydslRepositorySupport implements Fil
         super(File.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<Long, List<String>> getAllFileByReviewId(List<Long> reviewIdList) {
         QFile file = QFile.file;
