@@ -11,9 +11,27 @@ import java.util.Optional;
  */
 public interface PayRepositoryCustom {
 
+    /**
+     * 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param payId 결제 번호
+     * @return 결제 정보
+     */
     Optional<PayReadResponseDto> findPayByPayId(Long payId);
 
-    Optional<PayReadResponseDto> findPayByOrderId(Long orderId);
+    /**
+     * 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderId 주문 번호
+     * @return 결제 정보
+     */
+    PayReadResponseDto findPayByOrderId(Long orderId);
 
-    Optional<PayReadResponseDto> findPayByOrderCode(String orderCode);
+    /**
+     * 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 결제 정보
+     */
+    PayReadResponseDto findPayByOrderCode(String orderCode);
 }

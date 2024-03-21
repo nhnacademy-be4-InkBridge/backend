@@ -97,4 +97,11 @@ public class BookOrder {
     public void updateStatus() {
         this.isPayment = true;
     }
+
+    /**
+     * 주문 출고일을 오늘로 설정합니다.
+     */
+    public void updateShipDate(LocalDate date) {
+        this.shipDate = date;
+    }
 }

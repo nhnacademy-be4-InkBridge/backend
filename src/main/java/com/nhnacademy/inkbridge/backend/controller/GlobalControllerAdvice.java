@@ -4,6 +4,9 @@ import com.nhnacademy.inkbridge.backend.dto.ApiError;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +37,8 @@ public class GlobalControllerAdvice {
     }
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(new ApiError(e.getBindingResult().getAllErrors().toString()), HttpStatus.BAD_REQUEST);
+        List<String> result = e.getBindingResult().getAllErrors().stream()
+            .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+        return new ResponseEntity<>(new ApiError(result.toString()), HttpStatus.BAD_REQUEST);
     }
 }
