@@ -88,8 +88,8 @@ public class AuthorController {
      */
     @PostMapping("/api/admin/authors")
     public ResponseEntity<HttpStatus> createAuthor(
-        @RequestPart("image") MultipartFile authorFile,
-        @Valid @RequestPart(value = "author", required = false)
+        @RequestPart(value = "image", required = false) MultipartFile authorFile,
+        @Valid @RequestPart(value = "author")
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(

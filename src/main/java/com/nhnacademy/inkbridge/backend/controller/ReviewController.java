@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author minm063
  * @version 2024/03/19
  */
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/auth/reviews")
 @RestController
 public class ReviewController {
 
@@ -85,9 +85,9 @@ public class ReviewController {
      */
     @PostMapping
     public ResponseEntity<HttpStatus> createReview(
-        @RequestPart(name = "images", required = false) List<MultipartFile> reviewImages,
-        @RequestParam(name = "memberId") Long memberId,
-        @Valid @RequestPart(name = "review") ReviewCreateRequestDto reviewCreateRequestDto,
+        @RequestPart(value = "images", required = false) List<MultipartFile> reviewImages,
+        @RequestParam(value = "memberId") Long memberId,
+        @Valid @RequestPart(value = "review") ReviewCreateRequestDto reviewCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
@@ -115,9 +115,9 @@ public class ReviewController {
      */
     @PutMapping("/{reviewId}")
     public ResponseEntity<HttpStatus> updateReview(@PathVariable(name = "reviewId") Long reviewId,
-        @RequestParam(name = "memberId") Long memberId,
-        @RequestPart(name = "images", required = false) List<MultipartFile> reviewImages,
-        @Valid @RequestPart(name = "review") ReviewUpdateRequestDto reviewUpdateRequestDto,
+        @RequestParam(value = "memberId") Long memberId,
+        @RequestPart(value = "images", required = false) List<MultipartFile> reviewImages,
+        @Valid @RequestPart(value = "review") ReviewUpdateRequestDto reviewUpdateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(

@@ -1,5 +1,9 @@
 package com.nhnacademy.inkbridge.backend.dto.review;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,8 +18,13 @@ public class ReviewCreateRequestDto {
 
     private final Long bookId;
     private final Long orderDetailId;
+    @Size(min = 1, max = 50)
+    @NotBlank
     private final String reviewTitle;
+    @Size(max = 1000)
     private final String reviewContent;
+    @Min(value = 1)
+    @Max(value = 5)
     private final Integer score;
 
     @Builder
