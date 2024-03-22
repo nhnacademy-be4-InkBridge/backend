@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.member.PointHistoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.PointHistory;
 import com.nhnacademy.inkbridge.backend.entity.PointPolicy;
@@ -14,6 +15,7 @@ import com.nhnacademy.inkbridge.backend.repository.PointPolicyRepository;
 import com.nhnacademy.inkbridge.backend.repository.PointPolicyTypeRepository;
 import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class PointHistoryServiceImpl implements PointHistoryService {
+
     private final PointPolicyRepository pointPolicyRepository;
     private final PointPolicyTypeRepository pointPolicyTypeRepository;
     private final PointHistoryRepository pointHistoryRepository;
@@ -40,25 +43,35 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     @Override
     public void accumulatePointAtSignup(Long memberId) {
         PointPolicyType pointType =
-                pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
-                        PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
+            pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
+                PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
         PointPolicy pointPolicy =
-                pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId())).orElseThrow(
-                        () -> new NotFoundException(PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
+            pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId()))
+                .orElseThrow(
+                    () -> new NotFoundException(
+                        PointPolicyMessageEnum.POINT_POLICY_NOT_FOUND.getMessage()));
         Member member =
-                memberRepository.findById(memberId)
-                        .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+            memberRepository.findById(memberId)
+                .orElseThrow(
+                    () -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
 
         member.updateMemberPoint(pointPolicy.getAccumulatePoint());
 
         PointHistory pointHistory = PointHistory.builder()
-                .reason(PointHistoryReason.REGISTER_MSG.getMessage())
-                .point(pointPolicy.getAccumulatePoint())
-                .accruedAt(LocalDateTime.now())
-                .member(member)
-                .build();
+            .reason(PointHistoryReason.REGISTER_MSG.getMessage())
+            .point(pointPolicy.getAccumulatePoint())
+            .accruedAt(LocalDateTime.now())
+            .member(member)
+            .build();
 
         pointHistoryRepository.save(pointHistory);
 
+    }
+
+    @Override
+    public List<PointHistoryReadResponseDto> getPointHistory(Long userId) {
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.name()));
+        return pointHistoryRepository.findByMemberOrderByAccruedAtDesc(member);
     }
 }

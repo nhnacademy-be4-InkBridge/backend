@@ -1,5 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.member.PointHistoryReadResponseDto;
+import java.util.List;
+
 /**
  * class: PointHistoryService.
  *
@@ -13,4 +16,6 @@ public interface PointHistoryService {
      * @param memberId 지급할 회원 아이디
      */
     void accumulatePointAtSignup(Long memberId);
+
+    List<PointHistoryReadResponseDto> getPointHistory(Long userId);
 }
