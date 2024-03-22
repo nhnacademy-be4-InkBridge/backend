@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.config.ObjectStorageConfig;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthService;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,13 +30,20 @@ import org.springframework.web.multipart.MultipartFile;
  */
 
 @Service
-@RequiredArgsConstructor
 public class ObjectServiceImpl implements ObjectService {
 
+
     private final AuthService authService;
+
+    public ObjectServiceImpl(ObjectStorageConfig objectStorageConfig, AuthService authService) {
+        this.authService = authService;
+        storageUrl = objectStorageConfig.getStorageUrl();
+        containerName = objectStorageConfig.getContainerName();
+    }
+
     private String tokenId;
-    private static final String STORAGE_URL = "https://kr1-api-object-storage.nhncloudservice.com/v1/AUTH_e805e9a72d2f47338a0a463196c36314";
-    private static final String CONTAINER_NAME = "inkbridge";
+    private final String storageUrl;
+    private final String containerName;
 
 
     @Override
@@ -89,6 +96,6 @@ public class ObjectServiceImpl implements ObjectService {
     }
 
     private String getUrl(String objectName) {
-        return STORAGE_URL + "/" + CONTAINER_NAME + "/" + objectName;
+        return storageUrl + "/" + containerName + "/" + objectName;
     }
 }

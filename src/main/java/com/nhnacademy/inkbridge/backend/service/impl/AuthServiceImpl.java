@@ -1,10 +1,10 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.config.ObjectStorageConfig;
 import com.nhnacademy.inkbridge.backend.dto.TokenRequest;
 import com.nhnacademy.inkbridge.backend.dto.TokenResponse;
 import com.nhnacademy.inkbridge.backend.service.AuthService;
 import java.util.Objects;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,20 +20,27 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @Service
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private static final String AUTH_URL = "https://api-identity-infrastructure.nhncloudservice.com/v2.0";
-    private static final String TENANT_ID = "e805e9a72d2f47338a0a463196c36314";
-    private static final String USERNAME = "wjdqudgns23@naver.com";
-    private static final String PASSWORD = "bhC$050319";
+
+    public AuthServiceImpl(ObjectStorageConfig objectStorageConfig) {
+        authUrl = objectStorageConfig.getAuthUrl();
+        tenantId = objectStorageConfig.getTenantId();
+        username = objectStorageConfig.getUsername();
+        password = objectStorageConfig.getPassword();
+    }
+
+    private final String authUrl;
+    private final String tenantId;
+    private final String username;
+    private final String password;
 
     @Override
     public String requestToken() {
-        TokenRequest tokenRequest = TokenRequest.builder().tenantId(TENANT_ID).username(USERNAME)
-            .password(PASSWORD).build();
+        TokenRequest tokenRequest = TokenRequest.builder().tenantId(tenantId).username(username)
+            .password(password).build();
 
         RestTemplate restTemplate = new RestTemplate();
-        String identityUrl = AUTH_URL + "/tokens";
+        String identityUrl = authUrl + "/tokens";
 
         // 헤더 생성
         HttpHeaders headers = new HttpHeaders();
