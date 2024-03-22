@@ -12,16 +12,12 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginRespo
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
-import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
-import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import com.nhnacademy.inkbridge.backend.service.MemberService;
-import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -33,7 +29,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author minseo
  * @version 2/15/24
- * @modifiedBy JBum
- * @modifiedAt 3/7/24
- * @modificationReason - getOrderCoupons 추가, getMemberCoupons 추가
  */
 @RestController
 @RequestMapping("/api")
@@ -70,30 +62,50 @@ public class MemberController {
      * @return 회원가입 성공
      */
     @PostMapping("/members")
-    public ResponseEntity<HttpStatus> create(
-        @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto,
-        BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(MemberMessageEnum.MEMBER_VALID_FAIL.getMessage());
-        }
+    public ResponseEntity<Void> create(
+        @RequestBody @Valid MemberCreateRequestDto memberCreateRequestDto) {
+
         memberFacade.signupFacade(memberCreateRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 로그인 인증 절차에 필요한 정보를 가져오는 메서드입니다.
+     *
+     * @param memberAuthLoginRequestDto 정보를 가져올 이메일
+     * @return 로그인에 필요한 정보
+     */
     @PostMapping("/members/login")
     public ResponseEntity<MemberAuthLoginResponseDto> authLogin(
-        @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto,
-        BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.toString());
-        }
+        @RequestBody @Valid MemberAuthLoginRequestDto memberAuthLoginRequestDto) {
+
         MemberAuthLoginResponseDto memberAuthLoginResponseDto =
             memberService.loginInfoMember(memberAuthLoginRequestDto);
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
             .body(memberAuthLoginResponseDto);
     }
 
+    /**
+     * 이메일 중복확인하는 메서드입니다.
+     *
+     * @param memberEmailRequestDto 이메일 정보
+     * @return 중복 여부
+     */
+    @PostMapping("/members/checkEmail")
+    public ResponseEntity<Boolean> isDuplicatedEmail(@Valid @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
+    }
+
+    /**
+     * 회원 정보를 가져오는 메서드입니다.
+     *
+     * @param request request
+     * @return 회원 정보
+     */
     @GetMapping("/auth/info")
     public ResponseEntity<MemberInfoResponseDto> getMemberInfo(HttpServletRequest request) {
 
@@ -102,6 +114,34 @@ public class MemberController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
             .body(memberService.getMemberInfo(memberId));
     }
+
+    /**
+     * 소셜 회원인지 아닌지 체크하는 메서드
+     *
+     * @param memberIdNoRequestDto 멤버 아이디
+     * @return 결과값
+     */
+    @PostMapping("/oauth/check")
+    public ResponseEntity<Boolean> oauthMemberCheck(
+            @Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 소셜 회원의 이메일을 가져오는 메서드입니다.
+     *
+     * @param memberIdNoRequestDto 아이디
+     * @return 이메일
+     */
+    @PostMapping("/oauth")
+    public ResponseEntity<String> getOAuthEmail(@Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+    }
+
 
     @GetMapping("/auth/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
@@ -129,29 +169,6 @@ public class MemberController {
     public void issueCoupon(@PathVariable("memberId") Long memberId,
         @PathVariable("couponId") String couponId) {
         couponService.issueCoupon(memberId, couponId);
-    }
-
-
-    @PostMapping("/oauth/check")
-    public ResponseEntity<Boolean> oauthMemberCheck(
-        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
-        boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
-
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/oauth")
-    public ResponseEntity<String> getOAuthEmail(
-        @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
-    }
-
-    @PostMapping("/members/checkEmail")
-    public ResponseEntity<Boolean> isDuplicatedEmail(
-        @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
-        return ResponseEntity.ok()
-            .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
     }
 
     /**
