@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component;
 public class ObjectStorageProperty {
 
 
-    String storageUrl;
-    String containerName;
-    String password;
-    String username;
-    String tenantId;
-    String authUrl;
+    private String storageUrl;
+    private String containerName;
+    private String password;
+    private String username;
+    private String tenantId;
+    private String authUrl;
 
 
 }
