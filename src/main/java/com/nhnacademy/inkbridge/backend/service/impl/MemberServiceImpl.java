@@ -2,6 +2,8 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdatePasswordRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberEmailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
@@ -140,8 +142,41 @@ public class MemberServiceImpl implements MemberService {
         return email.get().getEmail();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean checkDuplicatedEmail(String email) {
         return memberRepository.existsByEmail(email);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateMember(MemberUpdateRequestDto memberUpdateRequestDto,Long memberId) {
+        Member member =
+                memberRepository.findById(memberId)
+                        .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+
+        member.updateMember(memberUpdateRequestDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean updatePassword(MemberUpdatePasswordRequestDto memberUpdatePasswordRequestDto,Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+
+        member.updatePassword(memberUpdatePasswordRequestDto.getNewPassword());
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public String getPassword(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+        return member.getPassword();
     }
 }
