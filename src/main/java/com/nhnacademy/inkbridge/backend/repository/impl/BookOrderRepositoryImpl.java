@@ -75,16 +75,16 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
      * @return 사용한 포인트 정보
      */
     @Override
-    public Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode) {
+    public OrderedMemberPointReadResponseDto findUsedPointByOrderCode(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        return Optional.ofNullable(from(bookOrder)
+        return from(bookOrder)
             .select(Projections.constructor(OrderedMemberPointReadResponseDto.class,
                 bookOrder.member.memberId,
                 bookOrder.usePoint,
                 bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
-            .fetchOne());
+            .fetchOne();
     }
 
     /**
@@ -133,7 +133,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
         return Optional.ofNullable(
             from(bookOrder)
                 .select(Projections.constructor(OrderResponseDto.class,
-                    bookOrder.orderId,
                     bookOrder.orderCode,
                     bookOrder.orderName,
                     bookOrder.receiver,
@@ -166,7 +165,6 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
 
         return Optional.ofNullable(from(bookOrder)
             .select(Projections.constructor(OrderResponseDto.class,
-                bookOrder.orderId,
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.receiver,

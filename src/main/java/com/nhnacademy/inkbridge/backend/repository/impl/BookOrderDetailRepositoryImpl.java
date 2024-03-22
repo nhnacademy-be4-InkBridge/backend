@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -86,12 +87,10 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
                 bookOrderDetail.wrappingPrice,
                 bookOrderDetail.amount,
                 wrapping.wrappingName,
-                bookOrderStatus.orderStatusId,
                 bookOrderStatus.orderStatus,
                 book.bookId,
                 file.fileUrl,
                 book.bookTitle,
-                memberCoupon.memberCouponId,
                 couponType.typeName,
                 coupon.couponName,
                 coupon.maxDiscountPrice,
@@ -138,12 +137,10 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
                 bookOrderDetail.wrappingPrice,
                 bookOrderDetail.amount,
                 wrapping.wrappingName,
-                bookOrderStatus.orderStatusId,
                 bookOrderStatus.orderStatus,
                 book.bookId,
                 file.fileUrl,
                 book.bookTitle,
-                memberCoupon.memberCouponId,
                 couponType.typeName,
                 coupon.couponName,
                 coupon.maxDiscountPrice,
@@ -167,6 +164,26 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
         return from(bookOrderDetail)
             .select(bookOrderDetail)
             .where(bookOrderDetail.bookOrder.orderId.eq(orderId))
+            .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 주문 수량 목록
+     */
+    @Override
+    public List<BookStockUpdateRequestDto> findBookStockByOrderCode(String orderCode) {
+        QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
+        QBookOrder bookOrder = QBookOrder.bookOrder;
+
+        return from(bookOrderDetail)
+            .leftJoin(bookOrderDetail.bookOrder, bookOrder)
+            .select(Projections.constructor(BookStockUpdateRequestDto.class,
+                bookOrderDetail.book.bookId,
+                bookOrderDetail.amount))
+            .where(bookOrder.orderCode.eq(orderCode))
             .fetch();
     }
 }

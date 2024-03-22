@@ -32,12 +32,10 @@ public class PayRepositoryImpl extends QuerydslRepositorySupport implements PayR
         QPay pay = QPay.pay;
         return Optional.ofNullable(from(pay)
             .select(Projections.constructor(PayReadResponseDto.class,
-                pay.payId,
                 pay.paymentKey,
                 pay.method,
                 pay.status,
                 pay.requestedAt,
-                pay.approvedAt,
                 pay.totalAmount,
                 pay.balanceAmount,
                 pay.vat,
@@ -58,12 +56,10 @@ public class PayRepositoryImpl extends QuerydslRepositorySupport implements PayR
         QPay pay = QPay.pay;
         return from(pay)
             .select(Projections.constructor(PayReadResponseDto.class,
-                pay.payId,
                 pay.paymentKey,
                 pay.method,
                 pay.status,
                 pay.requestedAt,
-                pay.approvedAt,
                 pay.totalAmount,
                 pay.balanceAmount,
                 pay.vat,
@@ -84,12 +80,10 @@ public class PayRepositoryImpl extends QuerydslRepositorySupport implements PayR
         QPay pay = QPay.pay;
         return from(pay)
             .select(Projections.constructor(PayReadResponseDto.class,
-                pay.payId,
                 pay.paymentKey,
                 pay.method,
                 pay.status,
                 pay.requestedAt,
-                pay.approvedAt,
                 pay.totalAmount,
                 pay.balanceAmount,
                 pay.vat,

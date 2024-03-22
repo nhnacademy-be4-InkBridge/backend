@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.ApiError;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
+import com.nhnacademy.inkbridge.backend.exception.AlreadyProcessedException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import java.util.List;
@@ -26,7 +27,7 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({AlreadyExistException.class})
+    @ExceptionHandler({AlreadyExistException.class, AlreadyProcessedException.class})
     public ResponseEntity<ApiError> handleAlreadyExistException(Exception e) {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.CONFLICT);
     }

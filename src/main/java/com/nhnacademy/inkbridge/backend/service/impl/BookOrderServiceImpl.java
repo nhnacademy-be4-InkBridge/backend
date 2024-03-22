@@ -126,8 +126,7 @@ public class BookOrderServiceImpl implements BookOrderService {
     @Transactional(readOnly = true)
     @Override
     public OrderedMemberPointReadResponseDto getOrderedPersonByOrderCode(String orderCode) {
-        return bookOrderRepository.findUsedPointByOrderCode(orderCode).orElseThrow(
-            () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+        return bookOrderRepository.findUsedPointByOrderCode(orderCode);
     }
 
     /**
