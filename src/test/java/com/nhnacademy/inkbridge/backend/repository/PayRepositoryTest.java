@@ -143,7 +143,7 @@ class PayRepositoryTest {
     @Test
     @DisplayName("결제 정보 조회 - 주문 번호")
     void testFindPayByOrderId() {
-        PayReadResponseDto result = payRepository.findPayByOrderId(pay.getPayId());
+        PayReadResponseDto result = payRepository.findPayByOrderId(bookOrder.getOrderId());
 
         assertAll(
             () -> assertNotNull(result),

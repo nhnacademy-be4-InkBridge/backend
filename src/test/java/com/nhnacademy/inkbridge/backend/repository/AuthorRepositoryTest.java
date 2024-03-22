@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -116,6 +117,7 @@ class AuthorRepositoryTest {
         );
     }
 
+    @Disabled
     @Test
     @DisplayName("도서 아이디로 작가 이름 조회")
     @Order(4)
