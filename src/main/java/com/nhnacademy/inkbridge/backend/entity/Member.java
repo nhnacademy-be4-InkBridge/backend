@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdateRequestDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -98,5 +99,14 @@ public class Member {
 
     public void updateActive(MemberStatus active) {
         this.memberStatus = active;
+    }
+
+    public void updateMember(MemberUpdateRequestDto update) {
+        this.email = update.getEmail();
+        this.memberName = update.getMemberName();
+        this.phoneNumber = update.getPhoneNumber();
+    }
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

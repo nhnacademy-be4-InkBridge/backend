@@ -2,6 +2,8 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdatePasswordRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
 
@@ -51,7 +53,35 @@ public interface MemberService {
      * @return oauth 회원 이메일
      */
     String getOAuthMemberEmail(String id);
-    
+
+    /**
+     * 이메일 중복 체크하는 메서드.
+     *
+     * @param email 중복체크할 이메일
+     * @return 중복여부
+     */
     Boolean checkDuplicatedEmail(String email);
 
+    /**
+     * 회원 정보 수정하는 메서드
+     *
+     * @param memberUpdateRequestDto 수정할 정보
+     */
+    void updateMember(MemberUpdateRequestDto memberUpdateRequestDto,Long memberId);
+
+    /**
+     * 회원 비밀번호 수정하는 메서드.
+     *
+     * @param memberUpdatePasswordRequestDto 기존 비밀번호와 새로운 비밀번호
+     * @return 성공 여부
+     */
+    Boolean updatePassword(MemberUpdatePasswordRequestDto memberUpdatePasswordRequestDto,Long memberId);
+
+    /**
+     * 회원의 비밀번호를 가져옵니다.
+     *
+     * @param memberId 아이디
+     * @return 비밀번호
+     */
+    String getPassword(Long memberId);
 }
