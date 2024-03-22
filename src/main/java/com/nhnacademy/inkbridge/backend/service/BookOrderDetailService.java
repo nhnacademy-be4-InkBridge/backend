@@ -51,4 +51,12 @@ public interface BookOrderDetailService {
      * @return 사용한 쿠폰 번호 목록
      */
     List<Long> getUsedCouponIdByOrderCode(String orderCode);
+
+    /**
+     * 주문한 도서 번호를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode);
 }
