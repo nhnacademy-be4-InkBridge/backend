@@ -37,6 +37,7 @@ import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.BookStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ConflictException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookAuthorRepository;
@@ -307,6 +308,24 @@ public class BookServiceImpl implements BookService {
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
     }
 
+    public Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
+        List<Book> books = bookRepository.findBookByBookIdIn(
+            bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
+                Collectors.toList()));
+
+        List<String> subtractionFail = new ArrayList<>();
+
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getStock() < bookStockUpdateRequestDtos.get(i).getAmount()) {
+                subtractionFail.add(books.get(i).getBookTitle());
+            }
+        }
+        if (!subtractionFail.isEmpty()) {
+            throw new ConflictException(String.join(", ", subtractionFail));
+        }
+        return true;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -320,17 +339,23 @@ public class BookServiceImpl implements BookService {
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
 
+        List<String> subtractionFail = new ArrayList<>();
+
         for (int i = 0; i < books.size(); i++) {
             Integer amount = bookStockUpdateRequestDtos.get(i).getAmount();
             int subtraction = books.get(i).getStock() - amount;
             if (subtraction < 0) {
-                throw new RuntimeException(); // TODO: errorMessage로 도서 재고 부족한 도서 이름 리스트를 반환
-                // 하나는 재고 체킹만, 하나는 차감까지 => 409로
+                subtractionFail.add(books.get(i).getBookTitle());
+                continue;
             }
             books.get(i).updateBookStock(subtraction);
             if (subtraction == 0) {
                 books.get(i).updateStatus(bookStatus);
             }
+        }
+
+        if (!subtractionFail.isEmpty()) {
+            throw new ConflictException(String.join(", ", subtractionFail));
         }
     }
 
