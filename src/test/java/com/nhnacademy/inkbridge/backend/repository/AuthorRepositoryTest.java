@@ -59,8 +59,8 @@ class AuthorRepositoryTest {
         author = Author.builder().authorName("authorName").authorIntroduce("authorIntroduce")
             .file(file).build();
 
-        testEntityManager.persist(file);
-        testEntityManager.persist(author);
+        file = testEntityManager.persist(file);
+        author = testEntityManager.persist(author);
     }
 
     @AfterEach
@@ -76,7 +76,8 @@ class AuthorRepositoryTest {
     @DisplayName("작가 아이디로 작가 정보 조회")
     @Order(1)
     void findByAuthorId() {
-        AuthorInfoReadResponseDto byAuthorId = authorRepository.findByAuthorId(1L);
+        AuthorInfoReadResponseDto byAuthorId = authorRepository.findByAuthorId(
+            author.getAuthorId());
 
         assertAll(
             () -> assertEquals(author.getAuthorName(), byAuthorId.getAuthorName()),

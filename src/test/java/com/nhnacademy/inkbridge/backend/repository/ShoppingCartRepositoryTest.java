@@ -39,6 +39,7 @@ class ShoppingCartRepositoryTest {
 
     ShoppingCart shoppingCart;
     Book book;
+    Member member;
 
     @BeforeEach
     void setup() {
@@ -62,8 +63,8 @@ class ShoppingCartRepositoryTest {
             .bookStatus(status)
             .publisher(publisher).thumbnailFile(file).build();
         testEntityManager.persist(book);
-        Member member = Member.create().memberName("member").build();
-        testEntityManager.persist(member);
+        member = Member.create().memberName("member").build();
+        member = testEntityManager.persist(member);
         shoppingCart = ShoppingCart.builder().book(book).member(member).amount(100).pk(
             Pk.builder().memberId(member.getMemberId()).bookId(book.getBookId()).build()).build();
 
@@ -75,7 +76,8 @@ class ShoppingCartRepositoryTest {
     @Test
     @DisplayName("회원 번호로 조회")
     void findByMemberId() {
-        List<CartReadResponseDto> cart = shoppingCartRepository.findByMemberId(1L);
+        List<CartReadResponseDto> cart = shoppingCartRepository.findByMemberId(
+            member.getMemberId());
 
         assertAll(
             () -> assertEquals(1, cart.size()),
