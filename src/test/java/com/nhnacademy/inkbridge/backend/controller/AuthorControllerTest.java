@@ -13,6 +13,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
@@ -27,8 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
+import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +52,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: AuthorControllerTest.
@@ -67,6 +69,9 @@ class AuthorControllerTest {
 
     @MockBean
     AuthorService authorService;
+
+    @MockBean
+    FileService fileService;
 
     @MockBean
     Pageable pageable;
@@ -92,7 +97,7 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.authorName", equalTo("name")))
             .andExpect(jsonPath("$.authorIntroduce", equalTo("introduce")))
             .andExpect(jsonPath("$.fileUrl", equalTo("url")))
-            .andDo(document("author/get-author",
+            .andDo(document("author/author-get",
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
                     fieldWithPath("authorId").description("작가 번호"),
@@ -116,7 +121,7 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.[0].authorName", equalTo("name")))
             .andExpect(jsonPath("$.[0].authorIntroduce", equalTo("introduce")))
             .andExpect(jsonPath("$.[0].fileUrl", equalTo("url")))
-            .andDo(document("author/get-author-byName",
+            .andDo(document("author/author-get-byName",
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
                     fieldWithPath("[].authorId").description("작가 번호"),
@@ -140,7 +145,7 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.content[0].authorName", equalTo("name")))
             .andExpect(jsonPath("$.content[0].authorIntroduce", equalTo("introduce")))
             .andExpect(jsonPath("$.content[0].fileUrl", equalTo("url")))
-            .andDo(document("author/get-authors",
+            .andDo(document("author/authors-get",
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
                     fieldWithPath("content[].authorId").description("작가 번호"),
@@ -169,13 +174,15 @@ class AuthorControllerTest {
             asString.getBytes());
 
         MockMultipartFile authorFile = new MockMultipartFile(
-            "image",
+            "authorFile",
             "authorFile",
             MediaType.IMAGE_PNG_VALUE,
             "authorFile".getBytes()
         );
 
-        doNothing().when(authorService).createAuthor(authorFile, authorCreateUpdateRequestDto);
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).createAuthor(any(File.class), any(
+            AuthorCreateUpdateRequestDto.class));
 
         mockMvc.perform(multipart("/api/admin/authors")
                 .file(authorFile)
@@ -184,12 +191,12 @@ class AuthorControllerTest {
                 .content(objectMapper.writeValueAsString(authorCreateUpdateRequestDto))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
-            .andDo(document("author/create-author",
+            .andDo(document("author/author-create",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestParts(
                     partWithName("author").description("작가"),
-                    partWithName("image").description("작가 사진")
+                    partWithName("authorFile").description("작가 사진")
                 )
             ));
     }
@@ -205,13 +212,15 @@ class AuthorControllerTest {
             asString.getBytes());
 
         MockMultipartFile authorFile = new MockMultipartFile(
-            "image",
+            "authorFile",
             "authorFile",
             MediaType.IMAGE_PNG_VALUE,
             "authorFile".getBytes()
         );
 
-        doNothing().when(authorService).createAuthor(authorFile, authorCreateUpdateRequestDto);
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).createAuthor(any(File.class), any(
+            AuthorCreateUpdateRequestDto.class));
 
         mockMvc.perform(multipart("/api/admin/authors")
                 .file(authorFile)
@@ -222,7 +231,7 @@ class AuthorControllerTest {
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
                 result -> assertTrue(result.getResolvedException() instanceof ValidationException))
-            .andDo(document("author/create-author-fail",
+            .andDo(document("author/author-create-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
@@ -250,23 +259,31 @@ class AuthorControllerTest {
         String asString = objectMapper.writeValueAsString(authorCreateUpdateRequestDto);
         MockMultipartFile author = new MockMultipartFile("author", "author", "application/json",
             asString.getBytes());
-        MockMultipartFile authorFile = new MockMultipartFile("image", "authorFile",
+        MockMultipartFile authorFile = new MockMultipartFile("authorFile", "authorFile",
             MediaType.IMAGE_PNG_VALUE, "authorFile".getBytes());
 
-        doNothing().when(authorService).updateAuthor(any(MultipartFile.class), any(
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).updateAuthor(any(File.class), any(
             AuthorCreateUpdateRequestDto.class), anyLong());
 
         mockMvc.perform(builders
                 .file(authorFile)
-                .file(author))
+                .file(author)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .content(objectMapper.writeValueAsString(authorCreateUpdateRequestDto))
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("author/author-update",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("authorId").description("작가 번호")),
+                requestFields(
+                    fieldWithPath("authorName").description("작가 이름"),
+                    fieldWithPath("authorIntroduce").description("작가 소개")
+                ),
                 requestParts(
                     partWithName("author").description("작가"),
-                    partWithName("image").description("작가 사진")
+                    partWithName("authorFile").description("작가 사진")
                 )));
     }
 
@@ -286,10 +303,11 @@ class AuthorControllerTest {
         String asString = objectMapper.writeValueAsString(authorCreateUpdateRequestDto);
         MockMultipartFile author = new MockMultipartFile("author", "author", "application/json",
             asString.getBytes());
-        MockMultipartFile authorFile = new MockMultipartFile("image", "authorFile",
+        MockMultipartFile authorFile = new MockMultipartFile("authorFile", "authorFile",
             MediaType.IMAGE_PNG_VALUE, "authorFile".getBytes());
 
-        doNothing().when(authorService).updateAuthor(any(MultipartFile.class), any(
+        when(fileService.saveThumbnail(any())).thenReturn(File.builder().build());
+        doNothing().when(authorService).updateAuthor(any(File.class), any(
             AuthorCreateUpdateRequestDto.class), anyLong());
 
         mockMvc.perform(builders
@@ -298,7 +316,7 @@ class AuthorControllerTest {
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
                 result -> assertTrue(result.getResolvedException() instanceof ValidationException))
-            .andDo(document("author/author-update",
+            .andDo(document("author/author-update-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("authorId").description("작가 번호")),

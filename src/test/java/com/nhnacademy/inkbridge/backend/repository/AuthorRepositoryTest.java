@@ -59,8 +59,8 @@ class AuthorRepositoryTest {
         author = Author.builder().authorName("authorName").authorIntroduce("authorIntroduce")
             .file(file).build();
 
-        testEntityManager.persist(file);
-        testEntityManager.persist(author);
+        file = testEntityManager.persist(file);
+        author = testEntityManager.persist(author);
     }
 
     @AfterEach
@@ -76,13 +76,14 @@ class AuthorRepositoryTest {
     @DisplayName("작가 아이디로 작가 정보 조회")
     @Order(1)
     void findByAuthorId() {
-        AuthorInfoReadResponseDto byAuthorId = authorRepository.findByAuthorId(1L);
+        AuthorInfoReadResponseDto byAuthorId = authorRepository.findByAuthorId(
+            author.getAuthorId());
 
         assertAll(
-            () -> assertEquals("authorName", byAuthorId.getAuthorName()),
-            () -> assertEquals("authorIntroduce", byAuthorId.getAuthorIntroduce()),
-            () -> assertEquals(1L, byAuthorId.getAuthorId()),
-            () -> assertEquals("fileUrl", byAuthorId.getFileUrl())
+            () -> assertEquals(author.getAuthorName(), byAuthorId.getAuthorName()),
+            () -> assertEquals(author.getAuthorIntroduce(), byAuthorId.getAuthorIntroduce()),
+            () -> assertEquals(author.getAuthorId(), byAuthorId.getAuthorId()),
+            () -> assertEquals(author.getFile().getFileUrl(), byAuthorId.getFileUrl())
         );
     }
 
@@ -95,10 +96,10 @@ class AuthorRepositoryTest {
 
         assertAll(
             () -> assertEquals(1, dto.size()),
-            () -> assertEquals("authorName", dto.get(0).getAuthorName()),
-            () -> assertEquals("authorIntroduce", dto.get(0).getAuthorIntroduce()),
-            () -> assertEquals(1L, dto.get(0).getAuthorId()),
-            () -> assertEquals("fileUrl", dto.get(0).getFileUrl())
+            () -> assertEquals(author.getAuthorName(), dto.get(0).getAuthorName()),
+            () -> assertEquals(author.getAuthorIntroduce(), dto.get(0).getAuthorIntroduce()),
+            () -> assertEquals(author.getAuthorId(), dto.get(0).getAuthorId()),
+            () -> assertEquals(author.getFile().getFileUrl(), dto.get(0).getFileUrl())
         );
     }
 
@@ -111,9 +112,11 @@ class AuthorRepositoryTest {
         assertAll(
             () -> assertEquals(5, authors.getSize()),
             () -> assertEquals(1, authors.getContent().size()),
-            () -> assertEquals("authorName", authors.getContent().get(0).getAuthorName()),
-            () -> assertEquals("authorIntroduce", authors.getContent().get(0).getAuthorIntroduce()),
-            () -> assertEquals("fileUrl", authors.getContent().get(0).getFileUrl())
+            () -> assertEquals(author.getAuthorName(), authors.getContent().get(0).getAuthorName()),
+            () -> assertEquals(author.getAuthorIntroduce(),
+                authors.getContent().get(0).getAuthorIntroduce()),
+            () -> assertEquals(author.getFile().getFileUrl(),
+                authors.getContent().get(0).getFileUrl())
         );
     }
 
@@ -144,7 +147,7 @@ class AuthorRepositoryTest {
         assertAll(
             () -> assertEquals(1, dto.size()),
             () -> assertEquals(1, dto.get(0).getAuthorName().size()),
-            () -> assertEquals("authorName", dto.get(0).getAuthorName().get(0))
+            () -> assertEquals(author.getAuthorName(), dto.get(0).getAuthorName().get(0))
         );
     }
 }

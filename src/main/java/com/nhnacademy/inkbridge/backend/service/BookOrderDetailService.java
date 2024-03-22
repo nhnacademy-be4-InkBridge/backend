@@ -70,3 +70,4 @@ public interface BookOrderDetailService {
      */
     List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode);
 }
+

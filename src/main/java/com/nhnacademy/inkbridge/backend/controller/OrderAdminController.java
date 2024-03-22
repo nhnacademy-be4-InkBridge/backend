@@ -37,7 +37,8 @@ public class OrderAdminController {
      * @return 주문 목록
      */
     @GetMapping
-    public ResponseEntity<Page<OrderReadResponseDto>> getOrderList(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<OrderReadResponseDto>> getOrderList(
+        @PageableDefault Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(orderFacade.getOrderList(pageable));
     }
 

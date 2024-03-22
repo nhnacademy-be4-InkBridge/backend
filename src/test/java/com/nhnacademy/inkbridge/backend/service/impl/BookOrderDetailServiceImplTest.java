@@ -245,7 +245,7 @@ class BookOrderDetailServiceImplTest {
         assertAll(
             () -> assertEquals(1, result.size()),
             () -> assertEquals(1L, result.get(0).getBookId()),
-            () -> assertEquals(4, result.get(0).getStock())
+            () -> assertEquals(4, result.get(0).getAmount())
         );
 
         verify(bookOrderDetailRepository, times(1)).findBookStockByOrderCode(anyString());

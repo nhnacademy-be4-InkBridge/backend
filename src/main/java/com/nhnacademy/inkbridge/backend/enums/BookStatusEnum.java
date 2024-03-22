@@ -16,7 +16,7 @@ public enum BookStatusEnum {
     OUT_OF_STOCK(4L),
     REMOVAL(5L);
 
-    private Long statusId;
+    private final Long statusId;
 
     BookStatusEnum(Long statusId) {
         this.statusId = statusId;

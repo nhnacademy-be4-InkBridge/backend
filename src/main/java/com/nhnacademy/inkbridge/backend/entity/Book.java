@@ -136,4 +136,8 @@ public class Book {
     public void updateBookStock(Integer stock) {
         this.stock = stock;
     }
+
+    public void updateStatus(BookStatus bookStatus) {
+        this.bookStatus = bookStatus;
+    }
 }

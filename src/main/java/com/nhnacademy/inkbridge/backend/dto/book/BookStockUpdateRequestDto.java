@@ -13,11 +13,11 @@ import lombok.Getter;
 public class BookStockUpdateRequestDto {
 
     private final Long bookId;
-    private final Integer stock;
+    private final Integer amount;
 
     @Builder
-    public BookStockUpdateRequestDto(Long bookId, Integer stock) {
+    public BookStockUpdateRequestDto(Long bookId, Integer amount) {
         this.bookId = bookId;
-        this.stock = stock;
+        this.amount = amount;
     }
 }

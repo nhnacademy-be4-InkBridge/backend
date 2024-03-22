@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
 /**
  * class: PublisherServiceImpl.
  *
@@ -54,8 +53,9 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public void updatePublisher(Long publisherId,
         PublisherUpdateRequestDto request) {
-        Publisher publisher = publisherRepository.findById(publisherId).orElseThrow(()-> new NotFoundException(
-            PublisherMessageEnum.PUBLISHER_NOT_FOUND.getMessage()));
+        Publisher publisher = publisherRepository.findById(publisherId)
+            .orElseThrow(() -> new NotFoundException(
+                PublisherMessageEnum.PUBLISHER_NOT_FOUND.getMessage()));
         publisher.updatePublisher(request.getPublisherName());
     }
 }

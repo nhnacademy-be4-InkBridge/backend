@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
 import java.util.List;

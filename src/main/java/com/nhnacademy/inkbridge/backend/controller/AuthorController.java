@@ -2,9 +2,12 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.AuthorService;
+import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,21 +35,21 @@ import org.springframework.web.multipart.MultipartFile;
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final FileService fileService;
 
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, FileService fileService) {
         this.authorService = authorService;
+        this.fileService = fileService;
     }
 
     /**
      * 작가 아이디로 작가 정보를 조회하는 api입니다.
      *
      * @param authorId Long
-     * @param pageable Pageable
      * @return AuthorReadResponseDto
      */
     @GetMapping("/api/authors/{authorId}")
-    public ResponseEntity<AuthorInfoReadResponseDto> getAuthor(@PathVariable Long authorId,
-        Pageable pageable) {
+    public ResponseEntity<AuthorInfoReadResponseDto> getAuthor(@PathVariable Long authorId) {
         AuthorInfoReadResponseDto author = authorService.getAuthor(authorId);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
@@ -85,15 +88,16 @@ public class AuthorController {
      */
     @PostMapping("/api/admin/authors")
     public ResponseEntity<HttpStatus> createAuthor(
-        @RequestPart("image") MultipartFile authorFile,
-        @Valid @RequestPart(value = "author", required = false)
-    AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto, BindingResult bindingResult) {
+        @RequestPart(value = "image", required = false) MultipartFile authorFile,
+        @Valid @RequestPart(value = "author")
+        AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(
                 bindingResult.getFieldErrors().get(0).getDefaultMessage());
         }
+        File file = fileService.saveThumbnail(authorFile);
 
-        authorService.createAuthor(authorFile, authorCreateUpdateRequestDto);
+        authorService.createAuthor(file, authorCreateUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -114,8 +118,9 @@ public class AuthorController {
             throw new ValidationException(
                 bindingResult.getFieldErrors().get(0).getDefaultMessage());
         }
+        File file = Objects.isNull(authorFile) ? null : fileService.saveThumbnail(authorFile);
 
-        authorService.updateAuthor(authorFile, authorCreateUpdateRequestDto, authorId);
+        authorService.updateAuthor(file, authorCreateUpdateRequestDto, authorId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

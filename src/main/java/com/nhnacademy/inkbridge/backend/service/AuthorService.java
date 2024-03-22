@@ -2,10 +2,10 @@ package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorCreateUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.author.AuthorInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: AuthorService.
@@ -42,20 +42,20 @@ public interface AuthorService {
     /**
      * 작가 정보를 등록하는 메서드입니다.
      *
-     * @param authorFile                   MultipartFile
+     * @param authorFile                   File Entity
      * @param authorCreateUpdateRequestDto AuthorCreateUpdateRequestDto
      */
-    void createAuthor(MultipartFile authorFile,
+    void createAuthor(File authorFile,
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto);
 
     /**
      * 작가 정보를 수정하는 메서드입니다.
      *
-     * @param authorFile                   MultipartFile
+     * @param authorFile                   File Entity
      * @param authorCreateUpdateRequestDto AuthorCreateUpdateRequestDto
      * @param authorId                     Long
      */
-    void updateAuthor(MultipartFile authorFile,
+    void updateAuthor(File authorFile,
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto,
         Long authorId);
 }

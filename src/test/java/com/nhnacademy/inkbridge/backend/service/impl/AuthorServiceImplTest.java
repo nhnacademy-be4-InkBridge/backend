@@ -17,7 +17,6 @@ import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
-import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: AuthorServiceImplTest.
@@ -46,9 +44,6 @@ class AuthorServiceImplTest {
 
     @Mock
     AuthorRepository authorRepository;
-
-    @Mock
-    FileService fileService;
 
     @Mock
     Pageable pageable;
@@ -111,10 +106,9 @@ class AuthorServiceImplTest {
     void createAuthor() {
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto = mock(
             AuthorCreateUpdateRequestDto.class);
-        when(fileService.saveThumbnail(any(MultipartFile.class))).thenReturn(mock(File.class));
         when(authorRepository.save(any())).thenReturn(mock(Author.class));
 
-        authorService.createAuthor(mock(MultipartFile.class), authorCreateUpdateRequestDto);
+        authorService.createAuthor(mock(File.class), authorCreateUpdateRequestDto);
 
         verify(authorRepository, times(1)).save(any(Author.class));
     }
@@ -125,11 +119,9 @@ class AuthorServiceImplTest {
         AuthorCreateUpdateRequestDto authorCreateUpdateRequestDto = mock(
             AuthorCreateUpdateRequestDto.class);
         when(authorRepository.findById(anyLong())).thenReturn(Optional.of(mock(Author.class)));
-        when(fileService.saveThumbnail(any())).thenReturn(mock(File.class));
-        authorService.updateAuthor(mock(MultipartFile.class), authorCreateUpdateRequestDto, 1L);
+        authorService.updateAuthor(mock(File.class), authorCreateUpdateRequestDto, 1L);
 
         verify(authorRepository, times(1)).findById(anyLong());
-        verify(fileService, times(1)).saveThumbnail(any(MultipartFile.class));
     }
 
     @Test
@@ -140,7 +132,7 @@ class AuthorServiceImplTest {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-            () -> authorService.updateAuthor(mock(MultipartFile.class),
+            () -> authorService.updateAuthor(mock(File.class),
                 authorCreateUpdateRequestDto, 1L));
 
         verify(authorRepository, times(1)).findById(anyLong());

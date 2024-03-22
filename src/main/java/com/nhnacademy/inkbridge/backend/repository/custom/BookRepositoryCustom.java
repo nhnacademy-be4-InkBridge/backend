@@ -1,8 +1,8 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import java.util.List;
@@ -45,7 +45,7 @@ public interface BookRepositoryCustom {
      * @param memberId Long
      * @return 도서 상세 조회 데이터
      */
-    Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId);
+    Optional<BookDetailReadResponseDto> findByBookId(Long bookId, Long memberId);
 
     /**
      * admin 도서 목록 페이지 조회 메서드입니다.

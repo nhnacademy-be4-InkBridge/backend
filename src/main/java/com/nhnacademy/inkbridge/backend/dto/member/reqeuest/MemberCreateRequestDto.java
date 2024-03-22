@@ -16,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @NoArgsConstructor
 public class MemberCreateRequestDto {
+
     @NotBlank(message = "이메일은 필수 입력 값 입니다.")
     private String email;
 

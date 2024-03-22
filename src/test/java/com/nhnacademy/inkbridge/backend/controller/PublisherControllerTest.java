@@ -139,7 +139,7 @@ class PublisherControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
 
-        verify(publisherService, times(0)).updatePublisher(publisherId,request);
+        verify(publisherService, times(0)).updatePublisher(publisherId, request);
     }
 
     @Test
@@ -153,7 +153,7 @@ class PublisherControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
 
-        verify(publisherService, times(0)).updatePublisher(publisherId,request);
+        verify(publisherService, times(0)).updatePublisher(publisherId, request);
     }
 
     @Test
@@ -166,6 +166,6 @@ class PublisherControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity());
 
-        verify(publisherService, times(0)).updatePublisher(publisherId,request);
+        verify(publisherService, times(0)).updatePublisher(publisherId, request);
     }
 }

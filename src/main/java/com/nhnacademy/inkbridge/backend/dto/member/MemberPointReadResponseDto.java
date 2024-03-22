@@ -11,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 public class MemberPointReadResponseDto {
+
     Long point;
 
     @Builder

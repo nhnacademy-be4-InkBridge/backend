@@ -1,8 +1,10 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.ApiError;
+import com.nhnacademy.inkbridge.backend.dto.ConflictError;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyExistException;
 import com.nhnacademy.inkbridge.backend.exception.AlreadyProcessedException;
+import com.nhnacademy.inkbridge.backend.exception.ConflictException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 public class GlobalControllerAdvice {
+
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<ApiError> handleNotFoundException(Exception e) {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.NOT_FOUND);
@@ -36,10 +39,16 @@ public class GlobalControllerAdvice {
     public ResponseEntity<ApiError> handleValidationException(Exception e) {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException e) {
         List<String> result = e.getBindingResult().getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+            .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         return new ResponseEntity<>(new ApiError(result.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ConflictException.class})
+    public ResponseEntity<ConflictError> handleConflictException(Exception e) {
+        return new ResponseEntity<>(new ConflictError(e.getMessage()), HttpStatus.CONFLICT);
     }
 }

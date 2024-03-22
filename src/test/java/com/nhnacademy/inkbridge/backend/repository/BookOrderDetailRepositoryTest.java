@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
@@ -320,7 +322,7 @@ class BookOrderDetailRepositoryTest {
         assertAll(
             () -> assertEquals(1, result.size()),
             () -> assertEquals(bookOrderDetail.getBook().getBookId(), result.get(0).getBookId()),
-            () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getStock())
+            () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getAmount())
         );
     }
 }

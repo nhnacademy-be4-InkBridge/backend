@@ -94,10 +94,11 @@ public class MemberController {
      * @return 중복 여부
      */
     @PostMapping("/members/checkEmail")
-    public ResponseEntity<Boolean> isDuplicatedEmail(@Valid @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+    public ResponseEntity<Boolean> isDuplicatedEmail(
+        @Valid @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
+            .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
     }
 
     /**
@@ -123,7 +124,7 @@ public class MemberController {
      */
     @PostMapping("/oauth/check")
     public ResponseEntity<Boolean> oauthMemberCheck(
-            @Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+        @Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
         boolean result = memberService.checkOAuthMember(memberIdNoRequestDto.getId());
 
         return ResponseEntity.ok(result);
@@ -136,10 +137,11 @@ public class MemberController {
      * @return 이메일
      */
     @PostMapping("/oauth")
-    public ResponseEntity<String> getOAuthEmail(@Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
+    public ResponseEntity<String> getOAuthEmail(
+        @Valid @RequestBody MemberIdNoRequestDto memberIdNoRequestDto) {
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
+            .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 
 

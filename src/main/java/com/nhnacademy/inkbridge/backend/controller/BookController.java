@@ -81,9 +81,10 @@ public class BookController {
      * @return BookReadResponseDto
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
+    public ResponseEntity<BookReadResponseDto> readBook(Pageable pageable,
+        @PathVariable Long bookId,
         @RequestParam Long memberId) {
-        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
+        BookReadResponseDto bookReadResponseDto = bookService.readBook(pageable, bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }
 }

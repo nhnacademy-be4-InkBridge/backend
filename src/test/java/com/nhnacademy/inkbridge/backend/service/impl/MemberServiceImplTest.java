@@ -45,6 +45,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 @ExtendWith(MockitoExtension.class)
 class MemberServiceImplTest {
+
     @InjectMocks
     MemberServiceImpl memberService;
 
@@ -73,7 +74,7 @@ class MemberServiceImplTest {
 
         ReflectionTestUtils.setField(memberCreateRequestDto, "email", "sa4777@naver.com");
         ReflectionTestUtils.setField(memberCreateRequestDto, "password",
-                "$2a$10$ILNBmH6tPNBa8/WeZ4hvi.BHj4bcpUKWcCM/Zc2SLIHBgvForZdHq");
+            "$2a$10$ILNBmH6tPNBa8/WeZ4hvi.BHj4bcpUKWcCM/Zc2SLIHBgvForZdHq");
         ReflectionTestUtils.setField(memberCreateRequestDto, "memberName", "이민서");
         ReflectionTestUtils.setField(memberCreateRequestDto, "birthday", LocalDate.now());
         ReflectionTestUtils.setField(memberCreateRequestDto, "phoneNumber", "01012345678");
@@ -81,13 +82,17 @@ class MemberServiceImplTest {
         memberAuth = new MemberAuth(1, "ROLE_MEMBER");
         memberStatus = new MemberStatus(1, "ACTIVE");
         memberGrade = new MemberGrade(1, "STANDARD", BigDecimal.ZERO, 0L);
-        member = Member.create().createdAt(LocalDateTime.now()).memberAuth(memberAuth).memberGrade(memberGrade)
-                .memberName(memberCreateRequestDto.getMemberName()).birthday(memberCreateRequestDto.getBirthday())
-                .password(memberCreateRequestDto.getPassword()).phoneNumber(memberCreateRequestDto.getPhoneNumber())
-                .memberStatus(memberStatus).email(memberCreateRequestDto.getEmail()).memberPoint(0L).build();
+        member = Member.create().createdAt(LocalDateTime.now()).memberAuth(memberAuth)
+            .memberGrade(memberGrade)
+            .memberName(memberCreateRequestDto.getMemberName())
+            .birthday(memberCreateRequestDto.getBirthday())
+            .password(memberCreateRequestDto.getPassword())
+            .phoneNumber(memberCreateRequestDto.getPhoneNumber())
+            .memberStatus(memberStatus).email(memberCreateRequestDto.getEmail()).memberPoint(0L)
+            .build();
 
         memberAuthLoginResponseDto =
-                new MemberAuthLoginResponseDto(1L, "sa4777@naver.com", "password", new ArrayList<>());
+            new MemberAuthLoginResponseDto(1L, "sa4777@naver.com", "password", new ArrayList<>());
     }
 
     @Test
@@ -116,7 +121,7 @@ class MemberServiceImplTest {
 
         when(memberRepository.existsByEmail(any())).thenReturn(false);
         when(memberAuthRepository.findById(any())).thenReturn(
-                Optional.of(memberAuth = new MemberAuth(3, "ROLE_SOCIAL")));
+            Optional.of(memberAuth = new MemberAuth(3, "ROLE_SOCIAL")));
         when(memberStatusRepository.findById(any())).thenReturn(Optional.of(memberStatus));
         when(memberGradeRepository.findById(any())).thenReturn(Optional.of(memberGrade));
 
@@ -143,7 +148,8 @@ class MemberServiceImplTest {
         when(memberRepository.existsByEmail(any())).thenReturn(true);
 
         assertThatThrownBy(() -> memberService.createMember(memberCreateRequestDto)).isInstanceOf(
-                NotFoundException.class).hasMessageContaining(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
+                NotFoundException.class)
+            .hasMessageContaining(MemberMessageEnum.MEMBER_ALREADY_EXIST.getMessage());
     }
 
     @Test
@@ -153,13 +159,15 @@ class MemberServiceImplTest {
 
         when(memberRepository.findByEmail(any())).thenReturn(Optional.ofNullable(member));
         when(memberStatusRepository.findById(any())).thenReturn(
-                Optional.of(memberStatus = new MemberStatus(3, "CLOSE")));
+            Optional.of(memberStatus = new MemberStatus(3, "CLOSE")));
 
-        Assertions.assertNotEquals(member.getMemberStatus().getMemberStatusName(), memberStatus.getMemberStatusName());
+        Assertions.assertNotEquals(member.getMemberStatus().getMemberStatusName(),
+            memberStatus.getMemberStatusName());
 
         when(memberRepository.findByMemberAuth(anyString())).thenReturn(memberAuthLoginResponseDto);
 
-        MemberAuthLoginResponseDto result = memberService.loginInfoMember(memberAuthLoginRequestDto);
+        MemberAuthLoginResponseDto result = memberService.loginInfoMember(
+            memberAuthLoginRequestDto);
 
         assertThat(result.getMemberId()).isEqualTo(memberAuthLoginResponseDto.getMemberId());
         assertThat(result.getPassword()).isEqualTo(memberAuthLoginResponseDto.getPassword());
