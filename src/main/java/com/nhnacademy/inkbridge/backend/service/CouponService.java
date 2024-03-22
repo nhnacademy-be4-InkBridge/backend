@@ -107,5 +107,12 @@ public interface CouponService {
      */
     CouponDetailReadResponseDto getDetailCoupon(String couponId);
 
+    /**
+     * 쿠폰 사용처리 하는 메소드.
+     *
+     * @param memberId       사용한 멤버
+     * @param memberCouponId 사용할 쿠폰 목록들
+     */
     void useCoupons(Long memberId, List<Long> memberCouponId);
+
 }

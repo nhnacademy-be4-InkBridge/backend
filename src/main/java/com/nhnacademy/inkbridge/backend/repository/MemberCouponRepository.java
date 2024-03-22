@@ -25,16 +25,7 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
      * @return 해당 회원이 해당 쿠폰을 이미 발급받았으면 true, 그렇지 않으면 false를 반환합니다.
      */
     boolean existsByCouponAndMember(Coupon coupon, Member member);
-
-//    /**
-//     * 주문시 적용할 수 있는 쿠폰들 모음.
-//     *
-//     * @param memberId 조회할 회원 Id
-//     * @return 현재 사용가능한 쿠폰들
-//     */
-//    List<OrderCouponReadResponseDto> findByMember_MemberIdAndUsedAtIsNull(
-//        Long memberId);
-
+    
     /**
      * 사용자가 가진 쿠폰들중 사용이 가능한것들만 보여준다.
      *
