@@ -14,8 +14,6 @@ import lombok.Getter;
 @Getter
 public class PayReadResponseDto {
 
-    private Long payId;
-
     private String paymentKey;
 
     private String method;
@@ -23,8 +21,6 @@ public class PayReadResponseDto {
     private String status;
 
     private LocalDateTime requestedAt;
-
-    private LocalDateTime approvedAt;
 
     private Long totalAmount;
 

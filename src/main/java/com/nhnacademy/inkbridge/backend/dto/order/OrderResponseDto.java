@@ -15,8 +15,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrderResponseDto {
 
-    private Long orderId;
-
     private String orderCode;
 
     private String orderName;

@@ -75,16 +75,16 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
      * @return 사용한 포인트 정보
      */
     @Override
-    public Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode) {
+    public OrderedMemberPointReadResponseDto findUsedPointByOrderCode(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        return Optional.ofNullable(from(bookOrder)
+        return from(bookOrder)
             .select(Projections.constructor(OrderedMemberPointReadResponseDto.class,
                 bookOrder.member.memberId,
                 bookOrder.usePoint,
                 bookOrder.totalPrice))
             .where(bookOrder.orderCode.eq(orderCode))
-            .fetchOne());
+            .fetchOne();
     }
 
     /**
@@ -127,30 +127,30 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
      * @return 주문 상세 내역
      */
     @Override
-    public OrderResponseDto findOrderByOrderId(Long orderId) {
+    public Optional<OrderResponseDto> findOrderByOrderId(Long orderId) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        return from(bookOrder)
-            .select(Projections.constructor(OrderResponseDto.class,
-                bookOrder.orderId,
-                bookOrder.orderCode,
-                bookOrder.orderName,
-                bookOrder.receiver,
-                bookOrder.receiverNumber,
-                bookOrder.zipCode,
-                bookOrder.address,
-                bookOrder.addressDetail,
-                bookOrder.orderer,
-                bookOrder.ordererNumber,
-                bookOrder.ordererEmail,
-                bookOrder.deliveryDate,
-                bookOrder.usePoint,
-                bookOrder.totalPrice,
-                bookOrder.deliveryPrice,
-                bookOrder.orderAt,
-                bookOrder.shipDate))
-            .where(bookOrder.orderId.eq(orderId))
-            .fetchOne();
+        return Optional.ofNullable(
+            from(bookOrder)
+                .select(Projections.constructor(OrderResponseDto.class,
+                    bookOrder.orderCode,
+                    bookOrder.orderName,
+                    bookOrder.receiver,
+                    bookOrder.receiverNumber,
+                    bookOrder.zipCode,
+                    bookOrder.address,
+                    bookOrder.addressDetail,
+                    bookOrder.orderer,
+                    bookOrder.ordererNumber,
+                    bookOrder.ordererEmail,
+                    bookOrder.deliveryDate,
+                    bookOrder.usePoint,
+                    bookOrder.totalPrice,
+                    bookOrder.deliveryPrice,
+                    bookOrder.orderAt,
+                    bookOrder.shipDate))
+                .where(bookOrder.orderId.eq(orderId))
+                .fetchOne());
     }
 
     /**
@@ -160,12 +160,11 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
      * @return 주문 상세 내역
      */
     @Override
-    public OrderResponseDto findOrderByOrderCode(String orderCode) {
+    public Optional<OrderResponseDto> findOrderByOrderCode(String orderCode) {
         QBookOrder bookOrder = QBookOrder.bookOrder;
 
-        return from(bookOrder)
+        return Optional.ofNullable(from(bookOrder)
             .select(Projections.constructor(OrderResponseDto.class,
-                bookOrder.orderId,
                 bookOrder.orderCode,
                 bookOrder.orderName,
                 bookOrder.receiver,
@@ -183,7 +182,7 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
                 bookOrder.orderAt,
                 bookOrder.shipDate))
             .where(bookOrder.orderCode.eq(orderCode))
-            .fetchOne();
+            .fetchOne());
     }
 
     /**
