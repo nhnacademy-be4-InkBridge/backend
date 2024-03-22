@@ -5,6 +5,9 @@ import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
+import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import java.util.List;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,5 +72,12 @@ public class OrderController {
         @PathVariable("orderCode") String orderCode) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(orderFacade.getOrderDetailByOrderCode(orderCode));
+    }
+
+    @GetMapping("/{orderCode}/books")
+    public ResponseEntity<List<OrderBooksIdResponseDto>> getOrderBooksIdList(@PathVariable("orderCode") String orderCode) {
+        List<OrderBooksIdResponseDto> orderBookIdList = orderFacade.getOrderBookIdList(orderCode);
+        log.debug("order books id list -> {}", orderBookIdList);
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookIdList);
     }
 }

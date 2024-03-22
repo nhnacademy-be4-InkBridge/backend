@@ -61,4 +61,12 @@ public interface BookOrderDetailService {
      * @return 도서 수량 목록
      */
     List<BookStockUpdateRequestDto> getBookStock(String orderCode);
+
+    /**
+     * 주문한 도서 번호를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode);
 }
