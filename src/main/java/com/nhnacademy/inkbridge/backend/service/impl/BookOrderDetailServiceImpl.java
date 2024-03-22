@@ -21,6 +21,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
+import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -108,6 +109,17 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     @Override
     public List<Long> getUsedCouponIdByOrderCode(String orderCode) {
         return bookOrderDetailRepository.findAllByOrderCode(orderCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    @Override
+    public List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode) {
+        return bookOrderDetailRepository.findBookIdByOrderCode(orderCode);
     }
 
     /**

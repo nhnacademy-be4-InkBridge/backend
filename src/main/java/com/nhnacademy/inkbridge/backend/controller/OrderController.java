@@ -6,6 +6,8 @@ import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
+import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,12 +71,19 @@ public class OrderController {
 
     /**
      * 주문 코드로 주문을 조회하는 메소드입니다.
-     * 
+     *
      * @param orderCode 주문 코드
      * @return 주문 내역
      */
     @GetMapping("/{orderCode}")
     public ResponseEntity<BookOrderDetailResponseDto> getOrderByOrderCode(@PathVariable("orderCode") String orderCode) {
         return ResponseEntity.status(HttpStatus.OK).body(orderFacade.getOrderDetailByOrderCode(orderCode));
+    }
+
+    @GetMapping("/{orderCode}/books")
+    public ResponseEntity<List<OrderBooksIdResponseDto>> getOrderBooksIdList(@PathVariable("orderCode") String orderCode) {
+        List<OrderBooksIdResponseDto> orderBookIdList = orderFacade.getOrderBookIdList(orderCode);
+        log.debug("order books id list -> {}", orderBookIdList);
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookIdList);
     }
 }

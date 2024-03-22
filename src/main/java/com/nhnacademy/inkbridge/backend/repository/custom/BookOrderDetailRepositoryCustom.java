@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
+import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
 import java.util.List;
 
 /**
@@ -43,4 +44,12 @@ public interface BookOrderDetailRepositoryCustom {
      * @return 상세 목록
      */
     List<BookOrderDetail> findOrderDetailByOrderId(Long orderId);
+
+    /**
+     * 주문 도서 목록을 조회합니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    List<OrderBooksIdResponseDto> findBookIdByOrderCode(String orderCode);
 }
