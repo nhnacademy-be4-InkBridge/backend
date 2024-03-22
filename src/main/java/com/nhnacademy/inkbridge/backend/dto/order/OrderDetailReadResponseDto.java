@@ -18,12 +18,10 @@ public class OrderDetailReadResponseDto {
     private Long wrappingPrice;
     private Integer amount;
     private String wrappingName;
-    private Long orderStatusId;
     private String orderStatus;
     private Long bookId;
     private String thumbnailUrl;
     private String bookTitle;
-    private Long memberCouponId;
     private String couponTypeName;
     private String couponName;
     private Long maxDiscountPrice;

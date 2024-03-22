@@ -38,7 +38,7 @@ public interface BookOrderRepositoryCustom {
      * @param orderCode 주문 코드
      * @return 사용한 포인트
      */
-    Optional<OrderedMemberPointReadResponseDto> findUsedPointByOrderCode(String orderCode);
+    OrderedMemberPointReadResponseDto findUsedPointByOrderCode(String orderCode);
 
     /**
      * 회원 주문 목록을 조회하는 메소드입니다.
@@ -55,7 +55,7 @@ public interface BookOrderRepositoryCustom {
      * @param orderId 주문 번호
      * @return 주문 내역
      */
-    OrderResponseDto findOrderByOrderId(Long orderId);
+    Optional<OrderResponseDto> findOrderByOrderId(Long orderId);
 
     /**
      * 주문 코드로 주문을 조회하는 메소드입니다.
@@ -63,7 +63,7 @@ public interface BookOrderRepositoryCustom {
      * @param orderCode 주문 코드
      * @return 주문 내역
      */
-    OrderResponseDto findOrderByOrderCode(String orderCode);
+    Optional<OrderResponseDto> findOrderByOrderCode(String orderCode);
 
 
     /**

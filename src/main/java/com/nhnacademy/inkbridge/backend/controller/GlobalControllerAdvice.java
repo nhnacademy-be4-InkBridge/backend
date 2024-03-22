@@ -29,7 +29,7 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({AlreadyExistException.class})
+    @ExceptionHandler({AlreadyExistException.class, AlreadyProcessedException.class})
     public ResponseEntity<ApiError> handleAlreadyExistException(Exception e) {
         return new ResponseEntity<>(new ApiError(e.getMessage()), HttpStatus.CONFLICT);
     }

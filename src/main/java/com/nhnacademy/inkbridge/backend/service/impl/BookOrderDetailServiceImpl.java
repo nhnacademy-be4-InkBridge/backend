@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -21,6 +22,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
+import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -108,6 +110,28 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     @Override
     public List<Long> getUsedCouponIdByOrderCode(String orderCode) {
         return bookOrderDetailRepository.findAllByOrderCode(orderCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 주문 수량 목록
+     */
+    @Override
+    public List<BookStockUpdateRequestDto> getBookStock(String orderCode) {
+        return bookOrderDetailRepository.findBookStockByOrderCode(orderCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    @Override
+    public List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode) {
+        return bookOrderDetailRepository.findBookIdByOrderCode(orderCode);
     }
 
     /**

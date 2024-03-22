@@ -1,10 +1,10 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.PayFacade;
 import java.util.Objects;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,14 +36,8 @@ public class PayController {
      * @return void
      */
     @PostMapping
-    public ResponseEntity<Void> doPay(@Valid @RequestBody PayCreateRequestDto requestDto,
-        BindingResult bindingResult) {
+    public ResponseEntity<Void> doPay(@Valid @RequestBody PayCreateRequestDto requestDto) {
         log.debug("payController Create {}", requestDto);
-
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(
-                Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
-        }
 
         payFacade.doPay(requestDto);
 

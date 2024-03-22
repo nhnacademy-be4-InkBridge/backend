@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
@@ -16,7 +17,7 @@ public interface BookOrderDetailService {
     /**
      * 주문 상세를 생성하는 메소드입니다.
      *
-     * @param orderId 주문 번호
+     * @param orderId        주문 번호
      * @param requestDtoList 주문 상세 정보 목록
      */
     void createBookOrderDetail(Long orderId, List<BookOrderDetailCreateRequestDto> requestDtoList);
@@ -39,8 +40,9 @@ public interface BookOrderDetailService {
 
     /**
      * 주문 상세의 상태를 변경하는 메소드입니다.
+     *
      * @param orderId 주문번호
-     * @param status 주문 상태
+     * @param status  주문 상태
      */
     void changeOrderStatus(Long orderId, OrderStatusEnum status);
 
@@ -51,4 +53,21 @@ public interface BookOrderDetailService {
      * @return 사용한 쿠폰 번호 목록
      */
     List<Long> getUsedCouponIdByOrderCode(String orderCode);
+
+    /**
+     * 도서 번호와 주문 수량을 조회합니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 수량 목록
+     */
+    List<BookStockUpdateRequestDto> getBookStock(String orderCode);
+
+    /**
+     * 주문한 도서 번호를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호 목록
+     */
+    List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode);
 }
+

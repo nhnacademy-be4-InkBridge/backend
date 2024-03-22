@@ -3,12 +3,14 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -19,19 +21,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
-import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +53,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 /**
  * class: OrderControllerTest.
@@ -116,9 +125,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/order-name/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -134,9 +143,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/order-name/size",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -145,15 +154,16 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 수취인 이름 길이")
     void testCreateOrder_valid_failed_receiverName_size() throws Exception {
-        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverName", "TeamInkBridgeReceiverName");
+        ReflectionTestUtils.setField(orderCreateRequestDto, "receiverName",
+            "TeamInkBridgeReceiverName");
 
         mockMvc.perform(post("/api/orders")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/receiver-name/size",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -168,9 +178,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/receiver-name/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -185,9 +195,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/receiver-phone-number/pattern",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -202,9 +212,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/receiver-phone-number/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -219,9 +229,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/zipCode/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -236,9 +246,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/zipCode/pattern",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -253,9 +263,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/address/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -270,9 +280,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/detail-address/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -287,9 +297,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-name/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -298,15 +308,16 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 정보 저장 요청 - 유효성 검사 실패 - 주문인 이름 길이")
     void testCreateOrder_valid_failed_senderName_size() throws Exception {
-        ReflectionTestUtils.setField(orderCreateRequestDto, "senderName", "TeamInkBridgeSenderName");
+        ReflectionTestUtils.setField(orderCreateRequestDto, "senderName",
+            "TeamInkBridgeSenderName");
 
         mockMvc.perform(post("/api/orders")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-name/size",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -321,9 +332,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-phone-number/pattern",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -338,9 +349,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-phone-number/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -355,9 +366,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-email/blank",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -372,9 +383,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/sender-email/email",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -389,9 +400,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/delivery-date/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -406,9 +417,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/point/negative",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -423,9 +434,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/point/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -440,9 +451,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/pay-amount/negative",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -457,9 +468,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/pay-amount/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -474,9 +485,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/delivery-price/negative",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -491,9 +502,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/delivery-price/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -508,9 +519,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/book-id/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -525,9 +536,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/price/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -542,9 +553,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/amount/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -559,9 +570,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/amount/negative",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -576,9 +587,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/wrapping-price/negative",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -593,9 +604,9 @@ class OrderControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isUnprocessableEntity())
+            .andExpect(status().isBadRequest())
             .andExpect(exception -> assertThat(exception.getResolvedException()).isInstanceOf(
-                ValidationException.class))
+                MethodArgumentNotValidException.class))
             .andDo(document("order/order-post-422/wrapping-price/null",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
@@ -712,7 +723,8 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 정보 저장 요청 - 성공")
     void testCreateOrder_success() throws Exception {
-        given(orderFacade.createOrder(any())).willReturn(new OrderCreateResponseDto(1L, "orderCode"));
+        given(orderFacade.createOrder(any())).willReturn(
+            new OrderCreateResponseDto(1L, "orderCode"));
 
         mockMvc.perform(post("/api/orders")
                 .accept(MediaType.APPLICATION_JSON)
@@ -720,11 +732,34 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
             .andExpectAll(
                 status().isCreated(),
+                jsonPath("orderId").value(1L),
                 jsonPath("orderCode", equalTo("orderCode"))
             )
             .andDo(document("order/order-post-201",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("bookOrderList[].bookId").description("도서 번호"),
+                    fieldWithPath("bookOrderList[].price").description("도서 판매가"),
+                    fieldWithPath("bookOrderList[].amount").description("도서 수량"),
+                    fieldWithPath("bookOrderList[].wrappingId").description("포장지 번호"),
+                    fieldWithPath("bookOrderList[].couponId").description("쿠폰 번호"),
+                    fieldWithPath("bookOrderList[].wrappingPrice").description("포장지 가격"),
+                    fieldWithPath("bookOrder.orderName").description("주문 이름"),
+                    fieldWithPath("bookOrder.receiverName").description("수취인 이름"),
+                    fieldWithPath("bookOrder.receiverPhoneNumber").description("수취인 전화번호"),
+                    fieldWithPath("bookOrder.zipCode").description("우편번호"),
+                    fieldWithPath("bookOrder.address").description("주소"),
+                    fieldWithPath("bookOrder.detailAddress").description("상세주소"),
+                    fieldWithPath("bookOrder.senderName").description("주문인 이름"),
+                    fieldWithPath("bookOrder.senderPhoneNumber").description("주문인 전화번호"),
+                    fieldWithPath("bookOrder.senderEmail").description("주문인 이메일"),
+                    fieldWithPath("bookOrder.deliveryDate").description("배송 예정일"),
+                    fieldWithPath("bookOrder.usePoint").description("사용 포인트"),
+                    fieldWithPath("bookOrder.payAmount").description("구매 가격"),
+                    fieldWithPath("bookOrder.memberId").description("회원 번호"),
+                    fieldWithPath("bookOrder.deliveryPrice").description("배송비")
+                ),
                 responseFields(
                     fieldWithPath("orderId").description("주문 번호"),
                     fieldWithPath("orderCode").description("주문 코드")
@@ -775,6 +810,167 @@ class OrderControllerTest {
                     fieldWithPath("orderCode").description("주문 코드"),
                     fieldWithPath("orderName").description("주문 이름"),
                     fieldWithPath("amount").description("가격")
+                )));
+    }
+
+    @Test
+    @DisplayName("주문 코드로 주문 조회 - 일치하는 주문이 없는 경우")
+    void testGetOrderByOrderCode_not_found() throws Exception {
+        given(orderFacade.getOrderDetailByOrderCode(anyString()))
+            .willThrow(new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{orderCode}", "orderCode")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isNotFound(),
+                exception -> assertThat(exception.getResolvedException())
+                    .isInstanceOf(NotFoundException.class)
+            )
+            .andDo(document("order/order-get/order-code/404",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("orderCode").description("주문 코드")
+                )));
+    }
+
+    @Test
+    @DisplayName("주문 코드로 주문 조회 - 조회 성공")
+    void testGetOrderByOrderCode_success() throws Exception {
+        OrderResponseDto orderResponse = new OrderResponseDto("orderCode",
+            "orderName", "receiver", "01011112222",
+            "11111", "address", "detailAddress", "sender",
+            "01033334444", "test@inkbridge.store",
+            LocalDate.of(2024, 1, 1), 0L, 30000L,
+            5000L, LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+            LocalDate.of(2024, 1, 1));
+
+        PayReadResponseDto payResponse = new PayReadResponseDto("paymentKey",
+            "method", "status",
+            LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+            30000L, 30000L, 3000L, true, "provider");
+
+        OrderDetailReadResponseDto orderDetailReadResponseDto = new OrderDetailReadResponseDto(1L,
+            30000L, 0L, 1,
+            "wrappingName", "WAITING", 1L,
+            "thumbnailUrl", "bookTitle", "PERCENT",
+            "couponName", 15000L, 5L);
+        List<OrderDetailReadResponseDto> detailResponseList = List.of(orderDetailReadResponseDto);
+
+        given(orderFacade.getOrderDetailByOrderCode("orderCode")).willReturn(
+            new BookOrderDetailResponseDto(orderResponse, payResponse, detailResponseList));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{orderCode}", "orderCode")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$.orderInfo.orderCode").value(orderResponse.getOrderCode()),
+                jsonPath("$.orderInfo.orderName").value(orderResponse.getOrderName()),
+                jsonPath("$.orderInfo.receiverName").value(orderResponse.getReceiverName()),
+                jsonPath("$.orderInfo.receiverPhoneNumber").value(
+                    orderResponse.getReceiverPhoneNumber()),
+                jsonPath("$.orderInfo.zipCode").value(orderResponse.getZipCode()),
+                jsonPath("$.orderInfo.address").value(orderResponse.getAddress()),
+                jsonPath("$.orderInfo.detailAddress").value(orderResponse.getDetailAddress()),
+                jsonPath("$.orderInfo.senderName").value(orderResponse.getSenderName()),
+                jsonPath("$.orderInfo.senderPhoneNumber").value(
+                    orderResponse.getSenderPhoneNumber()),
+                jsonPath("$.orderInfo.senderEmail").value(orderResponse.getSenderEmail()),
+                jsonPath("$.orderInfo.deliveryDate").value(DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    .format(orderResponse.getDeliveryDate())),
+                jsonPath("$.orderInfo.usePoint").value(orderResponse.getUsePoint()),
+                jsonPath("$.orderInfo.payAmount").value(orderResponse.getPayAmount()),
+                jsonPath("$.orderInfo.deliveryPrice").value(orderResponse.getDeliveryPrice()),
+                jsonPath("$.orderInfo.orderAt").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(orderResponse.getOrderAt())),
+                jsonPath("$.orderInfo.shipDate").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd").format(orderResponse.getShipDate())),
+                jsonPath("$.payInfo.paymentKey").value(payResponse.getPaymentKey()),
+                jsonPath("$.payInfo.method").value(payResponse.getMethod()),
+                jsonPath("$.payInfo.status").value(payResponse.getStatus()),
+                jsonPath("$.payInfo.requestedAt").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(payResponse.getRequestedAt())),
+                jsonPath("$.payInfo.totalAmount").value(payResponse.getTotalAmount()),
+                jsonPath("$.payInfo.balanceAmount").value(payResponse.getBalanceAmount()),
+                jsonPath("$.payInfo.vat").value(payResponse.getVat()),
+                jsonPath("$.payInfo.isPartialCancelable").value(
+                    payResponse.getIsPartialCancelable()),
+                jsonPath("$.payInfo.provider").value(payResponse.getProvider()),
+                jsonPath("$.orderDetailInfoList[0].orderDetailId").value(
+                    orderDetailReadResponseDto.getOrderDetailId()),
+                jsonPath("$.orderDetailInfoList[0].bookPrice").value(
+                    orderDetailReadResponseDto.getBookPrice()),
+                jsonPath("$.orderDetailInfoList[0].wrappingPrice").value(
+                    orderDetailReadResponseDto.getWrappingPrice()),
+                jsonPath("$.orderDetailInfoList[0].amount").value(
+                    orderDetailReadResponseDto.getAmount()),
+                jsonPath("$.orderDetailInfoList[0].wrappingName").value(
+                    orderDetailReadResponseDto.getWrappingName()),
+                jsonPath("$.orderDetailInfoList[0].orderStatus").value(
+                    orderDetailReadResponseDto.getOrderStatus()),
+                jsonPath("$.orderDetailInfoList[0].bookId").value(
+                    orderDetailReadResponseDto.getBookId()),
+                jsonPath("$.orderDetailInfoList[0].thumbnailUrl").value(
+                    orderDetailReadResponseDto.getThumbnailUrl()),
+                jsonPath("$.orderDetailInfoList[0].bookTitle").value(
+                    orderDetailReadResponseDto.getBookTitle()),
+                jsonPath("$.orderDetailInfoList[0].couponTypeName").value(
+                    orderDetailReadResponseDto.getCouponTypeName()),
+                jsonPath("$.orderDetailInfoList[0].couponName").value(
+                    orderDetailReadResponseDto.getCouponName()),
+                jsonPath("$.orderDetailInfoList[0].maxDiscountPrice").value(
+                    orderDetailReadResponseDto.getMaxDiscountPrice()),
+                jsonPath("$.orderDetailInfoList[0].discountPrice").value(
+                    orderDetailReadResponseDto.getDiscountPrice())
+            )
+            .andDo(document("order/order-get/order-code/200",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("orderCode").description("주문 코드")
+                ),
+                responseFields(
+                    fieldWithPath("orderInfo.orderCode").description("주문 코드"),
+                    fieldWithPath("orderInfo.orderName").description("주문 이름"),
+                    fieldWithPath("orderInfo.receiverName").description("수취인 이름"),
+                    fieldWithPath("orderInfo.receiverPhoneNumber").description("수취인 전화번호"),
+                    fieldWithPath("orderInfo.zipCode").description("우편 번호"),
+                    fieldWithPath("orderInfo.address").description("주소"),
+                    fieldWithPath("orderInfo.detailAddress").description("상세 주소"),
+                    fieldWithPath("orderInfo.senderName").description("주문인 이름"),
+                    fieldWithPath("orderInfo.senderPhoneNumber").description("주문인 전화번호"),
+                    fieldWithPath("orderInfo.senderEmail").description("주문인 이메일"),
+                    fieldWithPath("orderInfo.deliveryDate").description("배송 예정일"),
+                    fieldWithPath("orderInfo.usePoint").description("사용 포인트"),
+                    fieldWithPath("orderInfo.payAmount").description("총 가격"),
+                    fieldWithPath("orderInfo.deliveryPrice").description("배송비"),
+                    fieldWithPath("orderInfo.orderAt").description("주문일"),
+                    fieldWithPath("orderInfo.shipDate").description("출고일"),
+                    fieldWithPath("payInfo.paymentKey").description("결제 키"),
+                    fieldWithPath("payInfo.method").description("결제 방법"),
+                    fieldWithPath("payInfo.status").description("결제 상태"),
+                    fieldWithPath("payInfo.requestedAt").description("결제 요청 시간"),
+                    fieldWithPath("payInfo.totalAmount").description("결제 금액"),
+                    fieldWithPath("payInfo.balanceAmount").description("취소 가능 금액"),
+                    fieldWithPath("payInfo.vat").description("부가세"),
+                    fieldWithPath("payInfo.isPartialCancelable").description("부분 취소 여부"),
+                    fieldWithPath("payInfo.provider").description("결제 회사"),
+                    fieldWithPath("orderDetailInfoList[].orderDetailId").description("주문 상세 번호"),
+                    fieldWithPath("orderDetailInfoList[].bookPrice").description("도서 가격"),
+                    fieldWithPath("orderDetailInfoList[].wrappingPrice").description("포장 가격"),
+                    fieldWithPath("orderDetailInfoList[].amount").description("도서 수량"),
+                    fieldWithPath("orderDetailInfoList[].wrappingName").description("포장지 이름"),
+                    fieldWithPath("orderDetailInfoList[].orderStatus").description("주문 상태"),
+                    fieldWithPath("orderDetailInfoList[].bookId").description("도서 번호"),
+                    fieldWithPath("orderDetailInfoList[].thumbnailUrl").description("도서 이미지 경로"),
+                    fieldWithPath("orderDetailInfoList[].bookTitle").description("도서 이름"),
+                    fieldWithPath("orderDetailInfoList[].couponTypeName").description("쿠폰 타입"),
+                    fieldWithPath("orderDetailInfoList[].couponName").description("쿠폰 이름"),
+                    fieldWithPath("orderDetailInfoList[].maxDiscountPrice").description(
+                        "쿠폰 최대 할인 금액"),
+                    fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가")
                 )));
     }
 }
