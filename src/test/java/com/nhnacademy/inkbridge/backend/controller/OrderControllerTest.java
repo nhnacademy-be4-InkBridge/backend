@@ -35,7 +35,6 @@ import com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
-import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -876,35 +875,54 @@ class OrderControllerTest {
                 jsonPath("$.orderInfo.senderPhoneNumber").value(
                     orderResponse.getSenderPhoneNumber()),
                 jsonPath("$.orderInfo.senderEmail").value(orderResponse.getSenderEmail()),
-                jsonPath("$.orderInfo.deliveryDate").value(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(orderResponse.getDeliveryDate())),
+                jsonPath("$.orderInfo.deliveryDate").value(DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    .format(orderResponse.getDeliveryDate())),
                 jsonPath("$.orderInfo.usePoint").value(orderResponse.getUsePoint()),
                 jsonPath("$.orderInfo.payAmount").value(orderResponse.getPayAmount()),
                 jsonPath("$.orderInfo.deliveryPrice").value(orderResponse.getDeliveryPrice()),
-                jsonPath("$.orderInfo.orderAt").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(orderResponse.getOrderAt())),
-                jsonPath("$.orderInfo.shipDate").value(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(orderResponse.getShipDate())),
+                jsonPath("$.orderInfo.orderAt").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(orderResponse.getOrderAt())),
+                jsonPath("$.orderInfo.shipDate").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd").format(orderResponse.getShipDate())),
                 jsonPath("$.payInfo.paymentKey").value(payResponse.getPaymentKey()),
                 jsonPath("$.payInfo.method").value(payResponse.getMethod()),
                 jsonPath("$.payInfo.status").value(payResponse.getStatus()),
-                jsonPath("$.payInfo.requestedAt").value(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").format(payResponse.getRequestedAt())),
+                jsonPath("$.payInfo.requestedAt").value(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        .format(payResponse.getRequestedAt())),
                 jsonPath("$.payInfo.totalAmount").value(payResponse.getTotalAmount()),
                 jsonPath("$.payInfo.balanceAmount").value(payResponse.getBalanceAmount()),
                 jsonPath("$.payInfo.vat").value(payResponse.getVat()),
                 jsonPath("$.payInfo.isPartialCancelable").value(
                     payResponse.getIsPartialCancelable()),
                 jsonPath("$.payInfo.provider").value(payResponse.getProvider()),
-                jsonPath("$.orderDetailInfoList[0].orderDetailId").value(orderDetailReadResponseDto.getOrderDetailId()),
-                jsonPath("$.orderDetailInfoList[0].bookPrice").value(orderDetailReadResponseDto.getBookPrice()),
-                jsonPath("$.orderDetailInfoList[0].wrappingPrice").value(orderDetailReadResponseDto.getWrappingPrice()),
-                jsonPath("$.orderDetailInfoList[0].amount").value(orderDetailReadResponseDto.getAmount()),
-                jsonPath("$.orderDetailInfoList[0].wrappingName").value(orderDetailReadResponseDto.getWrappingName()),
-                jsonPath("$.orderDetailInfoList[0].orderStatus").value(orderDetailReadResponseDto.getOrderStatus()),
-                jsonPath("$.orderDetailInfoList[0].bookId").value(orderDetailReadResponseDto.getBookId()),
-                jsonPath("$.orderDetailInfoList[0].thumbnailUrl").value(orderDetailReadResponseDto.getThumbnailUrl()),
-                jsonPath("$.orderDetailInfoList[0].bookTitle").value(orderDetailReadResponseDto.getBookTitle()),
-                jsonPath("$.orderDetailInfoList[0].couponTypeName").value(orderDetailReadResponseDto.getCouponTypeName()),
-                jsonPath("$.orderDetailInfoList[0].couponName").value(orderDetailReadResponseDto.getCouponName()),
-                jsonPath("$.orderDetailInfoList[0].maxDiscountPrice").value(orderDetailReadResponseDto.getMaxDiscountPrice()),
-                jsonPath("$.orderDetailInfoList[0].discountPrice").value(orderDetailReadResponseDto.getDiscountPrice())
+                jsonPath("$.orderDetailInfoList[0].orderDetailId").value(
+                    orderDetailReadResponseDto.getOrderDetailId()),
+                jsonPath("$.orderDetailInfoList[0].bookPrice").value(
+                    orderDetailReadResponseDto.getBookPrice()),
+                jsonPath("$.orderDetailInfoList[0].wrappingPrice").value(
+                    orderDetailReadResponseDto.getWrappingPrice()),
+                jsonPath("$.orderDetailInfoList[0].amount").value(
+                    orderDetailReadResponseDto.getAmount()),
+                jsonPath("$.orderDetailInfoList[0].wrappingName").value(
+                    orderDetailReadResponseDto.getWrappingName()),
+                jsonPath("$.orderDetailInfoList[0].orderStatus").value(
+                    orderDetailReadResponseDto.getOrderStatus()),
+                jsonPath("$.orderDetailInfoList[0].bookId").value(
+                    orderDetailReadResponseDto.getBookId()),
+                jsonPath("$.orderDetailInfoList[0].thumbnailUrl").value(
+                    orderDetailReadResponseDto.getThumbnailUrl()),
+                jsonPath("$.orderDetailInfoList[0].bookTitle").value(
+                    orderDetailReadResponseDto.getBookTitle()),
+                jsonPath("$.orderDetailInfoList[0].couponTypeName").value(
+                    orderDetailReadResponseDto.getCouponTypeName()),
+                jsonPath("$.orderDetailInfoList[0].couponName").value(
+                    orderDetailReadResponseDto.getCouponName()),
+                jsonPath("$.orderDetailInfoList[0].maxDiscountPrice").value(
+                    orderDetailReadResponseDto.getMaxDiscountPrice()),
+                jsonPath("$.orderDetailInfoList[0].discountPrice").value(
+                    orderDetailReadResponseDto.getDiscountPrice())
             )
             .andDo(document("order/order-get/order-code/200",
                 preprocessRequest(prettyPrint()),
