@@ -87,10 +87,6 @@ public class PayFacade {
             Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
             memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
                 Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100 * -1);
-
-            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
-                requestDto.getOrderCode());
-            couponService.useCoupons(orderedResponseDto.getMemberId(), usedCouponIdList);
         }
     }
 }
