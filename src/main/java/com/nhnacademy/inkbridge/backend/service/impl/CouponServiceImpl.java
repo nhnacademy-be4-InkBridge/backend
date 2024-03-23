@@ -129,7 +129,7 @@ public class CouponServiceImpl implements CouponService {
             .basicExpiredDate(couponCreateRequestDto.getBasicExpiredDate())
             .basicIssuedDate(couponCreateRequestDto.getBasicIssuedDate())
             .discountPrice(couponCreateRequestDto.getDiscountPrice())
-            .isBirth(couponCreateRequestDto.getIsBirth())
+            .isBirth(false)
             .maxDiscountPrice(couponCreateRequestDto.getMaxDiscountPrice())
             .minPrice(couponCreateRequestDto.getMinPrice())
             .validity(couponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
@@ -422,6 +422,21 @@ public class CouponServiceImpl implements CouponService {
         useCoupons.forEach(coupon -> {
             validateCouponUsed(coupon);
             coupon.use();
+        });
+    }
+
+    @Override
+    @Transactional
+    public void cancelCouponUsage(Long memberId, List<Long> memberCouponIds) {
+        List<MemberCoupon> useCoupons = memberCouponRepository
+            .findAllByMemberCouponIdInAndMember_MemberId(
+                memberCouponIds, memberId);
+        if (useCoupons.size() != memberCouponIds.size()) {
+            throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
+        }
+        useCoupons.forEach(coupon -> {
+            validateCouponUsed(coupon);
+            coupon.cancel();
         });
     }
 }

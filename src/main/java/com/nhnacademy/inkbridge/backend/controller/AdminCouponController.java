@@ -110,4 +110,24 @@ public class AdminCouponController {
         couponService.createCoupon(couponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    /**
+     * admin이 쿠폰을 생성하는 메소드.
+     *
+     * @param couponCreateRequestDto 쿠폰생성시 필요한 필드들
+     * @param bindingResult          valid결과
+     * @return 생성되었습니다
+     * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
+     */
+    @PostMapping("/birthday-coupon")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity createBirthdayCoupon(
+        @Valid @RequestBody CouponCreateRequestDto couponCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+        }
+        couponService.createCoupon(couponCreateRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

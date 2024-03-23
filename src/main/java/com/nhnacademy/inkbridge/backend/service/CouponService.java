@@ -115,4 +115,11 @@ public interface CouponService {
      */
     void useCoupons(Long memberId, List<Long> memberCouponId);
 
+    /**
+     * 쿠폰 사용을 취소하는 메소드.
+     *
+     * @param memberId        취소할 멤버id
+     * @param memberCouponIds 취소할 쿠폰 목록들
+     */
+    void cancelCouponUsage(Long memberId, List<Long> memberCouponIds);
 }
