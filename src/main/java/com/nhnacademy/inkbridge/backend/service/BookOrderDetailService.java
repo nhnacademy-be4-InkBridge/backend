@@ -47,6 +47,14 @@ public interface BookOrderDetailService {
     void changeOrderStatus(Long orderId, OrderStatusEnum status);
 
     /**
+     * 주문 상세의 상태를 변경하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @param status  주문 상태
+     */
+    void changeOrderStatusByOrderCode(String orderCode, OrderStatusEnum status);
+
+    /**
      * 사용한 쿠폰 번호 목록을 조회합니다.
      *
      * @param orderCode 주문 코드

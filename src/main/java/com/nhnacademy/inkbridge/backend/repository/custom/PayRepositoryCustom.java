@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.Pay;
 import java.util.Optional;
 
 /**
@@ -34,4 +35,6 @@ public interface PayRepositoryCustom {
      * @return 결제 정보
      */
     PayReadResponseDto findPayByOrderCode(String orderCode);
+
+    Optional<Pay> findByOrderCode(String orderCode);
 }

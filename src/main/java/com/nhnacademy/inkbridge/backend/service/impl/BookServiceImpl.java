@@ -308,6 +308,7 @@ public class BookServiceImpl implements BookService {
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
     }
 
+    @Override
     public Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
         List<Book> books = bookRepository.findBookByBookIdIn(
             bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(

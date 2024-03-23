@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.facade.PayFacade;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +44,18 @@ public class PayController {
         payFacade.doPay(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 결제를 취소하는 메소드입니다.
+     * @param requestDto
+     * @return
+     */
+    @PutMapping
+    public ResponseEntity<Void> cancelPay(@Valid @RequestBody PayCancelRequestDto requestDto) {
+        payFacade.cancelPay(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

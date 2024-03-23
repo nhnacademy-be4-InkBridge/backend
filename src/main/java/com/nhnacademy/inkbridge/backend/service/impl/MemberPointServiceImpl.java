@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.enums.MemberPointMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.repository.MemberRepository;
+import com.nhnacademy.inkbridge.backend.repository.PointHistoryRepository;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberPointServiceImpl implements MemberPointService {
 
     private final MemberRepository memberRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
     /**
      * 지정된 회원의 포인트를 업데이트합니다.
@@ -38,6 +40,7 @@ public class MemberPointServiceImpl implements MemberPointService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(
             MemberMessageEnum.MEMBER_NOT_FOUND.name()));
         member.updateMemberPoint(pointValue);
+
         if(member.getMemberPoint() < 0) throw new ValidationException(
             MemberPointMessageEnum.MEMBER_POINT_VALID_FAIL.getMessage());
     }
