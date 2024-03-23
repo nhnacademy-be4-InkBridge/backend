@@ -46,6 +46,8 @@ public interface BookOrderDetailRepositoryCustom {
      */
     List<BookOrderDetail> findOrderDetailByOrderId(Long orderId);
 
+    List<BookOrderDetail> findOrderDetailByOrderCode(String orderCode);
+
     /**
      * 주문 도서 목록을 조회합니다.
      *
@@ -61,4 +63,6 @@ public interface BookOrderDetailRepositoryCustom {
      * @return 주문 수량 목록
      */
     List<BookStockUpdateRequestDto> findBookStockByOrderCode(String orderCode);
+
+
 }

@@ -168,6 +168,16 @@ public class BookOrderDetailRepositoryImpl extends QuerydslRepositorySupport imp
             .fetch();
     }
 
+    @Override
+    public List<BookOrderDetail> findOrderDetailByOrderCode(String orderCode) {
+        QBookOrderDetail bookOrderDetail = QBookOrderDetail.bookOrderDetail;
+
+        return from(bookOrderDetail)
+            .select(bookOrderDetail)
+            .where(bookOrderDetail.bookOrder.orderCode.eq(orderCode))
+            .fetch();
+    }
+
     /**
      * {@inheritDoc}
      *
