@@ -14,6 +14,7 @@ import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_NOT_FOUND;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -307,7 +308,7 @@ public class CouponServiceImpl implements CouponService {
         } else {
             return couponStatusRepository.findById(
                     today.isEqual(basicIssuedDate) ? COUPON_NORMAL : COUPON_WAIT)
-                .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage()));
         }
     }
 
@@ -425,6 +426,9 @@ public class CouponServiceImpl implements CouponService {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void cancelCouponUsage(Long memberId, List<Long> memberCouponIds) {
@@ -438,5 +442,35 @@ public class CouponServiceImpl implements CouponService {
             validateCouponUsed(coupon);
             coupon.cancel();
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void createBirthdayCoupon(
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto) {
+        LocalDate basicIssuedDate = LocalDate.of(LocalDate.now().getYear(),
+            birthDayCouponCreateRequestDto.getMonth(), 1);
+        Integer dayCount = LocalDate.now().withMonth(birthDayCouponCreateRequestDto.getMonth())
+            .lengthOfMonth();
+        LocalDate basicExpiredDate = LocalDate.of(LocalDate.now().getYear(),
+            birthDayCouponCreateRequestDto.getMonth(),
+            dayCount);
+        CouponStatus couponStatus = findCouponStatusByIssuedDate(
+            basicIssuedDate);
+        CouponType couponType = findCouponType(2);
+
+        Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
+            .couponType(couponType).couponName(birthDayCouponCreateRequestDto.getCouponName())
+            .basicExpiredDate(basicExpiredDate)
+            .basicIssuedDate(basicIssuedDate)
+            .discountPrice(birthDayCouponCreateRequestDto.getDiscountPrice())
+            .isBirth(true)
+            .maxDiscountPrice(birthDayCouponCreateRequestDto.getMaxDiscountPrice())
+            .minPrice(birthDayCouponCreateRequestDto.getMinPrice())
+            .validity(dayCount).couponStatus(couponStatus).build();
+        couponRepository.save(newCoupon);
     }
 }

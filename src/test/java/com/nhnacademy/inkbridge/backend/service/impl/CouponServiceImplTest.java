@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -758,5 +759,19 @@ class CouponServiceImplTest {
         });
         verify(memberCouponRepository, times(1)).findAllByMemberCouponIdInAndMember_MemberId(
             memberCouponIds, memberId);
+    }
+
+    @Test
+    void testCreateBirthdayCoupon() {
+        CouponType couponType = mock(CouponType.class);
+        CouponStatus couponStatus = mock(CouponStatus.class);
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto = mock(
+            BirthDayCouponCreateRequestDto.class);
+        when(birthDayCouponCreateRequestDto.getMonth()).thenReturn(4);
+        when(couponTypeRepository.findById(any())).thenReturn(Optional.of(couponType));
+        when(couponStatusRepository.findById(any())).thenReturn(Optional.of(couponStatus));
+
+        couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
+        verify(couponRepository, times(1)).save(any(Coupon.class));
     }
 }
