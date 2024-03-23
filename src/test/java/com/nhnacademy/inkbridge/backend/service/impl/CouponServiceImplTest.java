@@ -774,4 +774,22 @@ class CouponServiceImplTest {
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
         verify(couponRepository, times(1)).save(any(Coupon.class));
     }
+
+    @Test
+    void testCreateBirthdayCoupon_AlreadyExistException() {
+        CouponType couponType = mock(CouponType.class);
+        CouponStatus couponStatus = mock(CouponStatus.class);
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto = mock(
+            BirthDayCouponCreateRequestDto.class);
+        when(birthDayCouponCreateRequestDto.getMonth()).thenReturn(4);
+        // 변경된 스텁 설정
+        when(couponRepository.existsByBasicIssuedDateAndIsBirthTrue(
+            LocalDate.of(2024, 4, 1))).thenReturn(true);
+
+        assertThrows(AlreadyExistException.class, () -> {
+            couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
+        });
+        verify(couponRepository, times(1)).existsByBasicIssuedDateAndIsBirthTrue(
+            LocalDate.of(2024, 4, 1));
+    }
 }

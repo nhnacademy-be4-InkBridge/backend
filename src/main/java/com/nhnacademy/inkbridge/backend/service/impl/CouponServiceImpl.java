@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -453,6 +454,9 @@ public class CouponServiceImpl implements CouponService {
         BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto) {
         LocalDate basicIssuedDate = LocalDate.of(LocalDate.now().getYear(),
             birthDayCouponCreateRequestDto.getMonth(), 1);
+        if (couponRepository.existsByBasicIssuedDateAndIsBirthTrue(basicIssuedDate)) {
+            throw new AlreadyExistException(COUPON_DUPLICATED.getMessage());
+        }
         Integer dayCount = LocalDate.now().withMonth(birthDayCouponCreateRequestDto.getMonth())
             .lengthOfMonth();
         LocalDate basicExpiredDate = LocalDate.of(LocalDate.now().getYear(),
