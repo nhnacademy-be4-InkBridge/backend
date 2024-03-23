@@ -35,6 +35,7 @@ public class BookSearchResponseDto {
     private String fileUrl;
     private List<AuthorBySearch> authors;
     private List<TagBySearch> tags;
+    private List<CategoryBySearch> categories;
 
     public static BookSearchResponseDto toBookSearchResponseDto(Search search){
         return BookSearchResponseDto.builder()
@@ -53,6 +54,7 @@ public class BookSearchResponseDto {
             .fileUrl(search.getFileUrl())
             .authors(search.getAuthors())
             .tags(search.getTags())
+            .categories(search.getCategories())
             .build();
     }
 }

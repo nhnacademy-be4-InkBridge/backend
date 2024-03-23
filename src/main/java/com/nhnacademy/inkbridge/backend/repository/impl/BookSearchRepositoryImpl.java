@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -67,6 +69,24 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
             .build();
 
         SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery, Search.class);
+        List<Search> books = searchHits.get().map(SearchHit::getContent)
+            .collect(Collectors.toList());
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
+    }
+
+    @Override
+    public Page<Search> searchByCategory(String category, Pageable pageable) {
+        QueryBuilder queryBuilder = QueryBuilders.nestedQuery("categories",
+            QueryBuilders.queryStringQuery(category).field("categories.category_name"),
+            ScoreMode.None);
+
+        Query searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(queryBuilder)
+            .withPageable(pageable)
+            .build();
+
+        SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery,
+            Search.class);
         List<Search> books = searchHits.get().map(SearchHit::getContent)
             .collect(Collectors.toList());
         return new PageImpl<>(books, pageable, searchHits.getTotalHits());

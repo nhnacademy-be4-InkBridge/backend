@@ -16,4 +16,6 @@ public interface BookSearchRepositoryCustom {
 
     Page<Search> searchByAll(Pageable pageable);
 
+    Page<Search> searchByCategory(String category,Pageable pageable);
+
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
 import com.nhnacademy.inkbridge.backend.dto.search.AuthorBySearch;
+import com.nhnacademy.inkbridge.backend.dto.search.CategoryBySearch;
 import com.nhnacademy.inkbridge.backend.dto.search.TagBySearch;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,8 +56,10 @@ public class Search {
     private String statusName;
     @Field("file_url")
     private String fileUrl;
-    @Field(name = "authors",type= FieldType.Nested)
+    @Field(name = "authors", type = FieldType.Nested)
     private List<AuthorBySearch> authors;
     @Field("tags")
     private List<TagBySearch> tags;
+    @Field("categories")
+    private List<CategoryBySearch> categories;
 }

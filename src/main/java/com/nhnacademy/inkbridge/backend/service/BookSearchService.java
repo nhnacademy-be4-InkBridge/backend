@@ -15,4 +15,6 @@ public interface BookSearchService {
     Page<Search> searchByText(String text, Pageable pageable);
 
     Page<Search> searchByAll(Pageable pageable);
+
+    Page<Search> searchByCategory(String category,Pageable pageable);
 }

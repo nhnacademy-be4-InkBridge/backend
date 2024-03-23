@@ -30,4 +30,9 @@ public class BookSearchServiceImpl implements BookSearchService {
     public Page<Search> searchByAll(Pageable pageable) {
         return bookSearchRepository.searchByAll(pageable);
     }
+
+    @Override
+    public Page<Search> searchByCategory(String category, Pageable pageable) {
+        return bookSearchRepository.searchByCategory(category, pageable);
+    }
 }
