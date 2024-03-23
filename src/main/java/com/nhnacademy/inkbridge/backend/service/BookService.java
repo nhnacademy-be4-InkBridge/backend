@@ -6,12 +6,14 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookService.
@@ -44,7 +46,7 @@ public interface BookService {
      * @param pageable   Pageable
      * @return BooksReadResponseDto page
      */
-    BooksReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
+    BooksByCategoryReadResponseDto readBooksByCategory(Long categoryId, Pageable pageable);
 
     /**
      * Book Id값으로 dto에 대한 데이터를 가져오는 메서드입니다. parameter가 데이터베이스에 저장되어 있지 않을 시 NotFoundException을
@@ -52,7 +54,7 @@ public interface BookService {
      *
      * @return BookReadResponseDto
      */
-    BookReadResponseDto readBook(Long bookId, Long memberId);
+    BookReadResponseDto readBook(Pageable pageable, Long bookId, Long memberId);
 
     /**
      * admin 페이지에서 필요한 전체 도서 관련 데이터를 가져오는 메서드입니다.
@@ -85,7 +87,7 @@ public interface BookService {
      * @param thumbnail                 MultipartFile
      * @param bookAdminCreateRequestDto BookAdminCreateRequestDto
      */
-    void createBook(MultipartFile thumbnail, BookAdminCreateRequestDto bookAdminCreateRequestDto);
+    void createBook(File thumbnail, BookAdminCreateRequestDto bookAdminCreateRequestDto);
 
     /**
      * 입력값에 대해 도서 정보를 수정하는 메서드입니다. 해당하는 BookStatus, File, Publisher가 데이터베이스에 저장되어 있지 않을 시
@@ -94,6 +96,11 @@ public interface BookService {
      * @param bookId                    Long
      * @param bookAdminUpdateRequestDto BookAdminUpdateResponseDto
      */
-    void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
+    void updateBookByAdmin(Long bookId, File thumbnail,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto);
+
+    /**
+     * 재고를 수정하는 메서드입니다.
+     */
+    void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
 }

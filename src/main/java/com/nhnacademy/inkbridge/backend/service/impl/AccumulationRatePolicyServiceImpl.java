@@ -84,4 +84,15 @@ public class AccumulationRatePolicyServiceImpl implements AccumulationRatePolicy
 
         accumulationRatePolicyRepository.save(accumulationRatePolicy);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return 적립률
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public Integer getCurrentAccumulationRate() {
+        return accumulationRatePolicyRepository.findByCurrentAccumulationRate();
+    }
 }

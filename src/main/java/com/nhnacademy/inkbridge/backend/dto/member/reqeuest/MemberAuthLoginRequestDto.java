@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.member.reqeuest;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MemberAuthLoginRequestDto {
-    @Email
+
+    @Email(message = "이메일 형식이 틀렸습니다.")
+    @NotBlank(message = "이메일은 필수 입력 값 입니다.")
     private String email;
 }

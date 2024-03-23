@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.entity;
 
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdateRequestDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -10,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,11 +60,11 @@ public class Member {
     @Column(name = "withdraw_at")
     private LocalDateTime withdrawAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_auth_id")
     private MemberAuth memberAuth;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_status_id")
     private MemberStatus memberStatus;
 
@@ -91,5 +91,22 @@ public class Member {
 
     public void updateMemberPoint(Long pointValue) {
         this.memberPoint += pointValue;
+    }
+
+    public void updateLastLoginDate() {
+        this.lastLoginDate = LocalDateTime.now();
+    }
+
+    public void updateActive(MemberStatus active) {
+        this.memberStatus = active;
+    }
+
+    public void updateMember(MemberUpdateRequestDto update) {
+        this.email = update.getEmail();
+        this.memberName = update.getMemberName();
+        this.phoneNumber = update.getPhoneNumber();
+    }
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

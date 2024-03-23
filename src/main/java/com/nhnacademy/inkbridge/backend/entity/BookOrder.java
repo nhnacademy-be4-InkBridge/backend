@@ -91,4 +91,17 @@ public class BookOrder {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    /**
+     * 결제 상태를 변경하는 메소드입니다.
+     */
+    public void updateStatus() {
+        this.isPayment = true;
+    }
+
+    /**
+     * 주문 출고일을 오늘로 설정합니다.
+     */
+    public void updateShipDate(LocalDate date) {
+        this.shipDate = date;
+    }
 }

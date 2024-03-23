@@ -2,11 +2,11 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -55,7 +55,8 @@ public class BookController {
     @GetMapping("/orders")
     public ResponseEntity<List<BookOrderReadResponseDto>> getCartBooks(
         @RequestParam(name = "book-id", required = false) Set<Long> bookIdList) {
-        return new ResponseEntity<>(bookService.getCartBooks(bookIdList), HttpStatus.OK);
+        List<BookOrderReadResponseDto> cartBooks = bookService.getCartBooks(bookIdList);
+        return new ResponseEntity<>(cartBooks, HttpStatus.OK);
     }
 
     /**
@@ -66,9 +67,9 @@ public class BookController {
      * @return BooksReadResponseDto page
      */
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<BooksReadResponseDto> readBooksByCategory(
+    public ResponseEntity<BooksByCategoryReadResponseDto> readBooksByCategory(
         @PathVariable Long categoryId, Pageable pageable) {
-        BooksReadResponseDto content = bookService.readBooksByCategory(categoryId,
+        BooksByCategoryReadResponseDto content = bookService.readBooksByCategory(categoryId,
             pageable);
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
@@ -80,11 +81,10 @@ public class BookController {
      * @return BookReadResponseDto
      */
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookReadResponseDto> readBook(@PathVariable Long bookId,
-        HttpServletRequest request) {
-        Long memberId = request.getHeader("Authorization-Id") == null ? 0L
-            : Long.parseLong(request.getHeader("Authorization-Id"));
-        BookReadResponseDto bookReadResponseDto = bookService.readBook(bookId, memberId);
+    public ResponseEntity<BookReadResponseDto> readBook(Pageable pageable,
+        @PathVariable Long bookId,
+        @RequestParam Long memberId) {
+        BookReadResponseDto bookReadResponseDto = bookService.readBook(pageable, bookId, memberId);
         return new ResponseEntity<>(bookReadResponseDto, HttpStatus.OK);
     }
 }
