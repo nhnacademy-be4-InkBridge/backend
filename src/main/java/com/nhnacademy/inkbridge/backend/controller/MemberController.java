@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -100,8 +102,8 @@ public class MemberController {
     }
 
     @GetMapping("/auth/members/{memberId}/coupons")
-    public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
-        @PathVariable("memberId") Long memberId,
+    public ResponseEntity<Page<MemberCouponReadResponseDto>> getMemberCoupons(
+        @PathVariable("memberId") Long memberId, Pageable pageable,
         @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
         MemberCouponStatusEnum statusEnum;
         try {
@@ -110,7 +112,7 @@ public class MemberController {
             throw new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage());
         }
         return ResponseEntity.ok(
-            couponService.getMemberCouponList(memberId, statusEnum
+            couponService.getMemberCouponList(memberId, statusEnum, pageable
             ));
     }
 
@@ -136,8 +138,11 @@ public class MemberController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
             .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
+
     @PostMapping("/members/checkEmail")
-    public ResponseEntity<Boolean> isDuplicatedEmail(@RequestBody MemberEmailRequestDto memberEmailRequestDto) {
-        return ResponseEntity.ok().body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
+    public ResponseEntity<Boolean> isDuplicatedEmail(
+        @RequestBody MemberEmailRequestDto memberEmailRequestDto) {
+        return ResponseEntity.ok()
+            .body(memberService.checkDuplicatedEmail(memberEmailRequestDto.getEmail()));
     }
 }
