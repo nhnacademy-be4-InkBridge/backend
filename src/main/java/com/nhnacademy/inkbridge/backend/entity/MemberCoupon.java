@@ -77,4 +77,7 @@ public class MemberCoupon {
         this.usedAt = LocalDate.now();
     }
 
+    public void cancel() {
+        this.usedAt = null;
+    }
 }

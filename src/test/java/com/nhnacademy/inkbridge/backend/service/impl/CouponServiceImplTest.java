@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -104,7 +105,6 @@ class CouponServiceImplTest {
             .basicIssuedDate(LocalDate.now())
             .basicExpiredDate(LocalDate.now().plusDays(30))
             .discountPrice(1000L)
-            .isBirth(false)
             .maxDiscountPrice(5000L)
             .minPrice(10000L)
             .validity(7)
@@ -165,7 +165,6 @@ class CouponServiceImplTest {
             .basicIssuedDate(LocalDate.now())
             .basicExpiredDate(LocalDate.now())
             .discountPrice(1000L)
-            .isBirth(false)
             .maxDiscountPrice(5000L)
             .minPrice(10000L)
             .validity(7)
@@ -190,7 +189,6 @@ class CouponServiceImplTest {
             .basicIssuedDate(LocalDate.now().minusDays(1))
             .basicExpiredDate(LocalDate.now().minusDays(30))
             .discountPrice(1000L)
-            .isBirth(false)
             .maxDiscountPrice(5000L)
             .minPrice(10000L)
             .validity(7)
@@ -703,5 +701,77 @@ class CouponServiceImplTest {
         });
         verify(memberCouponRepository, times(1)).findAllByMemberCouponIdInAndMember_MemberId(
             memberCouponIds, memberId);
+    }
+
+    @Test
+    void testCancelCoupons() {
+        MemberCoupon memberCoupon = mock(MemberCoupon.class);
+        List<MemberCoupon> memberCoupons = Arrays.asList(memberCoupon, memberCoupon,
+            memberCoupon);
+        Long memberId = 1L;
+        List<Long> memberCouponIds = Arrays.asList(1L, 2L, 3L);
+        when(memberCoupon.getUsedAt()).thenReturn(null);
+
+        when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
+            memberId))
+            .thenReturn(memberCoupons);
+        couponService.cancelCouponUsage(memberId, memberCouponIds);
+        verify(memberCouponRepository, times(1)).findAllByMemberCouponIdInAndMember_MemberId(
+            memberCouponIds, memberId);
+    }
+
+    @Test
+    void testCancelCoupons_NotFoundSize() {
+        MemberCoupon memberCoupon = mock(MemberCoupon.class);
+        List<MemberCoupon> memberCoupons = Arrays.asList(memberCoupon, memberCoupon,
+            memberCoupon);
+        Long memberId = 1L;
+        List<Long> memberCouponIds = Arrays.asList(2L, 3L);
+
+        // memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId() 메서드의 반환 값을 설정합니다.
+        when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
+            memberId))
+            .thenReturn(memberCoupons);
+        // useCoupons() 메서드를 호출합니다.
+        assertThrows(NotFoundException.class, () -> {
+            couponService.cancelCouponUsage(memberId, memberCouponIds);
+
+        });
+        verify(memberCouponRepository, times(1)).findAllByMemberCouponIdInAndMember_MemberId(
+            memberCouponIds, memberId);
+    }
+
+    @Test
+    void testCancelCoupons_AlreadyUsedExceptionMemberCoupon() {
+        MemberCoupon memberCoupon = mock(MemberCoupon.class);
+        List<MemberCoupon> memberCoupons = Arrays.asList(memberCoupon, memberCoupon,
+            memberCoupon);
+        Long memberId = 1L;
+        List<Long> memberCouponIds = Arrays.asList(1L, 2L, 3L);
+        when(memberCoupon.getUsedAt()).thenReturn(LocalDate.now());
+
+        when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
+            memberId))
+            .thenReturn(memberCoupons);
+        assertThrows(AlreadyUsedException.class, () -> {
+            couponService.cancelCouponUsage(memberId, memberCouponIds);
+
+        });
+        verify(memberCouponRepository, times(1)).findAllByMemberCouponIdInAndMember_MemberId(
+            memberCouponIds, memberId);
+    }
+
+    @Test
+    void testCreateBirthdayCoupon() {
+        CouponType couponType = mock(CouponType.class);
+        CouponStatus couponStatus = mock(CouponStatus.class);
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto = mock(
+            BirthDayCouponCreateRequestDto.class);
+        when(birthDayCouponCreateRequestDto.getMonth()).thenReturn(4);
+        when(couponTypeRepository.findById(any())).thenReturn(Optional.of(couponType));
+        when(couponStatusRepository.findById(any())).thenReturn(Optional.of(couponStatus));
+
+        couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
+        verify(couponRepository, times(1)).save(any(Coupon.class));
     }
 }
