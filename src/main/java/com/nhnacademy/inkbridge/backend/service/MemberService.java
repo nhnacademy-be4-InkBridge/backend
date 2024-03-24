@@ -84,4 +84,11 @@ public interface MemberService {
      * @return 비밀번호
      */
     String getPassword(Long memberId);
+
+    /**
+     * 회원 탈퇴하는 메서드.
+     *
+     * @param memberId 회원 번호
+     */
+    void deleteMember(Long memberId);
 }

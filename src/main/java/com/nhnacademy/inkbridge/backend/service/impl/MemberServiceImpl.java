@@ -103,11 +103,11 @@ public class MemberServiceImpl implements MemberService {
         MemberStatus close = memberStatusRepository.findById(CLOSE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
 
-        member.updateLastLoginDate();
-
         if (member.getMemberStatus().getMemberStatusName().equals(close.getMemberStatusName())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
+
+        member.updateLastLoginDate();
 
         return memberRepository.findByMemberAuth(memberAuthLoginRequestDto.getEmail());
     }
@@ -133,9 +133,8 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public String getOAuthMemberEmail(String id) {
-        log.info("email start ->");
         Optional<MemberEmailResponseDto> email = memberRepository.findByPassword(id);
-        log.info("email -> {}", email);
+
         if (email.isEmpty()) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
@@ -149,6 +148,7 @@ public class MemberServiceImpl implements MemberService {
     public Boolean checkDuplicatedEmail(String email) {
         return memberRepository.existsByEmail(email);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -172,11 +172,26 @@ public class MemberServiceImpl implements MemberService {
         member.updatePassword(memberUpdatePasswordRequestDto.getNewPassword());
         return Boolean.TRUE;
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getPassword(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
         return member.getPassword();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+        MemberStatus close = memberStatusRepository.findById(CLOSE)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
+
+        member.updateStatus(close);
+        member.updateWithdrawAt();
     }
 }
