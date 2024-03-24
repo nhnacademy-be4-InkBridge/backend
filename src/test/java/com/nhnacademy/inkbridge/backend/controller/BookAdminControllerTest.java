@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,7 @@ class BookAdminControllerTest {
     }
 
     @Test
+    @DisplayName("관리자 페이지 도서 목록 조회")
     void whenAdminReadBooks_thenReturnDtoList() throws Exception {
         BooksAdminPaginationReadResponseDto booksAdminPaginationReadResponseDto = BooksAdminPaginationReadResponseDto.builder()
             .bookId(1L).bookTitle("title").publisherName("publisher").statusName("status").build();
@@ -136,7 +138,7 @@ class BookAdminControllerTest {
                 equalTo("status")))
             .andExpect(jsonPath("$.authorPaginationReadResponseDtos[0].authorName[0]",
                 equalTo("authorName")))
-            .andDo(document("book/books-get",
+            .andDo(document("book/admin/books-get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
@@ -170,6 +172,7 @@ class BookAdminControllerTest {
     }
 
     @Test
+    @DisplayName("도서 번호로 도서 상세 조회")
     void givenBookId_whenAdminReadBook_thenReturnDto() throws Exception {
         BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto = BookAdminSelectedReadResponseDto.builder()
             .bookTitle("title")
@@ -231,7 +234,7 @@ class BookAdminControllerTest {
             .andExpect(jsonPath("$.bookStatusReadResponseDtoList[0].statusName", equalTo("status")))
             .andExpect(jsonPath("$.tagReadResponseDtoList[0].tagId", equalTo(1)))
             .andExpect(jsonPath("$.tagReadResponseDtoList[0].tagName", equalTo("tag")))
-            .andDo(document("book/book-get",
+            .andDo(document("book/admin/book-get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("bookId").description("도서 번호")),
@@ -281,6 +284,7 @@ class BookAdminControllerTest {
     }
 
     @Test
+    @DisplayName("도서 등록 페이지")
     void whenAdminReadBook_thenReturnDto() throws Exception {
         BookAdminReadResponseDto bookAdminReadResponseDto = BookAdminReadResponseDto.builder()
             .parentCategoryReadResponseDtoList(List.of(parentCategoryReadResponseDto))
@@ -308,7 +312,7 @@ class BookAdminControllerTest {
             .andExpect(jsonPath("$.bookStatusReadResponseDtoList[0].statusName", equalTo("status")))
             .andExpect(jsonPath("$.tagReadResponseDtoList[0].tagId", equalTo(1)))
             .andExpect(jsonPath("$.tagReadResponseDtoList[0].tagName", equalTo("tag")))
-            .andDo(document("book/get-book-form",
+            .andDo(document("book/admin/book-get-form",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
@@ -364,7 +368,7 @@ class BookAdminControllerTest {
                 .file(book)
             )
             .andExpect(status().isCreated())
-            .andDo(document("book/book-create",
+            .andDo(document("book/admin/book-create",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestParts(
@@ -397,7 +401,7 @@ class BookAdminControllerTest {
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
                 result -> assertTrue(result.getResolvedException() instanceof ValidationException))
-            .andDo(document("book/book-create-fail",
+            .andDo(document("book/admin/book-create-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestParts(
@@ -432,7 +436,7 @@ class BookAdminControllerTest {
 
         mockMvc.perform(builders.file(book).file(thumbnail))
             .andExpect(status().isOk())
-            .andDo(document("book/book-update",
+            .andDo(document("book/admin/book-update",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("bookId").description("도서 번호")),
@@ -468,7 +472,7 @@ class BookAdminControllerTest {
             .andExpect(status().isUnprocessableEntity())
             .andExpect(
                 result -> assertTrue(result.getResolvedException() instanceof ValidationException))
-            .andDo(document("book/book-update-fail",
+            .andDo(document("book/admin/book-update-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("bookId").description("도서 번호")),

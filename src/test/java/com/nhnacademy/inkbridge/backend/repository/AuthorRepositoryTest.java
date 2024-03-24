@@ -16,14 +16,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -38,7 +33,6 @@ import org.springframework.data.domain.Pageable;
  * @version 2024/03/17
  */
 @DataJpaTest
-@TestMethodOrder(OrderAnnotation.class)
 class AuthorRepositoryTest {
 
     @Autowired
@@ -63,18 +57,8 @@ class AuthorRepositoryTest {
         author = testEntityManager.persist(author);
     }
 
-    @AfterEach
-    public void teardown() {
-        this.authorRepository.deleteAll();
-        this.testEntityManager
-            .getEntityManager()
-            .createNativeQuery("ALTER TABLE author ALTER COLUMN `author_id` RESTART WITH 1")
-            .executeUpdate();
-    }
-
     @Test
     @DisplayName("작가 아이디로 작가 정보 조회")
-    @Order(1)
     void findByAuthorId() {
         AuthorInfoReadResponseDto byAuthorId = authorRepository.findByAuthorId(
             author.getAuthorId());
@@ -89,7 +73,6 @@ class AuthorRepositoryTest {
 
     @Test
     @DisplayName("작가 이름으로 작가 정보 조회")
-    @Order(2)
     void findByAuthorName() {
         List<AuthorInfoReadResponseDto> dto = authorRepository.findByAuthorName(
             "authorName");
@@ -105,7 +88,6 @@ class AuthorRepositoryTest {
 
     @Test
     @DisplayName("작가 전체 목록 조회")
-    @Order(3)
     void findAllAuthors() {
         Page<AuthorInfoReadResponseDto> authors = authorRepository.findAllAuthors(pageable);
 
@@ -120,29 +102,27 @@ class AuthorRepositoryTest {
         );
     }
 
-    @Disabled
     @Test
     @DisplayName("도서 아이디로 작가 이름 조회")
-    @Order(4)
     void findAuthorNameByBookId() {
         BookStatus bookStatus = BookStatus.builder().statusId(1L).statusName("").build();
         Publisher publisher = Publisher.builder().publisherName("").build();
-        testEntityManager.persist(bookStatus);
-        testEntityManager.persist(publisher);
+        bookStatus = testEntityManager.persist(bookStatus);
+        publisher = testEntityManager.persist(publisher);
 
         Book book = Book.builder().bookTitle("").bookIndex("").description("").publicatedAt(
                 LocalDate.now()).isbn("").regularPrice(1L).price(1L)
             .discountRatio(BigDecimal.valueOf(3.3)).stock(1).updatedAt(
                 LocalDateTime.now()).bookStatus(bookStatus).publisher(publisher).thumbnailFile(file)
             .build();
-        testEntityManager.persist(book);
+        book = testEntityManager.persist(book);
         BookAuthor bookAuthor = BookAuthor.builder().author(author).book(book)
             .pk(Pk.builder().bookId(1L).authorId(1L).build())
             .build();
-        testEntityManager.persist(bookAuthor);
+        bookAuthor = testEntityManager.persist(bookAuthor);
 
         List<AuthorPaginationReadResponseDto> dto = authorRepository.findAuthorNameByBookId(
-            List.of(1L));
+            List.of(book.getBookId()));
 
         assertAll(
             () -> assertEquals(1, dto.size()),

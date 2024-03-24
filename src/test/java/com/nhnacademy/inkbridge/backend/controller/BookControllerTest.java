@@ -115,7 +115,7 @@ class BookControllerTest {
                 jsonPath("$.booksPaginationReadResponseDtos.content[0].fileUrl", equalTo("url")))
             .andExpect(jsonPath("$.authorPaginationReadResponseDto[0].authorName[0]",
                 equalTo("authorName")))
-            .andDo(document("book/books-main",
+            .andDo(document("book/books-get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 relaxedResponseFields(
@@ -227,6 +227,7 @@ class BookControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("bookId").description("도서 번호")),
+                requestParameters(parameterWithName("memberId").description("회원 번호")),
                 responseFields(
                     fieldWithPath("bookDetailReadResponseDto.bookTitle").description("도서 이름"),
                     fieldWithPath("bookDetailReadResponseDto.bookIndex").description("도서 목차"),
