@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 
 /**

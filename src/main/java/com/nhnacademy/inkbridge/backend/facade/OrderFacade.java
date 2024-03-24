@@ -11,7 +11,7 @@ import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.service.PayService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
