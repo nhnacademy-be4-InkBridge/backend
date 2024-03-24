@@ -162,7 +162,7 @@ class ReviewControllerTest {
                 .reviewFiles(reviewFiles).build());
 
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/auth/reviews/books/{bookId}", 1L))
+                RestDocumentationRequestBuilders.get("/api/reviews/books/{bookId}", 1L))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.reviewDetailReadResponseDtos.content[0].reviewId", equalTo(1)))
             .andExpect(jsonPath("$.reviewDetailReadResponseDtos.content[0].reviewerEmail",

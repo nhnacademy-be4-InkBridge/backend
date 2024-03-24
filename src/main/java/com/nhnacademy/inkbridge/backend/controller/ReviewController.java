@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author minm063
  * @version 2024/03/19
  */
-@RequestMapping("/api/auth/reviews")
+@RequestMapping("/api")
 @RestController
 public class ReviewController {
 
@@ -53,7 +53,7 @@ public class ReviewController {
      * @param pageable Pageable
      * @return ReviewReadResponseDto
      */
-    @GetMapping
+    @GetMapping("/auth/reviews")
     public ResponseEntity<ReviewMemberReadResponseDto> getReviewsByMember(
         @RequestParam(name = "memberId") Long memberId, Pageable pageable) {
         ReviewMemberReadResponseDto reviews = reviewService.getReviewsByMember(pageable, memberId);
@@ -64,10 +64,10 @@ public class ReviewController {
      * 도서 번호로 리뷰를 조회하는 api입니다.
      *
      * @param bookId Long
-     * @param pageable Long
+     * @param pageable Pageable
      * @return ReviewReadResponseDto
      */
-    @GetMapping("/books/{bookId}")
+    @GetMapping("/reviews/books/{bookId}")
     public ResponseEntity<ReviewBookReadResponseDto> getReviewsByBookId(@PathVariable Long bookId,
         @PageableDefault(size = 5) Pageable pageable) {
         ReviewBookReadResponseDto reviews = reviewService.getReviewsByBookId(pageable, bookId);
@@ -83,7 +83,7 @@ public class ReviewController {
      * @param bindingResult BindingResult
      * @return ResponseEntity HttpStatus
      */
-    @PostMapping
+    @PostMapping("/auth/reviews")
     public ResponseEntity<HttpStatus> createReview(
         @RequestPart(value = "images", required = false) List<MultipartFile> reviewImages,
         @RequestParam(value = "memberId") Long memberId,
@@ -113,7 +113,7 @@ public class ReviewController {
      * @param bindingResult BindingResult
      * @return HttpStatus
      */
-    @PutMapping("/{reviewId}")
+    @PutMapping("/auth/reviews/{reviewId}")
     public ResponseEntity<HttpStatus> updateReview(@PathVariable(name = "reviewId") Long reviewId,
         @RequestParam(value = "memberId") Long memberId,
         @RequestPart(value = "images", required = false) List<MultipartFile> reviewImages,
