@@ -3,9 +3,9 @@ package com.nhnacademy.inkbridge.backend.facade;
 import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.PaymentFailedException;
-import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
@@ -33,7 +33,6 @@ public class PayFacade {
     private final BookOrderDetailService bookOrderDetailService;
     private final CouponService couponService;
     private final MemberPointService memberPointService;
-    private final AccumulationRatePolicyService accumulationRatePolicyService;
 
     /**
      * 결제 정보를 저장하고 결제를 진행합니다.
@@ -55,11 +54,7 @@ public class PayFacade {
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
 
             memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                orderedResponseDto.getUsePoint() * -1);
-
-            Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100);
+                orderedResponseDto.getUsePoint() * -1, PointHistoryReason.PURCHASE_GOODS);
 
             List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
                 requestDto.getOrderCode());
@@ -82,11 +77,11 @@ public class PayFacade {
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
 
             memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                orderedResponseDto.getUsePoint());
+                orderedResponseDto.getUsePoint(), PointHistoryReason.PAYMENT_CANCELLATION);
 
-            Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100 * -1);
+            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
+                requestDto.getOrderCode());
+            couponService.cancelCouponUsage(orderedResponseDto.getMemberId(), usedCouponIdList);
         }
     }
 }

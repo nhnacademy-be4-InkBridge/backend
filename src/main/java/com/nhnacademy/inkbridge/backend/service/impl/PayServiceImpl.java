@@ -2,11 +2,9 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookStockResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
-import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
 import com.nhnacademy.inkbridge.backend.entity.Pay;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.PayMessageEnum;
@@ -50,7 +48,7 @@ public class PayServiceImpl implements PayService {
         List<BookStockUpdateRequestDto> bookStock = bookOrderDetailRepository.findBookStockByOrderCode(
             requestDto.getOrderCode());
 
-        if (bookService.validateStock(bookStock)) {
+        if (Boolean.TRUE.equals(bookService.validateStock(bookStock))) {
             bookService.updateStock(bookStock);
         }
 
