@@ -68,6 +68,9 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<PointHistoryReadResponseDto> getPointHistory(Long userId) {
         Member member = memberRepository.findById(userId)
