@@ -64,7 +64,7 @@ public class ReviewController {
      * 도서 번호로 리뷰를 조회하는 api입니다.
      *
      * @param bookId Long
-     * @param pageable Long
+     * @param pageable Pageable
      * @return ReviewReadResponseDto
      */
     @GetMapping("/reviews/books/{bookId}")
