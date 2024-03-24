@@ -711,6 +711,7 @@ class CouponServiceImplTest {
         Long memberId = 1L;
         List<Long> memberCouponIds = Arrays.asList(1L, 2L, 3L);
         when(memberCoupon.getUsedAt()).thenReturn(null);
+        lenient().when(memberCoupon.getUsedAt()).thenReturn(LocalDate.now());
 
         when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
             memberId))
@@ -732,6 +733,7 @@ class CouponServiceImplTest {
         when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
             memberId))
             .thenReturn(memberCoupons);
+        lenient().when(memberCoupon.getUsedAt()).thenReturn(LocalDate.now());
         // useCoupons() 메서드를 호출합니다.
         assertThrows(NotFoundException.class, () -> {
             couponService.cancelCouponUsage(memberId, memberCouponIds);
@@ -748,7 +750,7 @@ class CouponServiceImplTest {
             memberCoupon);
         Long memberId = 1L;
         List<Long> memberCouponIds = Arrays.asList(1L, 2L, 3L);
-        when(memberCoupon.getUsedAt()).thenReturn(LocalDate.now());
+        lenient().when(memberCoupon.getUsedAt()).thenReturn(null);
 
         when(memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(memberCouponIds,
             memberId))
@@ -773,5 +775,23 @@ class CouponServiceImplTest {
 
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
         verify(couponRepository, times(1)).save(any(Coupon.class));
+    }
+
+    @Test
+    void testCreateBirthdayCoupon_AlreadyExistException() {
+        CouponType couponType = mock(CouponType.class);
+        CouponStatus couponStatus = mock(CouponStatus.class);
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto = mock(
+            BirthDayCouponCreateRequestDto.class);
+        when(birthDayCouponCreateRequestDto.getMonth()).thenReturn(4);
+        // 변경된 스텁 설정
+        when(couponRepository.existsByBasicIssuedDateAndIsBirthTrue(
+            LocalDate.of(2024, 4, 1))).thenReturn(true);
+
+        assertThrows(AlreadyExistException.class, () -> {
+            couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
+        });
+        verify(couponRepository, times(1)).existsByBasicIssuedDateAndIsBirthTrue(
+            LocalDate.of(2024, 4, 1));
     }
 }
