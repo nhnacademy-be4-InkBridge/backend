@@ -146,7 +146,7 @@ class BookServiceImplTest {
         List<BookOrderReadResponseDto> cartBooks = bookService.getCartBooks(Set.of(1L));
 
         assertEquals(1, cartBooks.size());
-        verify(bookRepository, times(1)).findByBookIdIn(anyList());
+        verify(bookRepository, times(1)).findByBookIdIn(anySet());
     }
 
     @Test
