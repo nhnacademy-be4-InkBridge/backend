@@ -4,6 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
 import com.nhnacademy.inkbridge.backend.entity.CouponStatus;
 import com.nhnacademy.inkbridge.backend.repository.custom.CouponCustomRepository;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,4 +53,12 @@ public interface CouponRepository extends JpaRepository<Coupon, String>, CouponC
      * @return 쿠폰에대한 상세정보
      */
     Optional<Coupon> findByCouponIdAndIsBirthFalse(String couponId);
+
+    /**
+     * 이미 존재하는 생일 쿠폰인지 확인하는 메소드.
+     *
+     * @param issuedDate 원하는 월
+     * @return 생일쿠폰 존재여부
+     */
+    boolean existsByBasicIssuedDateAndIsBirthTrue(LocalDate issuedDate);
 }

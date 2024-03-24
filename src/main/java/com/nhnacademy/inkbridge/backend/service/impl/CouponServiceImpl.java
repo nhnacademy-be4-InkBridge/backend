@@ -2,7 +2,9 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_NOT_USED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUED_EXIST;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ISSUE_PERIOD_EXPIRED;
@@ -240,6 +242,18 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
+     * Member가 사용안했는 쿠폰인지 확인하는 메소드.
+     *
+     * @param memberCoupon 멤버의 쿠폰
+     * @throws AlreadyUsedException 사용안한 쿠폰이라면 예외 발생
+     */
+    private void validateCouponNotUsed(MemberCoupon memberCoupon) {
+        if (memberCoupon.getUsedAt() == null) {
+            throw new AlreadyUsedException(COUPON_ALREADY_NOT_USED.getMessage());
+        }
+    }
+
+    /**
      * 발급 가능한 날짜 인지 체크 하는 메소드.
      *
      * @param startDate 발급 시작 날짜
@@ -439,7 +453,7 @@ public class CouponServiceImpl implements CouponService {
             throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
         }
         useCoupons.forEach(coupon -> {
-            validateCouponUsed(coupon);
+            validateCouponNotUsed(coupon);
             coupon.cancel();
         });
     }
@@ -453,6 +467,9 @@ public class CouponServiceImpl implements CouponService {
         BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto) {
         LocalDate basicIssuedDate = LocalDate.of(LocalDate.now().getYear(),
             birthDayCouponCreateRequestDto.getMonth(), 1);
+        if (couponRepository.existsByBasicIssuedDateAndIsBirthTrue(basicIssuedDate)) {
+            throw new AlreadyExistException(COUPON_DUPLICATED.getMessage());
+        }
         Integer dayCount = LocalDate.now().withMonth(birthDayCouponCreateRequestDto.getMonth())
             .lengthOfMonth();
         LocalDate basicExpiredDate = LocalDate.of(LocalDate.now().getYear(),
