@@ -12,9 +12,26 @@ import org.springframework.data.domain.Pageable;
  */
 public interface BookSearchService {
 
+    /**
+     * 키워드에 해당하는 책을 조회하는 메소드
+     * @param text 키워드
+     * @param pageable 페이징 처리
+     * @return 페이지 객체
+     */
     Page<Search> searchByText(String text, Pageable pageable);
 
+    /**
+     * 필드명에 해당하는 책을 조회하는 메소드
+     * @param pageable 페이징 처리
+     * @return 페이지 객체
+     */
     Page<Search> searchByAll(Pageable pageable);
 
+    /**
+     * 카테고리명에 해당하는 책을 조회하는 메소드
+     * @param category 카테고리명
+     * @param pageable 페이징 처리
+     * @return 페이지 객체
+     */
     Page<Search> searchByCategory(String category,Pageable pageable);
 }

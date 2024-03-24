@@ -34,6 +34,9 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
 
     private final ElasticsearchOperations elasticsearchOperations;
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public Page<Search> searchByText(String text, Pageable pageable) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
@@ -62,6 +65,9 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
         return new PageImpl<>(books, pageable, searchHits.getTotalHits());
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public Page<Search> searchByAll(Pageable pageable) {
         Query searchQuery = new NativeSearchQueryBuilder()
@@ -74,6 +80,9 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
         return new PageImpl<>(books, pageable, searchHits.getTotalHits());
     }
 
+    /**
+     *{@inheritDoc}
+     */
     @Override
     public Page<Search> searchByCategory(String category, Pageable pageable) {
         QueryBuilder queryBuilder = QueryBuilders.nestedQuery("categories",

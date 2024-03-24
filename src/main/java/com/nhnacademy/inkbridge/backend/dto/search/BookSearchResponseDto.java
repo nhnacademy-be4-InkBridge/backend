@@ -37,6 +37,12 @@ public class BookSearchResponseDto {
     private List<TagBySearch> tags;
     private List<CategoryBySearch> categories;
 
+
+    /**
+     * search인덱스를 dto로 변환하는 메소드
+     * @param search 인덱스
+     * @return dto
+     */
     public static BookSearchResponseDto toBookSearchResponseDto(Search search){
         return BookSearchResponseDto.builder()
             .id(search.getId())

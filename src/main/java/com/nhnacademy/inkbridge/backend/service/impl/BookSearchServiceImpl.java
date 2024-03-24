@@ -21,16 +21,25 @@ public class BookSearchServiceImpl implements BookSearchService {
 
     private final BookSearchRepository bookSearchRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<Search> searchByText(String text, Pageable pageable) {
         return bookSearchRepository.searchByText(text,pageable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<Search> searchByAll(Pageable pageable) {
         return bookSearchRepository.searchByAll(pageable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<Search> searchByCategory(String category, Pageable pageable) {
         return bookSearchRepository.searchByCategory(category, pageable);

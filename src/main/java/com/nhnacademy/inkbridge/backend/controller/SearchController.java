@@ -28,6 +28,12 @@ public class SearchController {
 
     private final BookSearchService bookSearchService;
 
+    /**
+     * 키워드로 검색 하는 메소드
+     * @param text 키워드
+     * @param pageable 페이징 처리
+     * @return 페이징 처리된 bookDto
+     */
     @GetMapping("/search")
     public ResponseEntity<Page<BookSearchResponseDto>> searchByText(@RequestParam String text,
         Pageable pageable) {
@@ -38,6 +44,11 @@ public class SearchController {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
+    /**
+     * 필드명에 해당하는 도서들 조회하는 메소드
+     * @param pageable 페이징 처리
+     * @return 페이징 처리된 bookDto
+     */
     @GetMapping("/books/filter")
     public ResponseEntity<Page<BookSearchResponseDto>> searchByAll(Pageable pageable) {
         Page<Search> searchPage = bookSearchService.searchByAll(pageable);
@@ -46,6 +57,12 @@ public class SearchController {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
+    /**
+     * 카테고리명에 해당하는 도서들 조회하는 메소드
+     * @param category 카테고리명
+     * @param pageable 페이징 처리
+     * @return 페이징 처리된 bookDto
+     */
     @GetMapping("/categories/{category}/books")
     public ResponseEntity<Page<BookSearchResponseDto>> readByCategory(@PathVariable String category, Pageable pageable){
         Page<Search> searchPage = bookSearchService.searchByCategory(category,pageable);
