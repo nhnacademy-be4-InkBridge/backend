@@ -99,7 +99,7 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.fileUrl", equalTo("url")))
             .andDo(document("author/author-get",
                 preprocessResponse(prettyPrint()),
-                relaxedResponseFields(
+                responseFields(
                     fieldWithPath("authorId").description("작가 번호"),
                     fieldWithPath("authorName").description("작가 이름"),
                     fieldWithPath("authorIntroduce").description("작가 설명"),
@@ -123,7 +123,7 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.[0].fileUrl", equalTo("url")))
             .andDo(document("author/author-get-byName",
                 preprocessResponse(prettyPrint()),
-                relaxedResponseFields(
+                responseFields(
                     fieldWithPath("[].authorId").description("작가 번호"),
                     fieldWithPath("[].authorName").description("작가 이름"),
                     fieldWithPath("[].authorIntroduce").description("작가 설명"),

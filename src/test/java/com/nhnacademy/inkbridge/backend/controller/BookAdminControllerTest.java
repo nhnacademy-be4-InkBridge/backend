@@ -154,6 +154,8 @@ class BookAdminControllerTest {
                     fieldWithPath(
                         "booksAdminPaginationReadResponseDtos.content[].statusName").description(
                         "도서 상태 이름"),
+                    fieldWithPath("authorPaginationReadResponseDtos[].authorName[]").description(
+                        "작가 이름"),
                     fieldWithPath("booksAdminPaginationReadResponseDtos.totalPages").description(
                         "총 페이지"),
                     fieldWithPath("booksAdminPaginationReadResponseDtos.totalElements").description(
@@ -369,20 +371,6 @@ class BookAdminControllerTest {
                     partWithName("book").description("도서 정보"),
                     partWithName("image").description("이미지 url")
                 )
-//                requestFields(
-//                    fieldWithPath("bookTitle").description("도서 제목"),
-//                    fieldWithPath("bookIndex").description("도서 설명"),
-//                    fieldWithPath("publicatedAt").description("등록일"),
-//                    fieldWithPath("isbn").description("isbn"),
-//                    fieldWithPath("discountRatio").description("할인율"),
-//                    fieldWithPath("stock").description("재고"),
-//                    fieldWithPath("isPackagable").description("포장 가능 여부"),
-//                    fieldWithPath("publisherId").description("출판사 번호"),
-//                    fieldWithPath("categories").description("카테고리 목록"),
-//                    fieldWithPath("tags").description("태그 목록"),
-//                    fieldWithPath("authorIdList").description("작가 번호 목록"),
-//                    fieldWithPath("fieldIdList").description("파일 번호 목록")
-//                )
             ));
     }
 
@@ -402,7 +390,6 @@ class BookAdminControllerTest {
         doNothing().when(bookService)
             .createBook(mock(File.class), bookAdminCreateRequestDto);
 
-        // Perform the request
         mockMvc.perform(multipart("/api/admin/books")
                 .file(thumbnail)
                 .file(book)
