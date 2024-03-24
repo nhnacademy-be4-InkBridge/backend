@@ -68,6 +68,14 @@ public class Review {
         this.score = score;
     }
 
+    /**
+     * 리뷰를 수정합니다.
+     *
+     * @param reviewTitle review title
+     * @param reviewContent review content
+     * @param registeredAt review registeredAt
+     * @param score review score
+     */
     public void updateReview(String reviewTitle, String reviewContent, LocalDateTime registeredAt,
         Integer score) {
         this.reviewTitle = reviewTitle;

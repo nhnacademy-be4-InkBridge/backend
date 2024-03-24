@@ -90,6 +90,14 @@ public interface BookService {
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto);
 
     /**
+     * 저장된 재고와 param 값을 비교하는 메서드입니다. 재고가 부족하면 ConflictException을 던집니다.
+     *
+     * @param bookStockUpdateRequestDtos BookStockUpdateRequestDto List
+     * @return Boolean
+     */
+    Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
+
+    /**
      * 재고를 수정하는 메서드입니다.
      */
     void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
