@@ -25,7 +25,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Document(indexName="#{elasticsearch.index-name}")
-@Document(indexName = "inkbridge_book_dev")
+//@Document(indexName = "inkbridge_book_dev")
+@Document(indexName = "inkbridge_book_prod")
 @Builder
 @AllArgsConstructor
 public class Search {
