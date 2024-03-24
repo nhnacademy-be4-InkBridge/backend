@@ -109,9 +109,10 @@ public class Book {
         this.thumbnailFile = thumbnailFile;
     }
 
-    public void updateBook(String bookTitle, String bookIndex, String description, LocalDate publicatedAt,
-        String isbn, Long regularPrice, Long price, BigDecimal discountRatio, Integer stock,
-        Boolean isPackagable, BookStatus bookStatus, Publisher publisher, File thumbnailFile) {
+    public void updateBook(String bookTitle, String bookIndex, String description,
+        LocalDate publicatedAt, String isbn, Long regularPrice, Long price,
+        BigDecimal discountRatio, Integer stock, Boolean isPackagable, BookStatus bookStatus,
+        Publisher publisher, File thumbnailFile) {
         this.bookTitle = bookTitle;
         this.bookIndex = bookIndex;
         this.description = description;
