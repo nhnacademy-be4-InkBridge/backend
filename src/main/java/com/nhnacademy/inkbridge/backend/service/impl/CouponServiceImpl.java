@@ -188,9 +188,10 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
-
+        System.out.println("test1");
         Book book = bookRepository.findById(bookCouponCreateRequestDto.getBookId())
             .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND.getMessage()));
+        System.out.println(book.getBookTitle());
         saveBookCoupon(book, newCoupon);
     }
 
@@ -262,7 +263,7 @@ public class CouponServiceImpl implements CouponService {
      */
     private void validateCouponPeriod(LocalDate startDate, LocalDate endDate) {
         LocalDate now = LocalDate.now();
-        if (startDate.isBefore(now)) {
+        if (now.isBefore(startDate)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_NOT_STARTED.getMessage());
         } else if (endDate.isBefore(now)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_EXPIRED.getMessage());

@@ -409,7 +409,7 @@ class CouponServiceImplTest {
         Member member = mock(Member.class);
         MemberCoupon issueCouponDto = mock(MemberCoupon.class);
 
-        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(1);
 
         LocalDate endDate = LocalDate.now().plusDays(30);
 
@@ -440,7 +440,7 @@ class CouponServiceImplTest {
         Member member = mock(Member.class);
         MemberCoupon issueCouponDto = mock(MemberCoupon.class);
 
-        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDate startDate = LocalDate.now().plusDays(30);
 
         LocalDate endDate = LocalDate.now().plusDays(30);
 

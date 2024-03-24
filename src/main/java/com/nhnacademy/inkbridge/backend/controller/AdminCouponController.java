@@ -120,7 +120,7 @@ public class AdminCouponController {
      * @return 생성되었습니다
      * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
      */
-    @PostMapping("/birthday-coupon")
+    @PostMapping("/birthday-coupons")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity createBirthdayCoupon(
         @Valid @RequestBody BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto,
