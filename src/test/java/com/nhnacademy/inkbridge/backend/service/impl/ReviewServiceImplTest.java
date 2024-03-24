@@ -96,7 +96,8 @@ class ReviewServiceImplTest {
         when(memberRepository.existsById(anyLong())).thenReturn(true);
         when(reviewRepository.findByMemberId(any(Pageable.class), anyLong())).thenReturn(
             new PageImpl<>(List.of(
-                ReviewDetailByMemberReadResponseDto.builder().reviewId(1L).build())));
+                ReviewDetailByMemberReadResponseDto.builder().reviewId(1L)
+                    .registeredAt(LocalDateTime.now()).build())));
         when(fileRepository.getAllFileByReviewId(anyList())).thenReturn(new HashMap<>());
         when(reviewRepository.countByMember_MemberId(anyLong())).thenReturn(1L);
 
