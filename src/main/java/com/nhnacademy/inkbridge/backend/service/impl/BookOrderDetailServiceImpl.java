@@ -185,4 +185,24 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
     }
 
+    @Override
+    public void changeOrderStatusByOrderCode(String orderCode, OrderStatusEnum status) {
+        List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findOrderDetailByOrderCode(
+            orderCode);
+
+        BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(
+            status.getOrderStatusId()).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
+
+        bookOrderDetailList.forEach(bookOrder -> {
+            if (bookOrder.getBookOrderStatus() == bookOrderStatus) {
+                throw new AlreadyProcessedException(
+                    OrderMessageEnum.ALREADY_PROCESSED.getMessage());
+            }
+
+            bookOrder.updateStatus(bookOrderStatus);
+        });
+
+    }
+
 }

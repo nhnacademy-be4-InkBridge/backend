@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
@@ -8,12 +9,16 @@ import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
+import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
+import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.service.PayService;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +39,8 @@ public class OrderFacade {
     private final BookOrderService bookOrderService;
     private final BookOrderDetailService bookOrderDetailService;
     private final PayService payService;
+    private final MemberPointService memberPointService;
+    private final AccumulationRatePolicyService accumulationRatePolicyService;
 
 
     /**
@@ -126,7 +133,7 @@ public class OrderFacade {
 
 
     /**
-     * 주문 상세 내역의 주문 상태를 변경하는 메소드입니다. <br/> 주문 상태를 배송중으로 변경할 경우 출고일을 설정합니다.
+     * 주문 상세 내역의 주문 상태를 변경하는 메소드입니다. <br/> 주문 상태를 배송중으로 변경할 경우 출고일을 설정하고 회원인 경우 포인트를 적립합니다.
      *
      * @param orderId         주문 번호
      * @param orderStatusEnum 주문 상태
@@ -136,6 +143,18 @@ public class OrderFacade {
 
         if (orderStatusEnum == OrderStatusEnum.SHIPPING) {
             bookOrderService.updateOrderShipDate(orderId);
+
+            OrderedMemberReadResponseDto orderedResponseDto =
+                bookOrderService.getOrderedPersonByOrderId(orderId);
+
+            if (Objects.nonNull(orderedResponseDto.getMemberId())) {
+
+                Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
+
+                memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
+                    Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100,
+                    PointHistoryReason.PURCHASE_GOODS);
+            }
         }
     }
 

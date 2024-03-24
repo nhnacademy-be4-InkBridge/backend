@@ -126,6 +126,9 @@
             <configuration>
               <backend>html</backend>
               <doctype>book</doctype>
+              <sourceDocumentName>index.adoc</sourceDocumentName>
+              <sourceDirectory>${project.basedir}/src/docs/asciidoc</sourceDirectory>
+              <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
               <attributes>
                 <snippets>${project.build.directory}/generated-snippets</snippets>
               </attributes>

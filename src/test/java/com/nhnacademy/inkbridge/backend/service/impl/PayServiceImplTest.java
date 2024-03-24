@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -11,8 +12,10 @@ import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.Pay;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookOrderDetailRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
 import com.nhnacademy.inkbridge.backend.repository.PayRepository;
+import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +45,11 @@ class PayServiceImplTest {
     @Mock
     BookOrderRepository bookOrderRepository;
 
+    @Mock
+    BookService bookService;
+
+    @Mock
+    BookOrderDetailRepository bookOrderDetailRepository;
 
     @Test
     @DisplayName("결제 저장 - 주문 정보가 없을 때")

@@ -7,7 +7,9 @@ package com.nhnacademy.inkbridge.backend.entity.enums;
  * @version 3/19/24
  */
 public enum PointHistoryReason {
-    REGISTER_MSG("회원가입 축하금 지급");
+    REGISTER_MSG("회원가입 축하금 지급"),
+    PURCHASE_GOODS("상품 구매"),
+    PAYMENT_CANCELLATION("결제 취소");
 
     private final String message;
 

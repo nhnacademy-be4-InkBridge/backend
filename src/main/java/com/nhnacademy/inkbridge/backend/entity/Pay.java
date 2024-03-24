@@ -81,4 +81,18 @@ public class Pay {
         this.provider = provider;
         this.order = order;
     }
+
+    /**
+     * 결제 상태, 결제 금액, 취소 가능 금액을 변경합니다.
+     * @param status
+     * @param totalAmount
+     * @param balanceAmount
+     * @param isPartialCancelable
+     */
+    public void updatePay(String status, Long totalAmount, Long balanceAmount, Boolean isPartialCancelable) {
+        this.status = status;
+        this.totalAmount = totalAmount;
+        this.balanceAmount = balanceAmount;
+        this.isPartialCancelable = isPartialCancelable;
+    }
 }

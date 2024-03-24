@@ -279,6 +279,7 @@ public class BookServiceImpl implements BookService {
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
     }
 
+
     /**
      * {@inheritDoc}
      */

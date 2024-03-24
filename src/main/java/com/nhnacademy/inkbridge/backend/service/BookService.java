@@ -101,4 +101,6 @@ public interface BookService {
      * 재고를 수정하는 메서드입니다.
      */
     void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
+
+    Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
 }

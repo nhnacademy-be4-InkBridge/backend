@@ -1,15 +1,20 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.Pay;
 import com.nhnacademy.inkbridge.backend.enums.OrderMessageEnum;
 import com.nhnacademy.inkbridge.backend.enums.PayMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
+import com.nhnacademy.inkbridge.backend.repository.BookOrderDetailRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookOrderRepository;
 import com.nhnacademy.inkbridge.backend.repository.PayRepository;
+import com.nhnacademy.inkbridge.backend.service.BookService;
 import com.nhnacademy.inkbridge.backend.service.PayService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,6 +33,8 @@ public class PayServiceImpl implements PayService {
 
     private final PayRepository payRepository;
     private final BookOrderRepository bookOrderRepository;
+    private final BookService bookService;
+    private final BookOrderDetailRepository bookOrderDetailRepository;
 
     /**
      * {@inheritDoc}
@@ -37,6 +44,14 @@ public class PayServiceImpl implements PayService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long createPay(PayCreateRequestDto requestDto) {
+
+        List<BookStockUpdateRequestDto> bookStock = bookOrderDetailRepository.findBookStockByOrderCode(
+            requestDto.getOrderCode());
+
+        if (Boolean.TRUE.equals(bookService.validateStock(bookStock))) {
+            bookService.updateStock(bookStock);
+        }
+
         BookOrder bookOrder = bookOrderRepository.findByOrderCode(requestDto.getOrderCode())
             .orElseThrow(
                 () -> new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
@@ -100,11 +115,15 @@ public class PayServiceImpl implements PayService {
     /**
      * {@inheritDoc}
      *
-     * @param payId        결제 번호
-     * @param cancelAmount 취소 금액
+     * @param requestDto 요청 정보
      */
     @Override
-    public void cancelPay(Long payId, Long cancelAmount) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void cancelPay(PayCancelRequestDto requestDto) {
+        Pay pay = payRepository.findByOrderCode(requestDto.getOrderCode())
+            .orElseThrow(() -> new NotFoundException(PayMessageEnum.PAY_NOT_FOUND.getMessage()));
 
+        pay.updatePay(requestDto.getStatus(), requestDto.getTotalAmount(),
+            requestDto.getBalanceAmount(), requestDto.getIsPartialCancelable());
     }
 }

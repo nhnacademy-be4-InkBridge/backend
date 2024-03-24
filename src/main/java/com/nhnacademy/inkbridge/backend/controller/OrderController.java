@@ -74,7 +74,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderCode}/books")
-    public ResponseEntity<List<OrderBooksIdResponseDto>> getOrderBooksIdList(@PathVariable("orderCode") String orderCode) {
+    public ResponseEntity<List<OrderBooksIdResponseDto>> getOrderBooksIdList(
+        @PathVariable("orderCode") String orderCode) {
         List<OrderBooksIdResponseDto> orderBookIdList = orderFacade.getOrderBookIdList(orderCode);
         log.debug("order books id list -> {}", orderBookIdList);
         return ResponseEntity.status(HttpStatus.OK).body(orderBookIdList);
