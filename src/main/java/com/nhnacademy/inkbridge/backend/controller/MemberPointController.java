@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.controller.header.HeaderConstants;
 import com.nhnacademy.inkbridge.backend.dto.member.MemberPointReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class MemberPointController {
 
     @GetMapping
     ResponseEntity<MemberPointReadResponseDto> getPoint(
-        @RequestHeader("Authorization-Id") Long userId) {
+        @RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId) {
         return ResponseEntity.ok(MemberPointReadResponseDto.builder().point(
             memberPointService.getMemberPoint(userId)).build());
     }

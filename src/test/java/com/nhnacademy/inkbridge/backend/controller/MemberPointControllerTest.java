@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.nhnacademy.inkbridge.backend.controller.header.HeaderConstants;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ class MemberPointControllerTest {
 
         mvc.perform(get("/api/mypage/points")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization-Id", 1L))
+                .header(HeaderConstants.MEMBER_ID_HEADER, 1L))
             .andExpect(status().isOk())
             .andExpect(jsonPath("point", equalTo(100)))
             .andDo(document("docs"));
