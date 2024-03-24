@@ -1,16 +1,13 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
-import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.exception.ValidationException;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.facade.PayFacade;
-import java.util.Objects;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

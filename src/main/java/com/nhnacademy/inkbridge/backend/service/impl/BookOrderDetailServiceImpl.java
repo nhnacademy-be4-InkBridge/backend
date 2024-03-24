@@ -22,7 +22,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

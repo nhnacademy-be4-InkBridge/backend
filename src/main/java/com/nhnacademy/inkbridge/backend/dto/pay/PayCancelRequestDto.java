@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto;
+package com.nhnacademy.inkbridge.backend.dto.pay;
 
 import lombok.Getter;
 

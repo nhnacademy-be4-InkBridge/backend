@@ -1,10 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
-import java.util.List;
 
 /**
  * class: PayService.

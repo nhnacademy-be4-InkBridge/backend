@@ -13,7 +13,7 @@ import com.nhnacademy.inkbridge.backend.entity.QFile;
 import com.nhnacademy.inkbridge.backend.entity.QMemberCoupon;
 import com.nhnacademy.inkbridge.backend.entity.QWrapping;
 import com.nhnacademy.inkbridge.backend.repository.custom.BookOrderDetailRepositoryCustom;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

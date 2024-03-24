@@ -1,8 +1,8 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.PayCancelRequestDto;
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.PaymentFailedException;

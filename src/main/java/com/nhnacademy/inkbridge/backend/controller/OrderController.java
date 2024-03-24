@@ -5,7 +5,7 @@ import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;

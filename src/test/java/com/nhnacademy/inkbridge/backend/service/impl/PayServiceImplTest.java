@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.Pay;

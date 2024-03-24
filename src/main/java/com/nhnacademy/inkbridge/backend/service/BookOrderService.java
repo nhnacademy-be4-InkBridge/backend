@@ -1,8 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;

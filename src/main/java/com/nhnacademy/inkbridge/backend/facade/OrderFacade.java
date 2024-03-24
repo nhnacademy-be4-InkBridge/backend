@@ -1,6 +1,6 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
@@ -15,7 +15,7 @@ import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.service.PayService;
 import java.util.List;
 import java.util.Objects;

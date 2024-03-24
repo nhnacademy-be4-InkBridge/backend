@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;

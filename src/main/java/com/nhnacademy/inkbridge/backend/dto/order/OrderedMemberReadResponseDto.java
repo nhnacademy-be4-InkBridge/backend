@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto;
+package com.nhnacademy.inkbridge.backend.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
