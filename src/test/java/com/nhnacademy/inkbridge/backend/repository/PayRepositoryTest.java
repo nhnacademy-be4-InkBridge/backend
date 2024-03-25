@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.repository;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
@@ -14,6 +15,7 @@ import com.nhnacademy.inkbridge.backend.entity.Pay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -175,6 +177,18 @@ class PayRepositoryTest {
             () -> assertEquals(pay.getVat(), result.getVat()),
             () -> assertEquals(pay.getIsPartialCancelable(), result.getIsPartialCancelable()),
             () -> assertEquals(pay.getProvider(), result.getProvider())
+        );
+    }
+
+    @Test
+    @DisplayName("결제 정보 조회")
+    void testFindByOrderCode() {
+        Optional<Pay> result = payRepository.findByOrderCode(bookOrder.getOrderCode());
+        Pay resultPay = result.orElse(null);
+
+        assertAll(
+            () -> assertTrue(result.isPresent()),
+            () -> assertEquals(pay, resultPay)
         );
     }
 }

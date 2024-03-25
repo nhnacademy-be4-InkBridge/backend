@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
@@ -167,5 +169,43 @@ class PayServiceImplTest {
         assertEquals(response, result);
 
         verify(payRepository, times(1)).findPayByOrderCode("orderCode");
+    }
+
+    @Test
+    @DisplayName("결제 취소 - 취소할 결제 정보가 존재하지 않는 경우")
+    void testCancelPay_order_not_found() {
+        given(payRepository.findByOrderCode("orderCode")).willReturn(Optional.empty());
+        PayCancelRequestDto requestDto = new PayCancelRequestDto();
+        ReflectionTestUtils.setField(requestDto, "orderCode", "orderCode");
+
+        assertThrows(NotFoundException.class, () -> payService.cancelPay(requestDto));
+
+        verify(payRepository, times(1)).findByOrderCode("orderCode");
+    }
+
+    @Test
+    @DisplayName("결제 취소 - 성공")
+    void testCancelPay_success() {
+        Pay pay = Pay.builder().build();
+
+        given(payRepository.findByOrderCode("orderCode")).willReturn(Optional.of(pay));
+
+        PayCancelRequestDto requestDto = new PayCancelRequestDto();
+        ReflectionTestUtils.setField(requestDto, "orderCode", "orderCode");
+        ReflectionTestUtils.setField(requestDto, "status", "CANCELED");
+        ReflectionTestUtils.setField(requestDto, "totalAmount", 10000L);
+        ReflectionTestUtils.setField(requestDto, "balanceAmount", 0L);
+        ReflectionTestUtils.setField(requestDto, "isPartialCancelable", false);
+
+        payService.cancelPay(requestDto);
+
+        assertAll(
+            () -> assertEquals(requestDto.getStatus(), pay.getStatus()),
+            () -> assertEquals(requestDto.getTotalAmount(), pay.getTotalAmount()),
+            () -> assertEquals(requestDto.getBalanceAmount(), pay.getBalanceAmount()),
+            () -> assertEquals(requestDto.getIsPartialCancelable(), pay.getIsPartialCancelable())
+        );
+
+        verify(payRepository, times(1)).findByOrderCode("orderCode");
     }
 }

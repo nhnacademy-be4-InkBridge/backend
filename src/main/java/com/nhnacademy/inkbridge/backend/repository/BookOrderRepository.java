@@ -15,4 +15,6 @@ public interface BookOrderRepository extends JpaRepository<BookOrder, Long>,
     BookOrderRepositoryCustom {
 
     Optional<BookOrder> findByOrderCode(String orderCode);
+
+    boolean existsByOrderCode(String orderCode);
 }

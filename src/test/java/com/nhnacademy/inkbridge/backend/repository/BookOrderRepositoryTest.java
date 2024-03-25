@@ -8,6 +8,7 @@ import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponse
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.entity.MemberAuth;
@@ -253,5 +254,15 @@ class BookOrderRepositoryTest {
         );
     }
 
+    @Test
+    @DisplayName("회원 주문 가격 조회")
+    void testFindUsedPointByOrderId() {
+        OrderedMemberReadResponseDto result = bookOrderRepository.findUsedPointByOrderId(
+            bookOrder.getOrderId());
 
+        assertAll(
+            () -> assertEquals(member.getMemberId(), result.getMemberId()),
+            () -> assertEquals(bookOrder.getTotalPrice(), result.getTotalPrice())
+        );
+    }
 }

@@ -45,8 +45,9 @@ public class PayController {
 
     /**
      * 결제를 취소하는 메소드입니다.
-     * @param requestDto
-     * @return
+     *
+     * @param requestDto 취소 정보
+     * @return void
      */
     @PutMapping
     public ResponseEntity<Void> cancelPay(@Valid @RequestBody PayCancelRequestDto requestDto) {

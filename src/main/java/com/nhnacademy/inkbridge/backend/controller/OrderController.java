@@ -73,6 +73,12 @@ public class OrderController {
             .body(orderFacade.getOrderDetailByOrderCode(orderCode));
     }
 
+    /**
+     * 주문 코드로 주문 도서 번호 목록을 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 주문 도서 번호 목록
+     */
     @GetMapping("/{orderCode}/books")
     public ResponseEntity<List<OrderBooksIdResponseDto>> getOrderBooksIdList(
         @PathVariable("orderCode") String orderCode) {
