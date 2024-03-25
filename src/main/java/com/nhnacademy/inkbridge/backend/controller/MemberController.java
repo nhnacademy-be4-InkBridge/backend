@@ -182,7 +182,7 @@ public class MemberController {
      * @return 페이지에 맞는 주문 목록
      */
     @Auth
-    @GetMapping("/members/{memberId}/orders")
+    @GetMapping("/auth/members/{memberId}/orders")
     public ResponseEntity<Page<OrderReadResponseDto>> getOrder(@PathVariable Long memberId,
         @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(orderFacade.getOrderListByMemberId(memberId, pageable));
@@ -194,7 +194,7 @@ public class MemberController {
      * @return 주문 상세 내역
      */
     @Auth
-    @GetMapping("/members/{memberId}/orders/{orderCode}")
+    @GetMapping("/auth/members/{memberId}/orders/{orderCode}")
     public ResponseEntity<BookOrderDetailResponseDto> getOrder(
         @PathVariable("memberId") Long memberId, @PathVariable("orderCode") String orderCode) {
         return ResponseEntity.ok(orderFacade.getOrderDetailByOrderCode(orderCode));
