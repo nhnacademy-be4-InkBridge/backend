@@ -1,0 +1,17 @@
+=== 쿠폰
+
+==== 요청
+
+===== HTTP 요청
+
+include::{snippets}/coupons/http-request.adoc[]
+
+==== 응답
+
+===== 응답 필드
+
+include::{snippets}/coupons/response-fields.adoc[]
+
+===== HTTP 응답
+
+include::{snippets}/coupons/http-response.adoc[]
