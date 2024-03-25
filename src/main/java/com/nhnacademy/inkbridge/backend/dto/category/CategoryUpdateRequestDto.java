@@ -1,11 +1,9 @@
 package com.nhnacademy.inkbridge.backend.dto.category;
 
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * class: CategoryUpdateRequestDto.
@@ -18,6 +16,7 @@ import lombok.Setter;
 @Getter
 @EqualsAndHashCode
 public class CategoryUpdateRequestDto {
-    @Size(min=1,max=10)
+
+    @Size(min = 1, max = 10)
     private String categoryName;
 }
