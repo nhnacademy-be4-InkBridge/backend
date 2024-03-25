@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.book;
 
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
@@ -22,8 +23,6 @@ public class BookAdminDetailReadResponseDto {
     List<AuthorReadResponseDto> authorReadResponseDtoList;
     List<BookStatusReadResponseDto> bookStatusReadResponseDtoList;
     List<TagReadResponseDto> tagReadResponseDtoList;
-
-    // builder
 
     @Builder
     public BookAdminDetailReadResponseDto(

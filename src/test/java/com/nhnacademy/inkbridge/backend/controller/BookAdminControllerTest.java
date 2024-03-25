@@ -23,12 +23,14 @@
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
+//import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
+//import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+//import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 //import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
@@ -104,40 +106,42 @@
 //
 //    @Test
 //    void whenAdminReadBooks_thenReturnDtoList() throws Exception {
+//        BooksAdminPaginationReadResponseDto booksAdminPaginationReadResponseDto = BooksAdminPaginationReadResponseDto.builder()
+//            .bookId(1L).bookTitle("title").publisherName("publisher").statusName("status").build();
+//        Page<BooksAdminPaginationReadResponseDto> page = new PageImpl<>(
+//            List.of(booksAdminPaginationReadResponseDto));
+//        AuthorPaginationReadResponseDto authorPaginationReadResponseDto = AuthorPaginationReadResponseDto.builder()
+//            .authorName(List.of("authorName")).build();
 //        BooksAdminReadResponseDto booksAdminReadResponseDto = BooksAdminReadResponseDto.builder()
-//            .bookId(1L)
-//            .bookTitle("title")
-//            .authorName(List.of("author"))
-//            .publisherName("publisher")
-//            .statusName("status")
-//            .build();
-//        Page<BooksAdminReadResponseDto> page = new PageImpl<>(List.of(booksAdminReadResponseDto));
-//        when(bookService.readBooksByAdmin(any(Pageable.class))).thenReturn(page);
+//            .booksAdminPaginationReadResponseDtos(page)
+//            .authorPaginationReadResponseDtos(List.of(authorPaginationReadResponseDto)).build();
+//
+//        when(bookService.readBooksByAdmin(any(Pageable.class))).thenReturn(
+//            booksAdminReadResponseDto);
 //
 //        mockMvc.perform(get("/api/admin/books")
 //                .contentType(MediaType.APPLICATION_JSON))
 //            .andExpect(status().isOk())
 //            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(jsonPath("$.content.[0].bookId", equalTo(1)))
-//            .andExpect(jsonPath("$.content.[0].bookTitle", equalTo("title")))
-//            .andExpect(jsonPath("$.content.[0].authorName[0]", equalTo("author")))
-//            .andExpect(jsonPath("$.content.[0].publisherName", equalTo("publisher")))
-//            .andExpect(jsonPath("$.content.[0].statusName", equalTo("status")))
+//            .andExpect(jsonPath("$.booksAdminPaginationReadResponseDtos.content.[0].bookId", equalTo(1)))
+//            .andExpect(jsonPath("$.booksAdminPaginationReadResponseDtos.content.[0].bookTitle", equalTo("title")))
+//            .andExpect(jsonPath("$.booksAdminPaginationReadResponseDtos.content.[0].publisherName", equalTo("publisher")))
+//            .andExpect(jsonPath("$.booksAdminPaginationReadResponseDtos.content.[0].statusName", equalTo("status")))
+//            .andExpect(jsonPath("$.authorPaginationReadResponseDtos[0].authorName[0]", equalTo("authorName")))
 //            .andDo(document("book/get-books",
 //                preprocessRequest(prettyPrint()),
 //                preprocessResponse(prettyPrint()),
 //                relaxedResponseFields(
-//                    fieldWithPath("content[].bookId").description("도서 번호"),
-//                    fieldWithPath("content[].bookTitle").description("도서 이름"),
-//                    fieldWithPath("content[].authorName").description("저자 이름"),
-//                    fieldWithPath("content[].publisherName").description("출판사 이름"),
-//                    fieldWithPath("content[].statusName").description("도서 상태 이름"),
-//                    fieldWithPath("totalPages").description("총 페이지"),
-//                    fieldWithPath("totalElements").description("총 개수"),
-//                    fieldWithPath("size").description("화면에 출력할 개수"),
-//                    fieldWithPath("number").description("현재 페이지"),
-//                    fieldWithPath("numberOfElements").description("현재 페이지 개수")
-//                )));
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.content[].bookId").description("도서 번호"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.content[].bookTitle").description("도서 이름"),
+//                    fieldWithPath("authorPaginationReadResponseDtos[].authorName[]").description("저자 이름"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.content[].publisherName").description("출판사 이름"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.content[].statusName").description("도서 상태 이름"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.totalPages").description("총 페이지"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.totalElements").description("총 개수"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.size").description("화면에 출력할 개수"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.number").description("현재 페이지"),
+//                    fieldWithPath("booksAdminPaginationReadResponseDtos.numberOfElements").description("현재 페이지 개수"))));
 //    }
 //
 //    @Test

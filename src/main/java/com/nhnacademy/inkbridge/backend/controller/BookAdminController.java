@@ -5,8 +5,11 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
+import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.BookService;
+import com.nhnacademy.inkbridge.backend.service.FileService;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -36,9 +39,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class BookAdminController {
 
     private final BookService bookService;
+    private final FileService fileService;
 
-    public BookAdminController(BookService bookService) {
+    public BookAdminController(BookService bookService, FileService fileService) {
         this.bookService = bookService;
+        this.fileService = fileService;
     }
 
     /**
@@ -95,7 +100,8 @@ public class BookAdminController {
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.createBook(thumbnail, bookAdminCreateRequestDto);
+        File file = fileService.saveThumbnail(thumbnail);
+        bookService.createBook(file, bookAdminCreateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -117,7 +123,9 @@ public class BookAdminController {
             log.info("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
-        bookService.updateBookByAdmin(bookId, thumbnail, bookAdminUpdateRequestDto);
+        File file = Objects.isNull(thumbnail) ? null : fileService.saveThumbnail(thumbnail);
+
+        bookService.updateBookByAdmin(bookId, file, bookAdminUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

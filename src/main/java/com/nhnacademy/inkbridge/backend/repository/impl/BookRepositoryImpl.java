@@ -10,8 +10,8 @@ import static com.querydsl.core.group.GroupBy.map;
 import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -120,7 +120,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
      * {@inheritDoc}
      */
     @Override
-    public Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId) {
+    public Optional<BookDetailReadResponseDto> findByBookId(Long bookId, Long memberId) {
         QBook book = QBook.book;
         QPublisher publisher = QPublisher.publisher;
         QBookStatus bookStatus = QBookStatus.bookStatus;
@@ -135,7 +135,7 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
         QBookTag bookTag = QBookTag.bookTag;
         QWish wish = QWish.wish;
 
-        List<BookReadResponseDto> result = from(book)
+        List<BookDetailReadResponseDto> result = from(book)
             .innerJoin(publisher).on(publisher.publisherId.eq(book.publisher.publisherId))
             .innerJoin(bookStatus).on(bookStatus.statusId.eq(book.bookStatus.statusId))
             .innerJoin(bookAuthor).on(bookAuthor.book.bookId.eq(book.bookId))
@@ -151,25 +151,29 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
             .where(bookStatus.statusId.in(SALE.getStatusId(), SOLD_OUT.getStatusId(),
                 OUT_OF_STOCK.getStatusId()).and(book.bookId.eq(bookId)))
             .select(
-                Projections.constructor(BookReadResponseDto.class, book.bookTitle, book.bookIndex,
+                Projections.constructor(BookDetailReadResponseDto.class, book.bookTitle,
+                    book.bookIndex,
                     book.description, book.publicatedAt, book.isbn, book.regularPrice, book.price,
                     book.discountRatio, book.isPackagable, thumbnail.fileUrl, bookStatus.statusName,
                     publisher.publisherId, publisher.publisherName,
                     map(author.authorId, author.authorName),
                     wish.pk.memberId.coalesce(0L),
+                    book.view,
                     set(bookImage.fileUrl.coalesce("")),
                     set(tag.tagName.coalesce("")),
                     set(category.categoryName)))
-            .transform(groupBy(book.bookId).list(Projections.constructor(BookReadResponseDto.class,
-                book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
-                book.regularPrice, book.price, book.discountRatio, book.isPackagable,
-                thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
-                publisher.publisherName, map(Projections.constructor(Long.class, author.authorId),
-                    Projections.constructor(String.class, author.authorName)),
-                wish.pk.memberId.coalesce(0L),
-                set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
-                set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
-                set(Projections.constructor(String.class, category.categoryName)))));
+            .transform(
+                groupBy(book.bookId).list(Projections.constructor(BookDetailReadResponseDto.class,
+                    book.bookTitle, book.bookIndex, book.description, book.publicatedAt, book.isbn,
+                    book.regularPrice, book.price, book.discountRatio, book.isPackagable,
+                    thumbnail.fileUrl, bookStatus.statusName, publisher.publisherId,
+                    publisher.publisherName,
+                    map(Projections.constructor(Long.class, author.authorId),
+                        Projections.constructor(String.class, author.authorName)),
+                    wish.pk.memberId.coalesce(0L), book.view,
+                    set(Projections.constructor(String.class, bookImage.fileUrl.coalesce(""))),
+                    set(Projections.constructor(String.class, tag.tagName.coalesce(""))),
+                    set(Projections.constructor(String.class, category.categoryName)))));
         if (result.isEmpty()) {
             return Optional.empty();
         }
