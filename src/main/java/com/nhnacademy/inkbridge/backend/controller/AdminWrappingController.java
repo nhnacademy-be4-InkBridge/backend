@@ -49,7 +49,7 @@ public class AdminWrappingController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
@@ -70,7 +70,7 @@ public class AdminWrappingController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.updateWrapping(wrappingId, wrappingCreateRequestDto);

@@ -188,10 +188,8 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
-        System.out.println("test1");
         Book book = bookRepository.findById(bookCouponCreateRequestDto.getBookId())
             .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND.getMessage()));
-        System.out.println(book.getBookTitle());
         saveBookCoupon(book, newCoupon);
     }
 

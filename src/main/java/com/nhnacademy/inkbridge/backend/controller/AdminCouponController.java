@@ -70,7 +70,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBookCoupon(bookCouponCreateRequestDto);
@@ -92,7 +92,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
@@ -114,7 +114,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
@@ -136,7 +136,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.info("ERROR:" + firstError.getDefaultMessage());
+            log.error("ERROR:" + firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
