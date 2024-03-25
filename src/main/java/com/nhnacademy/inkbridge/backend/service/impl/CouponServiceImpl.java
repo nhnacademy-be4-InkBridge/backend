@@ -368,7 +368,6 @@ public class CouponServiceImpl implements CouponService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public Page<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
         MemberCouponStatusEnum statusEnum, Pageable pageable) {
         LocalDate now = LocalDate.now();
@@ -378,15 +377,18 @@ public class CouponServiceImpl implements CouponService {
             coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId,
                 pageable);
         } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
-            coupons = memberCouponRepository
-                .findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
-                    memberId, now, now, pageable);
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+                memberId, now, now, pageable);
         } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
             coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
                 memberId, now, pageable);
         }
-        return coupons.map(MemberCoupon::toResponseDto);
 
+        if (coupons != null) {
+            return coupons.map(MemberCoupon::toResponseDto);
+        } else {
+            return Page.empty();
+        }
     }
 
     /**

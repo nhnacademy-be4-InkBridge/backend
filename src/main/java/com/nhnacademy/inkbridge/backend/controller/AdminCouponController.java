@@ -8,11 +8,13 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/22
  */
 @RestController
+@Slf4j
 @RequestMapping("/api/admin/coupons")
 public class AdminCouponController {
 
@@ -66,7 +69,9 @@ public class AdminCouponController {
         @Valid @RequestBody BookCouponCreateRequestDto bookCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBookCoupon(bookCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -86,7 +91,9 @@ public class AdminCouponController {
         @Valid @RequestBody CategoryCouponCreateRequestDto categoryCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -106,7 +113,9 @@ public class AdminCouponController {
         @Valid @RequestBody CouponCreateRequestDto couponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -126,7 +135,9 @@ public class AdminCouponController {
         @Valid @RequestBody BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.info("ERROR:" + firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
