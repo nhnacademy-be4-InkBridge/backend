@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * class: BookSearchServiceImpl.
- *
  * @author choijaehun
  * @version 2024/03/11
  */
