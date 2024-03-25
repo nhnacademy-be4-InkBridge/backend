@@ -10,6 +10,7 @@ import java.util.List;
  * @version 3/19/24
  */
 public interface PointHistoryService {
+
     /**
      * 회원이 회원가입시 회원가입 축하금을 지급하는 메서드입니다.
      *
@@ -26,4 +27,12 @@ public interface PointHistoryService {
      * @return 조회된 포인트 이력 정보를 담은 {@link PointHistoryReadResponseDto} 객체의 리스트
      */
     List<PointHistoryReadResponseDto> getPointHistory(Long userId);
+
+    /**
+     * 회원이 리뷰 작성 시 포인트를 적립합니다.
+     *
+     * @param memberId member id
+     * @return point policy id
+     */
+    Integer accumulatePointAtReview(Long memberId, boolean isPhotoReview);
 }
