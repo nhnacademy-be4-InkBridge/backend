@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
@@ -127,6 +128,11 @@ public class BookOrderServiceImpl implements BookOrderService {
     @Override
     public OrderedMemberPointReadResponseDto getOrderedPersonByOrderCode(String orderCode) {
         return bookOrderRepository.findUsedPointByOrderCode(orderCode);
+    }
+
+    @Override
+    public OrderedMemberReadResponseDto getOrderedPersonByOrderId(Long orderId) {
+        return bookOrderRepository.findUsedPointByOrderId(orderId);
     }
 
     /**

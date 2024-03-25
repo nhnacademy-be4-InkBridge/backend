@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.repository.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Pay;
+import com.nhnacademy.inkbridge.backend.entity.QBookOrder;
 import com.nhnacademy.inkbridge.backend.entity.QPay;
 import com.nhnacademy.inkbridge.backend.repository.custom.PayRepositoryCustom;
 import com.querydsl.core.types.Projections;
@@ -91,5 +92,17 @@ public class PayRepositoryImpl extends QuerydslRepositorySupport implements PayR
                 pay.provider))
             .where(pay.order.orderCode.eq(orderCode))
             .fetchOne();
+    }
+
+    @Override
+    public Optional<Pay> findByOrderCode(String orderCode) {
+        QPay pay = QPay.pay;
+        QBookOrder bookOrder = QBookOrder.bookOrder;
+
+        return Optional.ofNullable(from(pay)
+            .select(pay)
+                .innerJoin(pay.order, bookOrder)
+            .where(bookOrder.orderCode.eq(orderCode))
+            .fetchOne());
     }
 }

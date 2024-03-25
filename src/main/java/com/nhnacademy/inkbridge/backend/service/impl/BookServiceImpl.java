@@ -13,12 +13,10 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.category.CategoryNameReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
@@ -137,30 +135,7 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public BooksByCategoryReadResponseDto readBooksByCategory(Long categoryId,
-        Pageable pageable) {
-        Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByCategory(
-            pageable, categoryId);
-        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
-            books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
-                .collect(Collectors.toList()));
-        CategoryNameReadResponseDto categoryByCategoryId =
-            categoryRepository.findCategoryByCategoryId(categoryId);
-        return BooksByCategoryReadResponseDto.builder().booksPaginationReadResponseDtos(books)
-            .authorPaginationReadResponseDto(authors)
-            .categoryNameReadResponseDto(categoryByCategoryId).build();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Transactional(readOnly = true)
-    @Override
     public BookReadResponseDto readBook(Pageable pageable, Long bookId, Long memberId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
-        }
-
         BookDetailReadResponseDto bookDetail = bookRepository.findByBookId(bookId,
                 memberId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
@@ -192,10 +167,6 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public BookAdminDetailReadResponseDto readBookByAdmin(Long bookId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
-        }
-
         BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto =
             bookRepository.findBookByAdminByBookId(bookId)
                 .orElseThrow(
@@ -308,6 +279,11 @@ public class BookServiceImpl implements BookService {
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
         List<Book> books = bookRepository.findBookByBookIdIn(
             bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(

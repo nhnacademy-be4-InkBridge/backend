@@ -3,7 +3,7 @@ package com.nhnacademy.inkbridge.backend.repository.custom;
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.BookOrderDetail;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import java.util.List;
 
 /**
@@ -46,6 +46,8 @@ public interface BookOrderDetailRepositoryCustom {
      */
     List<BookOrderDetail> findOrderDetailByOrderId(Long orderId);
 
+    List<BookOrderDetail> findOrderDetailByOrderCode(String orderCode);
+
     /**
      * 주문 도서 목록을 조회합니다.
      *
@@ -61,4 +63,6 @@ public interface BookOrderDetailRepositoryCustom {
      * @return 주문 수량 목록
      */
     List<BookStockUpdateRequestDto> findBookStockByOrderCode(String orderCode);
+
+
 }

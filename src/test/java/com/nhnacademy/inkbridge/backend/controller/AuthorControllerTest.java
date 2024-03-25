@@ -18,6 +18,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -90,7 +91,7 @@ class AuthorControllerTest {
     void getAuthor() throws Exception {
         when(authorService.getAuthor(anyLong())).thenReturn(authorInfoReadResponseDto);
 
-        mockMvc.perform(get("/api/authors/{authorId}", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/authors/{authorId}", 1L))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.authorId", equalTo(1)))
@@ -99,7 +100,10 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.fileUrl", equalTo("url")))
             .andDo(document("author/author-get",
                 preprocessResponse(prettyPrint()),
-                relaxedResponseFields(
+                pathParameters(
+                    parameterWithName("authorId").description("작가 번호")
+                ),
+                responseFields(
                     fieldWithPath("authorId").description("작가 번호"),
                     fieldWithPath("authorName").description("작가 이름"),
                     fieldWithPath("authorIntroduce").description("작가 설명"),
@@ -123,7 +127,8 @@ class AuthorControllerTest {
             .andExpect(jsonPath("$.[0].fileUrl", equalTo("url")))
             .andDo(document("author/author-get-byName",
                 preprocessResponse(prettyPrint()),
-                relaxedResponseFields(
+                requestParameters(parameterWithName("authorName").description("작가 이름")),
+                responseFields(
                     fieldWithPath("[].authorId").description("작가 번호"),
                     fieldWithPath("[].authorName").description("작가 이름"),
                     fieldWithPath("[].authorIntroduce").description("작가 설명"),
@@ -322,6 +327,10 @@ class AuthorControllerTest {
                 pathParameters(parameterWithName("authorId").description("작가 번호")),
                 responseFields(
                     fieldWithPath("message").description("오류 메세지")
+                ),
+                requestParts(
+                    partWithName("author").description("작가"),
+                    partWithName("authorFile").description("작가 사진")
                 )));
     }
 }

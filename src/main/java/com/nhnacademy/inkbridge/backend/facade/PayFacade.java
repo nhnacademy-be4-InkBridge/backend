@@ -1,7 +1,11 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
+import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
+import com.nhnacademy.inkbridge.backend.exception.PaymentFailedException;
 import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
@@ -30,7 +34,6 @@ public class PayFacade {
     private final BookOrderDetailService bookOrderDetailService;
     private final CouponService couponService;
     private final MemberPointService memberPointService;
-    private final AccumulationRatePolicyService accumulationRatePolicyService;
 
     /**
      * 결제 정보를 저장하고 결제를 진행합니다.
@@ -39,7 +42,11 @@ public class PayFacade {
      */
     public void doPay(PayCreateRequestDto requestDto) {
 
-        payService.createPay(requestDto);
+        try {
+            payService.createPay(requestDto);
+        } catch (Exception e) {
+            throw new PaymentFailedException(e.getMessage());
+        }
 
         bookOrderService.updateBookOrderPayStatusByOrderCode(requestDto.getOrderCode());
 
@@ -48,11 +55,7 @@ public class PayFacade {
         if (Objects.nonNull(orderedResponseDto.getMemberId())) {
 
             memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                orderedResponseDto.getUsePoint() * -1);
-
-            Integer rate = accumulationRatePolicyService.getCurrentAccumulationRate();
-            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
-                Math.round((double) orderedResponseDto.getTotalPrice() * rate) / 100);
+                orderedResponseDto.getUsePoint() * -1, PointHistoryReason.PURCHASE_GOODS);
 
             List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
                 requestDto.getOrderCode());
@@ -60,5 +63,26 @@ public class PayFacade {
         }
     }
 
+    /**
+     * 결제 취소를 진행하는 메소드입니다.
+     *
+     * @param requestDto 취소 정보
+     */
+    public void cancelPay(PayCancelRequestDto requestDto) {
+        payService.cancelPay(requestDto);
+        bookOrderDetailService.changeOrderStatusByOrderCode(requestDto.getOrderCode(),
+            OrderStatusEnum.WITHDRAW);
 
+        OrderedMemberPointReadResponseDto orderedResponseDto = bookOrderService.getOrderedPersonByOrderCode(
+            requestDto.getOrderCode());
+        if (Objects.nonNull(orderedResponseDto.getMemberId())) {
+
+            memberPointService.memberPointUpdate(orderedResponseDto.getMemberId(),
+                orderedResponseDto.getUsePoint(), PointHistoryReason.PAYMENT_CANCELLATION);
+
+            List<Long> usedCouponIdList = bookOrderDetailService.getUsedCouponIdByOrderCode(
+                requestDto.getOrderCode());
+            couponService.cancelCouponUsage(orderedResponseDto.getMemberId(), usedCouponIdList);
+        }
+    }
 }

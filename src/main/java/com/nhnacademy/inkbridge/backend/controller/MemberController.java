@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_TYPE_NOT_FOUND;
 
+import com.nhnacademy.inkbridge.backend.annotation.Auth;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.OrderCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
@@ -149,13 +150,14 @@ public class MemberController {
             .body(memberService.getOAuthMemberEmail(memberIdNoRequestDto.getId()));
     }
 
-
+    @Auth
     @GetMapping("/auth/members/{memberId}/order-coupons")
     public ResponseEntity<List<OrderCouponReadResponseDto>> getOrderCoupons(
         @PathVariable("memberId") Long memberId, @RequestParam("book-id") Long[] bookId) {
         return ResponseEntity.ok(couponService.getOrderCouponList(bookId, memberId));
     }
 
+    @Auth
     @GetMapping("/auth/members/{memberId}/coupons")
     public ResponseEntity<Page<MemberCouponReadResponseDto>> getMemberCoupons(
         @PathVariable("memberId") Long memberId, Pageable pageable,
@@ -171,6 +173,7 @@ public class MemberController {
             ));
     }
 
+    @Auth
     @PostMapping("/auth/members/{memberId}/coupons/{couponId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void issueCoupon(@PathVariable("memberId") Long memberId,
@@ -183,7 +186,8 @@ public class MemberController {
      *
      * @return 페이지에 맞는 주문 목록
      */
-    @GetMapping("/members/{memberId}/orders")
+    @Auth
+    @GetMapping("/auth/members/{memberId}/orders")
     public ResponseEntity<Page<OrderReadResponseDto>> getOrder(@PathVariable Long memberId,
         @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(orderFacade.getOrderListByMemberId(memberId, pageable));
@@ -194,7 +198,8 @@ public class MemberController {
      *
      * @return 주문 상세 내역
      */
-    @GetMapping("/members/{memberId}/orders/{orderCode}")
+    @Auth
+    @GetMapping("/auth/members/{memberId}/orders/{orderCode}")
     public ResponseEntity<BookOrderDetailResponseDto> getOrder(
         @PathVariable("memberId") Long memberId, @PathVariable("orderCode") String orderCode) {
         return ResponseEntity.ok(orderFacade.getOrderDetailByOrderCode(orderCode));

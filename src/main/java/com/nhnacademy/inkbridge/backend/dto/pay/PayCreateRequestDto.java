@@ -1,4 +1,4 @@
-package com.nhnacademy.inkbridge.backend.dto;
+package com.nhnacademy.inkbridge.backend.dto.pay;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;

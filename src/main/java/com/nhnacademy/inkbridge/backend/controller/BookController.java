@@ -2,7 +2,6 @@ package com.nhnacademy.inkbridge.backend.controller;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BooksByCategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.BookService;
 import java.util.List;
@@ -57,21 +56,6 @@ public class BookController {
         @RequestParam(name = "book-id", required = false) Set<Long> bookIdList) {
         List<BookOrderReadResponseDto> cartBooks = bookService.getCartBooks(bookIdList);
         return new ResponseEntity<>(cartBooks, HttpStatus.OK);
-    }
-
-    /**
-     * 카테고리에 따른 도서 목록 조회 api입니다.
-     *
-     * @param categoryId Long
-     * @param pageable   Pageable
-     * @return BooksReadResponseDto page
-     */
-    @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<BooksByCategoryReadResponseDto> readBooksByCategory(
-        @PathVariable Long categoryId, Pageable pageable) {
-        BooksByCategoryReadResponseDto content = bookService.readBooksByCategory(categoryId,
-            pageable);
-        return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
     /**

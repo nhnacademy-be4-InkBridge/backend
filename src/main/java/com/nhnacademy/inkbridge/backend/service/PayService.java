@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.service;
 
-import com.nhnacademy.inkbridge.backend.dto.PayCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCancelRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 
 /**
@@ -39,8 +40,7 @@ public interface PayService {
     /**
      * 결제를 취소하는 메소드입니다.
      *
-     * @param payId 결제 번호
-     * @param cancelAmount 취소 금액
+     * @param requestDto
      */
-    void cancelPay(Long payId, Long cancelAmount);
+    void cancelPay(PayCancelRequestDto requestDto);
 }

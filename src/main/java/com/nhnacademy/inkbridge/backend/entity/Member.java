@@ -97,8 +97,8 @@ public class Member {
         this.lastLoginDate = LocalDateTime.now();
     }
 
-    public void updateActive(MemberStatus active) {
-        this.memberStatus = active;
+    public void updateStatus(MemberStatus status) {
+        this.memberStatus = status;
     }
 
     public void updateMember(MemberUpdateRequestDto update) {
@@ -108,5 +108,8 @@ public class Member {
     }
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+    public void updateWithdrawAt() {
+        this.withdrawAt = LocalDateTime.now();
     }
 }

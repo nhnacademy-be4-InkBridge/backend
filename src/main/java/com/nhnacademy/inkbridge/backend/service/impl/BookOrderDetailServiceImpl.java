@@ -22,7 +22,7 @@ import com.nhnacademy.inkbridge.backend.repository.BookRepository;
 import com.nhnacademy.inkbridge.backend.repository.MemberCouponRepository;
 import com.nhnacademy.inkbridge.backend.repository.WrappingRepository;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
-import com.nhnacademy.inkbridge.backend.service.OrderBooksIdResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -169,6 +169,26 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
     public void changeOrderStatus(Long orderId, OrderStatusEnum status) {
         List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findOrderDetailByOrderId(
             orderId);
+
+        BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(
+            status.getOrderStatusId()).orElseThrow(
+            () -> new NotFoundException(OrderMessageEnum.ORDER_STATUS_NOT_FOUND.getMessage()));
+
+        bookOrderDetailList.forEach(bookOrder -> {
+            if (bookOrder.getBookOrderStatus() == bookOrderStatus) {
+                throw new AlreadyProcessedException(
+                    OrderMessageEnum.ALREADY_PROCESSED.getMessage());
+            }
+
+            bookOrder.updateStatus(bookOrderStatus);
+        });
+
+    }
+
+    @Override
+    public void changeOrderStatusByOrderCode(String orderCode, OrderStatusEnum status) {
+        List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findOrderDetailByOrderCode(
+            orderCode);
 
         BookOrderStatus bookOrderStatus = bookOrderStatusRepository.findById(
             status.getOrderStatusId()).orElseThrow(

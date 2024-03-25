@@ -1,6 +1,7 @@
 package com.nhnacademy.inkbridge.backend.repository.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberPointReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
@@ -86,6 +87,25 @@ public class BookOrderRepositoryImpl extends QuerydslRepositorySupport implement
             .where(bookOrder.orderCode.eq(orderCode))
             .fetchOne();
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderId 주문 번호
+     * @return 회원 주문 금액
+     */
+    @Override
+    public OrderedMemberReadResponseDto findUsedPointByOrderId(Long orderId) {
+        QBookOrder bookOrder = QBookOrder.bookOrder;
+
+        return from(bookOrder)
+            .select(Projections.constructor(OrderedMemberReadResponseDto.class,
+                bookOrder.member.memberId,
+                bookOrder.totalPrice))
+            .where(bookOrder.orderId.eq(orderId))
+            .fetchOne();
+    }
+
 
     /**
      * {@inheritDoc}

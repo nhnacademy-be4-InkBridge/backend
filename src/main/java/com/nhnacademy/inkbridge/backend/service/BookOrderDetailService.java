@@ -1,6 +1,8 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
@@ -45,6 +47,14 @@ public interface BookOrderDetailService {
      * @param status  주문 상태
      */
     void changeOrderStatus(Long orderId, OrderStatusEnum status);
+
+    /**
+     * 주문 상세의 상태를 변경하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @param status  주문 상태
+     */
+    void changeOrderStatusByOrderCode(String orderCode, OrderStatusEnum status);
 
     /**
      * 사용한 쿠폰 번호 목록을 조회합니다.
