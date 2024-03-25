@@ -36,15 +36,53 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     private final PointHistoryRepository pointHistoryRepository;
     private final MemberRepository memberRepository;
     private static final Integer REGISTER = 1;
+    private static final Integer REVIEW = 2;
+    private static final Integer PHOTO_REVIEW = 3;
+
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void accumulatePointAtSignup(Long memberId) {
+
         PointPolicyType pointType =
             pointPolicyTypeRepository.findById(REGISTER).orElseThrow(() -> new NotFoundException(
                 PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
+
+        saveAccumulation(memberId, pointType, PointHistoryReason.REGISTER_MSG.getMessage());
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer accumulatePointAtReview(Long memberId, boolean isReview) {
+        PointPolicyType pointType;
+        if (isReview) {
+            pointType =
+                pointPolicyTypeRepository.findById(REVIEW)
+                    .orElseThrow(() -> new NotFoundException(
+                        PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
+        } else {
+            pointType = pointPolicyTypeRepository.findById(PHOTO_REVIEW)
+                .orElseThrow(() -> new NotFoundException(
+                    PointPolicyMessageEnum.POINT_POLICY_TYPE_NOT_FOUND.getMessage()));
+        }
+
+        saveAccumulation(memberId, pointType, PointHistoryReason.REVIEW_MSG.getMessage());
+        return pointType.getPointPolicyTypeId();
+    }
+
+    /**
+     * 포인트 내역 적립의 공통 부분을 처리하는 메서드입니다. 
+     *
+     * @param memberId member id
+     * @param pointType {@link PointPolicyType}
+     * @param message 적립 문구
+     */
+    private void saveAccumulation(Long memberId, PointPolicyType pointType, String message) {
         PointPolicy pointPolicy =
             pointPolicyRepository.findById(Long.valueOf(pointType.getPointPolicyTypeId()))
                 .orElseThrow(
@@ -58,7 +96,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         member.updateMemberPoint(pointPolicy.getAccumulatePoint());
 
         PointHistory pointHistory = PointHistory.builder()
-            .reason(PointHistoryReason.REGISTER_MSG.getMessage())
+            .reason(message)
             .point(pointPolicy.getAccumulatePoint())
             .accruedAt(LocalDateTime.now())
             .member(member)

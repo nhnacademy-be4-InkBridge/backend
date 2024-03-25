@@ -4,14 +4,9 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
-import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
-import com.nhnacademy.inkbridge.backend.service.FileService;
-import com.nhnacademy.inkbridge.backend.service.ReviewService;
-import java.util.Collections;
+import com.nhnacademy.inkbridge.backend.facade.ReviewFacade;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -38,12 +33,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class ReviewController {
 
-    private final ReviewService reviewService;
-    private final FileService fileService;
+    private final ReviewFacade reviewFacade;
 
-    public ReviewController(ReviewService reviewService, FileService fileService) {
-        this.reviewService = reviewService;
-        this.fileService = fileService;
+    public ReviewController(ReviewFacade reviewFacade) {
+        this.reviewFacade = reviewFacade;
     }
 
     /**
@@ -56,7 +49,7 @@ public class ReviewController {
     @GetMapping("/auth/reviews")
     public ResponseEntity<ReviewMemberReadResponseDto> getReviewsByMember(
         @RequestParam(name = "memberId") Long memberId, Pageable pageable) {
-        ReviewMemberReadResponseDto reviews = reviewService.getReviewsByMember(pageable, memberId);
+        ReviewMemberReadResponseDto reviews = reviewFacade.getReviewsByMember(pageable, memberId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
@@ -70,7 +63,7 @@ public class ReviewController {
     @GetMapping("/reviews/books/{bookId}")
     public ResponseEntity<ReviewBookReadResponseDto> getReviewsByBookId(@PathVariable Long bookId,
         @PageableDefault(size = 5) Pageable pageable) {
-        ReviewBookReadResponseDto reviews = reviewService.getReviewsByBookId(pageable, bookId);
+        ReviewBookReadResponseDto reviews = reviewFacade.getReviewsByBookId(pageable, bookId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
@@ -93,13 +86,8 @@ public class ReviewController {
             throw new ValidationException(
                 bindingResult.getFieldErrors().get(0).getDefaultMessage());
         }
+        reviewFacade.createReviewAndUpdatePoint(memberId, reviewCreateRequestDto, reviewImages);
 
-        List<File> files =
-            Objects.isNull(reviewImages) ? Collections.emptyList() : reviewImages.stream()
-                .map(fileService::saveThumbnail).collect(
-                    Collectors.toList());
-
-        reviewService.createReview(memberId, reviewCreateRequestDto, files);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -123,12 +111,8 @@ public class ReviewController {
             throw new ValidationException(
                 bindingResult.getFieldErrors().get(0).getDefaultMessage());
         }
-        List<File> files =
-            Objects.isNull(reviewImages) ? Collections.emptyList() : reviewImages.stream()
-                .map(fileService::saveThumbnail).collect(
-                    Collectors.toList());
+        reviewFacade.updateReview(memberId, reviewId, reviewUpdateRequestDto, reviewImages);
 
-        reviewService.updateReview(memberId, reviewId, reviewUpdateRequestDto, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
