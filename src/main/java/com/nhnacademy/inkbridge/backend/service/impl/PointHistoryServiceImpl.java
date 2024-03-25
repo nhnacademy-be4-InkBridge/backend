@@ -76,7 +76,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     }
 
     /**
-     * 포인트 내역 적립의 공통 부분을 처리하는 메서드입니다. 
+     * 포인트 내역 적립의 공통 부분을 처리하는 메서드입니다.
      *
      * @param memberId member id
      * @param pointType {@link PointPolicyType}
