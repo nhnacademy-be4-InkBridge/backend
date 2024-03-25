@@ -25,7 +25,7 @@ public class MemberPointController {
     private final MemberPointService memberPointService;
 
     @GetMapping
-    ResponseEntity<MemberPointReadResponseDto> getPoint(
+    public ResponseEntity<MemberPointReadResponseDto> getPoint(
         @RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId) {
         return ResponseEntity.ok(MemberPointReadResponseDto.builder().point(
             memberPointService.getMemberPoint(userId)).build());
