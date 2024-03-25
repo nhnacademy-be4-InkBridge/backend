@@ -93,7 +93,7 @@ class CouponControllerTest {
             .andExpect(jsonPath("$.size").value(1))
             .andExpect(jsonPath("$.numberOfElements").value(1))
             .andExpect(jsonPath("$.empty").value(false))
-            .andDo(document("getCoupons",
+            .andDo(document("coupons",
                 preprocessRequest(prettyPrint()), // 요청 데이터 예쁘게 출력
                 preprocessResponse(prettyPrint()), // 응답 데이터 예쁘게 출력
                 responseFields(
@@ -126,8 +126,5 @@ class CouponControllerTest {
         verify(couponService, times(1)).getIssuableCoupons(PageRequest.of(0, 20));
 
     }
-
-    @Test
-    void getCoupon() {
-    }
+    
 }

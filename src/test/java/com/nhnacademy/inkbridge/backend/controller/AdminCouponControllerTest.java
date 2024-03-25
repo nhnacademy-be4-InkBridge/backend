@@ -98,7 +98,7 @@ class AdminCouponControllerTest {
             .andExpect(jsonPath("$.sort.empty").value(true))
             .andExpect(jsonPath("$.sort.unsorted").value(true))
             .andExpect(jsonPath("$.sort.sorted").value(false))
-            .andDo(document("admin/coupons",
+            .andDo(document("admin/coupons/get",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseFields(
@@ -176,7 +176,7 @@ class AdminCouponControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("admin/coupons/book-coupons",
+            .andDo(document("admin/coupons/book-coupons-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())
             ));
@@ -229,7 +229,7 @@ class AdminCouponControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("admin/coupons/category-coupons",
+            .andDo(document("admin/coupons/category-coupons-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())
             ));
@@ -280,7 +280,7 @@ class AdminCouponControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("admin/coupons",
+            .andDo(document("admin/coupons-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())
             ));
@@ -325,7 +325,7 @@ class AdminCouponControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("admin/coupons/birthday-coupons",
+            .andDo(document("admin/coupons/birthday-coupons-fail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())
             ));
