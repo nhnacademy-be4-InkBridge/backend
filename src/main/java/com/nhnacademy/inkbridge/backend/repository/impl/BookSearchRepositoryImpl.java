@@ -40,18 +40,18 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
     @Override
     public Page<Search> searchByText(String text, Pageable pageable) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
-            .should(QueryBuilders.matchQuery("book_title", text))
-            .should(QueryBuilders.matchQuery("book_title.nori", text))
-            .should(QueryBuilders.matchQuery("book_title.ngram", text))
-            .should(QueryBuilders.matchQuery("description", text))
-            .should(QueryBuilders.matchQuery("description.nori", text))
-            .should(QueryBuilders.matchQuery("description.ngram", text))
-            .should(QueryBuilders.matchQuery("publisher_name", text))
+            .should(QueryBuilders.matchQuery("book_title", text).boost(100.0f))
+            .should(QueryBuilders.matchQuery("book_title.nori", text).boost(40.0f))
+            .should(QueryBuilders.matchQuery("book_title.ngram", text).boost(40.0f))
+            .should(QueryBuilders.matchQuery("description", text).boost(80.0f))
+            .should(QueryBuilders.matchQuery("description.nori", text).boost(5.0f))
+            .should(QueryBuilders.matchQuery("description.ngram", text).boost(5.0f))
+            .should(QueryBuilders.matchQuery("publisher_name", text).boost(90.0f))
             .should(QueryBuilders.nestedQuery("tags",
                 QueryBuilders.queryStringQuery(text).field("tags.tag_name"),
-                ScoreMode.None))
+                ScoreMode.None).boost(90.0f))
             .should(QueryBuilders.nestedQuery("authors",
-                QueryBuilders.queryStringQuery(text).field("authors.author_name"), ScoreMode.None));
+                QueryBuilders.queryStringQuery(text).field("authors.author_name"), ScoreMode.None).boost(90.f));
 
         Query searchQuery = new NativeSearchQueryBuilder()
             .withQuery(boolQueryBuilder)
