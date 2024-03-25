@@ -36,5 +36,11 @@ public interface PayRepositoryCustom {
      */
     PayReadResponseDto findPayByOrderCode(String orderCode);
 
+    /**
+     * 주문 코드로 결제 정보를 조회하는 메소드입니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 결제 정보
+     */
     Optional<Pay> findByOrderCode(String orderCode);
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookOrder;
@@ -253,9 +254,11 @@ class BookOrderDetailRepositoryTest {
 
         assertAll(
             () -> assertEquals(1, result.size()),
-            () -> assertEquals(bookOrderDetail.getOrderDetailId(), result.get(0).getOrderDetailId()),
+            () -> assertEquals(bookOrderDetail.getOrderDetailId(),
+                result.get(0).getOrderDetailId()),
             () -> assertEquals(bookOrderDetail.getBookPrice(), result.get(0).getBookPrice()),
-            () -> assertEquals(bookOrderDetail.getWrappingPrice(), result.get(0).getWrappingPrice()),
+            () -> assertEquals(bookOrderDetail.getWrappingPrice(),
+                result.get(0).getWrappingPrice()),
             () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getAmount()),
             () -> assertEquals(wrapping.getWrappingName(), result.get(0).getWrappingName()),
             () -> assertEquals(bookOrderStatus.getOrderStatus(), result.get(0).getOrderStatus()),
@@ -277,9 +280,11 @@ class BookOrderDetailRepositoryTest {
 
         assertAll(
             () -> assertEquals(1, result.size()),
-            () -> assertEquals(bookOrderDetail.getOrderDetailId(), result.get(0).getOrderDetailId()),
+            () -> assertEquals(bookOrderDetail.getOrderDetailId(),
+                result.get(0).getOrderDetailId()),
             () -> assertEquals(bookOrderDetail.getBookPrice(), result.get(0).getBookPrice()),
-            () -> assertEquals(bookOrderDetail.getWrappingPrice(), result.get(0).getWrappingPrice()),
+            () -> assertEquals(bookOrderDetail.getWrappingPrice(),
+                result.get(0).getWrappingPrice()),
             () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getAmount()),
             () -> assertEquals(wrapping.getWrappingName(), result.get(0).getWrappingName()),
             () -> assertEquals(bookOrderStatus.getOrderStatus(), result.get(0).getOrderStatus()),
@@ -301,11 +306,14 @@ class BookOrderDetailRepositoryTest {
 
         assertAll(
             () -> assertEquals(1, result.size()),
-            () -> assertEquals(bookOrderDetail.getOrderDetailId(), result.get(0).getOrderDetailId()),
+            () -> assertEquals(bookOrderDetail.getOrderDetailId(),
+                result.get(0).getOrderDetailId()),
             () -> assertEquals(bookOrderDetail.getBookPrice(), result.get(0).getBookPrice()),
-            () -> assertEquals(bookOrderDetail.getWrappingPrice(), result.get(0).getWrappingPrice()),
+            () -> assertEquals(bookOrderDetail.getWrappingPrice(),
+                result.get(0).getWrappingPrice()),
             () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getAmount()),
-            () -> assertEquals(bookOrderDetail.getBookOrderStatus(), result.get(0).getBookOrderStatus()),
+            () -> assertEquals(bookOrderDetail.getBookOrderStatus(),
+                result.get(0).getBookOrderStatus()),
             () -> assertEquals(bookOrderDetail.getWrapping(), result.get(0).getWrapping()),
             () -> assertEquals(bookOrderDetail.getBookOrder(), result.get(0).getBookOrder()),
             () -> assertEquals(bookOrderDetail.getBook(), result.get(0).getBook()),
@@ -324,5 +332,23 @@ class BookOrderDetailRepositoryTest {
             () -> assertEquals(bookOrderDetail.getBook().getBookId(), result.get(0).getBookId()),
             () -> assertEquals(bookOrderDetail.getAmount(), result.get(0).getAmount())
         );
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회")
+    void testFindOrderDetailByOrderCode() {
+        List<BookOrderDetail> result = bookOrderDetailRepository.findOrderDetailByOrderCode(
+            bookOrder.getOrderCode());
+
+        assertEquals(bookOrderDetail, result.get(0));
+    }
+
+    @Test
+    @DisplayName("주문 도서 번호 조회")
+    void testFindBookIdByOrderCode() {
+        List<OrderBooksIdResponseDto> result = bookOrderDetailRepository.findBookIdByOrderCode(
+            bookOrder.getOrderCode());
+
+        assertEquals(book.getBookId(), result.get(0).getBookId());
     }
 }
