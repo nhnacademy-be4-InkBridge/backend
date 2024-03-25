@@ -37,9 +37,5 @@ public class BirthDayCouponCreateRequestDto {
         this.maxDiscountPrice = maxDiscountPrice;
         this.discountPrice = discountPrice;
         this.month = month;
-//        this.basicIssuedDate = basicIssuedDate;
-//        this.basicExpiredDate = basicExpiredDate;
-//        this.validity = validity;
-//        this.couponTypeId = couponTypeId;
     }
 }

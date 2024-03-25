@@ -14,6 +14,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDt
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
+import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
@@ -30,6 +31,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +46,9 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author minseo
  * @version 2/15/24
+ * @modifiedBy JBum
+ * @modifiedAt 3/7/24
+ * @modificationReason - getOrderCoupons 추가, getMemberCoupons 추가
  */
 @RestController
 @RequestMapping("/api")
@@ -154,8 +159,8 @@ public class MemberController {
 
     @Auth
     @GetMapping("/auth/members/{memberId}/coupons")
-    public ResponseEntity<List<MemberCouponReadResponseDto>> getMemberCoupons(
-        @PathVariable("memberId") Long memberId,
+    public ResponseEntity<Page<MemberCouponReadResponseDto>> getMemberCoupons(
+        @PathVariable("memberId") Long memberId, Pageable pageable,
         @RequestParam(value = "status", defaultValue = "ACTIVE") String status) {
         MemberCouponStatusEnum statusEnum;
         try {
@@ -164,7 +169,7 @@ public class MemberController {
             throw new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage());
         }
         return ResponseEntity.ok(
-            couponService.getMemberCouponList(memberId, statusEnum
+            couponService.getMemberCouponList(memberId, statusEnum, pageable
             ));
     }
 

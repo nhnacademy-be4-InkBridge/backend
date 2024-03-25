@@ -56,6 +56,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -408,7 +409,7 @@ class CouponServiceImplTest {
         Member member = mock(Member.class);
         MemberCoupon issueCouponDto = mock(MemberCoupon.class);
 
-        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDate startDate = LocalDate.now().minusDays(1);
 
         LocalDate endDate = LocalDate.now().plusDays(30);
 
@@ -439,7 +440,7 @@ class CouponServiceImplTest {
         Member member = mock(Member.class);
         MemberCoupon issueCouponDto = mock(MemberCoupon.class);
 
-        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDate startDate = LocalDate.now().plusDays(30);
 
         LocalDate endDate = LocalDate.now().plusDays(30);
 
@@ -546,24 +547,25 @@ class CouponServiceImplTest {
         verify(bookRepository, times(1)).existsById(any());
     }
 
-
     @Test
     void testGetMemberCouponList_StatusActive() {
         Long memberId = 1L;
         LocalDate now = LocalDate.now();
-        List<MemberCoupon> memberCoupons = new ArrayList<>();
+        Page<MemberCoupon> memberCoupons = new PageImpl<>(new ArrayList<>());
         lenient().when(
                 memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
-                    memberId, now, now))
+                    memberId, now, now, PageRequest.of(0, 10)))
             .thenReturn(memberCoupons);
-        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.ACTIVE);
+        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.ACTIVE,
+            PageRequest.of(0, 10));
 
-        verify(memberCouponRepository, times(0)).findByMember_MemberIdAndUsedAtIsNotNull(any());
-        verify(memberCouponRepository,
-            times(1)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+        verify(memberCouponRepository, times(0)).findByMember_MemberIdAndUsedAtIsNotNull(any(),
             any());
         verify(memberCouponRepository,
-            times(0)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any());
+            times(1)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+            any(), any());
+        verify(memberCouponRepository,
+            times(0)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any(), any());
 
     }
 
@@ -571,36 +573,41 @@ class CouponServiceImplTest {
     void testGetMemberCouponList_StatusExpired() {
         Long memberId = 1L;
         LocalDate now = LocalDate.now();
-        List<MemberCoupon> memberCoupons = new ArrayList<>();
+        Page<MemberCoupon> memberCoupons = new PageImpl<>(new ArrayList<>());
         lenient().when(
-                memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(memberId,
-                    now))
+                memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
+                    memberId, now, PageRequest.of(0, 10)))
             .thenReturn(memberCoupons);
-        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.EXPIRED);
+        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.EXPIRED,
+            PageRequest.of(0, 10));
 
-        verify(memberCouponRepository, times(0)).findByMember_MemberIdAndUsedAtIsNotNull(any());
-        verify(memberCouponRepository,
-            times(0)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+        verify(memberCouponRepository, times(0)).findByMember_MemberIdAndUsedAtIsNotNull(any(),
             any());
         verify(memberCouponRepository,
-            times(1)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any());
+            times(0)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+            any(), any());
+        verify(memberCouponRepository,
+            times(1)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any(), any());
 
     }
 
     @Test
     void testGetMemberCouponList_StatusUsed() {
         Long memberId = 1L;
-        List<MemberCoupon> memberCoupons = new ArrayList<>();
-        lenient().when(memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId))
+        Page<MemberCoupon> memberCoupons = new PageImpl<>(new ArrayList<>());
+        lenient().when(memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId,
+                PageRequest.of(0, 10)))
             .thenReturn(memberCoupons);
-        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.USED);
+        couponService.getMemberCouponList(memberId, MemberCouponStatusEnum.USED,
+            PageRequest.of(0, 10));
 
-        verify(memberCouponRepository, times(1)).findByMember_MemberIdAndUsedAtIsNotNull(any());
-        verify(memberCouponRepository,
-            times(0)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+        verify(memberCouponRepository, times(1)).findByMember_MemberIdAndUsedAtIsNotNull(any(),
             any());
         verify(memberCouponRepository,
-            times(0)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any());
+            times(0)).findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(any(), any(),
+            any(), any());
+        verify(memberCouponRepository,
+            times(0)).findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(any(), any(), any());
 
     }
 
