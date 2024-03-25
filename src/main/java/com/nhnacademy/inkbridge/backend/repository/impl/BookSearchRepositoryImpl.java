@@ -41,9 +41,9 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
     public Page<Search> searchByText(String text, Pageable pageable) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
             .should(QueryBuilders.matchQuery("book_title", text).boost(100.0f))
-            .should(QueryBuilders.matchQuery("book_title.nori", text).boost(40.0f))
-            .should(QueryBuilders.matchQuery("book_title.ngram", text).boost(40.0f))
-            .should(QueryBuilders.matchQuery("description", text).boost(80.0f))
+            .should(QueryBuilders.matchQuery("book_title.nori", text).boost(80.0f))
+            .should(QueryBuilders.matchQuery("book_title.ngram", text).boost(80.0f))
+            .should(QueryBuilders.matchQuery("description", text).boost(50.0f))
             .should(QueryBuilders.matchQuery("description.nori", text).boost(5.0f))
             .should(QueryBuilders.matchQuery("description.ngram", text).boost(5.0f))
             .should(QueryBuilders.matchQuery("publisher_name", text).boost(90.0f))
@@ -87,6 +87,42 @@ public class BookSearchRepositoryImpl implements BookSearchRepositoryCustom {
     public Page<Search> searchByCategory(String category, Pageable pageable) {
         QueryBuilder queryBuilder = QueryBuilders.nestedQuery("categories",
             QueryBuilders.queryStringQuery(category).field("categories.category_name"),
+            ScoreMode.None);
+
+        Query searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(queryBuilder)
+            .withPageable(pageable)
+            .build();
+
+        SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery,
+            Search.class);
+        List<Search> books = searchHits.get().map(SearchHit::getContent)
+            .collect(Collectors.toList());
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
+    }
+
+    @Override
+    public Page<Search> searchByAuthor(String author, Pageable pageable) {
+        QueryBuilder queryBuilder = QueryBuilders.nestedQuery("authors",
+            QueryBuilders.queryStringQuery(author).field("authors.author_name"),
+            ScoreMode.None);
+
+        Query searchQuery = new NativeSearchQueryBuilder()
+            .withQuery(queryBuilder)
+            .withPageable(pageable)
+            .build();
+
+        SearchHits<Search> searchHits = elasticsearchOperations.search(searchQuery,
+            Search.class);
+        List<Search> books = searchHits.get().map(SearchHit::getContent)
+            .collect(Collectors.toList());
+        return new PageImpl<>(books, pageable, searchHits.getTotalHits());
+    }
+
+    @Override
+    public Page<Search> searchByPublisher(String publisher, Pageable pageable) {
+        QueryBuilder queryBuilder = QueryBuilders.nestedQuery("publishers",
+            QueryBuilders.queryStringQuery(publisher).field("publishers.publisher_name"),
             ScoreMode.None);
 
         Query searchQuery = new NativeSearchQueryBuilder()
