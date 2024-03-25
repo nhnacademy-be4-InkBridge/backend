@@ -5,6 +5,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.wish.BookWishReadResponseDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,4 +62,6 @@ public interface BookRepositoryCustom {
      * @return CartReadResponseDto
      */
     List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
+
+    List<BookWishReadResponseDto> findByWishMemberId(Long memberId);
 }

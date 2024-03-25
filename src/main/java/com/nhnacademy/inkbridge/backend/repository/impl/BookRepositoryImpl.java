@@ -14,6 +14,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.wish.BookWishReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.QAuthor;
 import com.nhnacademy.inkbridge.backend.entity.QBook;
@@ -24,6 +25,7 @@ import com.nhnacademy.inkbridge.backend.entity.QBookStatus;
 import com.nhnacademy.inkbridge.backend.entity.QBookTag;
 import com.nhnacademy.inkbridge.backend.entity.QCategory;
 import com.nhnacademy.inkbridge.backend.entity.QFile;
+import com.nhnacademy.inkbridge.backend.entity.QMember;
 import com.nhnacademy.inkbridge.backend.entity.QPublisher;
 import com.nhnacademy.inkbridge.backend.entity.QTag;
 import com.nhnacademy.inkbridge.backend.entity.QWish;
@@ -233,6 +235,22 @@ public class BookRepositoryImpl extends QuerydslRepositorySupport implements Boo
                     book.regularPrice, book.price, book.discountRatio, book.stock,
                     book.isPackagable,
                     file.fileUrl))
+            .fetch();
+    }
+
+    @Override
+    public List<BookWishReadResponseDto> findByWishMemberId(Long memberId) {
+        QBook book = QBook.book;
+        QWish wish = QWish.wish;
+        QMember member = QMember.member;
+
+        return from(book)
+            .innerJoin(wish)
+            .innerJoin(member)
+            .where(member.memberId.eq(memberId))
+            .select(
+                Projections.constructor(BookWishReadResponseDto.class, book.bookId, book.bookTitle,
+                    book.thumbnailFile.fileUrl))
             .fetch();
     }
 

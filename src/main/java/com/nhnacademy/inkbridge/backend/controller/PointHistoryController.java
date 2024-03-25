@@ -32,7 +32,7 @@ public class PointHistoryController {
      * @return 조회된 포인트 이력 정보를 담은 {@link PointHistoryReadResponseDto} 리스트와 함께 HTTP 상태 코드 200(OK)을 반환합니다.
      */
     @GetMapping
-    ResponseEntity<List<PointHistoryReadResponseDto>> getPointHistory(
+    public ResponseEntity<List<PointHistoryReadResponseDto>> getPointHistory(
         @RequestHeader("Authorization-Id") Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(pointHistoryService.getPointHistory(userId));
