@@ -14,7 +14,6 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Objects;
 import javax.net.ssl.SSLContext;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;

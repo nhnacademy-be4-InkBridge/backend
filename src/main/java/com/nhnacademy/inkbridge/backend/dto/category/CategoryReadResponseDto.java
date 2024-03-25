@@ -1,7 +1,5 @@
 package com.nhnacademy.inkbridge.backend.dto.category;
 
-import com.nhnacademy.inkbridge.backend.entity.Category;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
