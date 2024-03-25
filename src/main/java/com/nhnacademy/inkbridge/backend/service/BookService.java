@@ -102,5 +102,4 @@ public interface BookService {
      */
     void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
 
-    Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos);
 }
