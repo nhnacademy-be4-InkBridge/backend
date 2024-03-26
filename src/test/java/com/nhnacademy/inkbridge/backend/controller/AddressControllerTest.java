@@ -6,7 +6,17 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +37,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureRestDocs
@@ -63,7 +74,21 @@ class AddressControllerTest {
             .andExpect(jsonPath("$[0].addressDetail", equalTo("home")))
             .andExpect(jsonPath("$[0].receiverName", equalTo("testName")))
             .andExpect(jsonPath("$[0].receiverNumber", equalTo("01012340123")))
-            .andDo(document("docs"));
+            .andDo(document("get-addresses",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(AUTH_HEADER).description("사용자 식별을 위한 헤더")
+                ),
+                responseFields(
+                    fieldWithPath("[].addressId").description("주소 식별자"),
+                    fieldWithPath("[].zipCode").description("우편번호"),
+                    fieldWithPath("[].address").description("기본 주소"),
+                    fieldWithPath("[].alias").description("주소 별칭"),
+                    fieldWithPath("[].addressDetail").description("상세 주소"),
+                    fieldWithPath("[].receiverName").description("수령인 이름"),
+                    fieldWithPath("[].receiverNumber").description("수령인 연락처")
+                )));
     }
 
     @Test
@@ -79,7 +104,20 @@ class AddressControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createRequestDto)))
             .andExpect(status().isCreated())
-            .andDo(document("create-address"));
+            .andDo(document("create-address",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(AUTH_HEADER).description("사용자 식별을 위한 헤더")
+                ),
+                requestFields(
+                    fieldWithPath("zipCode").description("우편번호"),
+                    fieldWithPath("address").description("기본 주소"),
+                    fieldWithPath("alias").description("주소 별칭"),
+                    fieldWithPath("addressDetail").description("상세 주소"),
+                    fieldWithPath("receiverName").description("수령인 이름"),
+                    fieldWithPath("receiverNumber").description("수령인 연락처")
+                )));
 
         verify(memberAddressService).createAddress(eq(USER_ID), any(AddressCreateRequestDto.class));
     }
@@ -97,7 +135,21 @@ class AddressControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequestDto)))
             .andExpect(status().isOk())
-            .andDo(document("modify-address"));
+            .andDo(document("modify-address",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(AUTH_HEADER).description("사용자 식별을 위한 헤더")
+                ),
+                requestFields(
+                    fieldWithPath("addressId").description("수정할 주소의 식별자"),
+                    fieldWithPath("zipCode").description("새 우편번호"),
+                    fieldWithPath("address").description("새 기본 주소"),
+                    fieldWithPath("alias").description("새 주소 별칭"),
+                    fieldWithPath("addressDetail").description("새 상세 주소"),
+                    fieldWithPath("receiverName").description("새 수령인 이름"),
+                    fieldWithPath("receiverNumber").description("새 수령인 연락처")
+                )));
 
         verify(memberAddressService).updateAddress(eq(USER_ID), any(AddressUpdateRequestDto.class));
     }
@@ -107,10 +159,18 @@ class AddressControllerTest {
     void testDeleteAddress() throws Exception {
         Long addressIdToDelete = 1L;
 
-        mockMvc.perform(delete("/api/mypage/addresses/{addressId}", addressIdToDelete)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/addresses/{addressId}", addressIdToDelete)
                 .header(AUTH_HEADER, USER_ID))
             .andExpect(status().isOk())
-            .andDo(document("delete-address"));
+            .andDo(document("delete-address",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(AUTH_HEADER).description("사용자 식별을 위한 헤더")
+                ),
+                pathParameters(
+                    parameterWithName("addressId").description("삭제할 주소의 식별자")
+                )));
 
         verify(memberAddressService).deleteAddress(USER_ID, addressIdToDelete);
     }

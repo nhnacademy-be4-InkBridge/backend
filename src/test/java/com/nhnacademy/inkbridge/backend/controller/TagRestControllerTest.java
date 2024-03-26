@@ -6,6 +6,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,11 +38,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -46,6 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureRestDocs
 @WebMvcTest(TagRestController.class)
+@ExtendWith(RestDocumentationExtension.class)
 class TagRestControllerTest {
 
     @Autowired
@@ -79,7 +91,7 @@ class TagRestControllerTest {
         TagCreateRequestDto tagCreateRequestDto = new TagCreateRequestDto();
         tagCreateRequestDto.setTagName("testTag");
         TagCreateResponseDto tagCreateResponseDto = new TagCreateResponseDto(
-            Tag.builder().tagName(tagCreateRequestDto.getTagName()).build());
+            Tag.builder().tagName(tagCreateRequestDto.getTagName()).tagId(testTagId1).build());
         given(tagService.createTag(any())).willReturn(tagCreateResponseDto);
         mvc.perform(post("/api/tags")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +99,16 @@ class TagRestControllerTest {
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("tagName", equalTo("testTag")))
-            .andDo(document("docs"));
+            .andExpect(jsonPath("tagId").value(testTagId1))
+            .andDo(document("tag-create",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("tagName").description("생성할 태그의 이름")
+                ),
+                responseFields(fieldWithPath("tagName").description("생성된 태그의 이름")),
+                responseFields(fieldWithPath("tagId").description("생성된 태그의 아이디"))
+            ));
     }
 
     @Test
@@ -135,7 +156,12 @@ class TagRestControllerTest {
             .andExpect(jsonPath("$[0].tagId", equalTo(tagList.get(0).getTagId().intValue())))
             .andExpect(jsonPath("$[1].tagName", equalTo(tagList.get(1).getTagName())))
             .andExpect(jsonPath("$[1].tagId", equalTo(tagList.get(1).getTagId().intValue())))
-            .andDo(document("docs"));
+            .andDo(document("tag-list",
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("[].tagName").description("태그의 이름"),
+                    fieldWithPath("[].tagId").description("태그의 식별자")
+                )));;
     }
 
     @Test
@@ -146,15 +172,26 @@ class TagRestControllerTest {
             Tag.builder().tagId(testTagId1).tagName(testTagName2).build());
         when(tagService.updateTag(any(), any())).thenReturn(
             tagUpdateResponseDto);
-        mvc.perform(put("/api/tags/{tagId}", testTagId1)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/tags/{tagId}", testTagId1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagUpdateRequestDto)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("tagId", equalTo(testTagId1.intValue())))
-            .andExpect(jsonPath("tagName", equalTo(testTagName2)))
-            .andDo(document("docs"));
-
+            .andExpect(jsonPath("$.tagId", equalTo(testTagId1.intValue())))
+            .andExpect(jsonPath("$.tagName", equalTo(testTagName2)))
+            .andDo(document("tag-update",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("tagId").description("업데이트할 태그의 ID")
+                ),
+                requestFields(
+                    fieldWithPath("tagName").description("업데이트할 새 태그의 이름")
+                ),
+                responseFields(
+                    fieldWithPath("tagId").description("업데이트된 태그의 ID"),
+                    fieldWithPath("tagName").description("업데이트된 태그의 이름")
+                )));
     }
 
     @Test
@@ -207,11 +244,18 @@ class TagRestControllerTest {
     void deleteTag() throws Exception {
         when(tagService.deleteTag(testTagId1)).thenReturn(
             new TagDeleteResponseDto(testTag1 + " is deleted"));
-        mvc.perform(delete("/api/tags/{tagId}", testTagId1)
+        mvc.perform(RestDocumentationRequestBuilders.delete("/api/tags/{tagId}", testTagId1)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("message", equalTo(testTag1 + " is deleted")))
-            .andDo(document("docs"));
+            .andDo(document("tag-delete",
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("tagId").description("삭제할 태그의 ID")
+                ),
+                responseFields(
+                    fieldWithPath("message").description("삭제 성공 메시지")
+                )));
     }
 
     @Test
