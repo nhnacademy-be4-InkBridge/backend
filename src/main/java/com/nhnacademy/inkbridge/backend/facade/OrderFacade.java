@@ -1,13 +1,14 @@
 package com.nhnacademy.inkbridge.backend.facade;
 
-import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderPayInfoReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderedMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.pay.PayReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
@@ -15,10 +16,12 @@ import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
-import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.service.PayService;
+import com.nhnacademy.inkbridge.backend.service.ReviewService;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +44,7 @@ public class OrderFacade {
     private final PayService payService;
     private final MemberPointService memberPointService;
     private final AccumulationRatePolicyService accumulationRatePolicyService;
+    private final ReviewService reviewService;
 
 
     /**
@@ -124,10 +128,15 @@ public class OrderFacade {
         List<OrderDetailReadResponseDto> detailResponseDtoList = bookOrderDetailService.getOrderDetailByOrderCode(
             orderCode);
         PayReadResponseDto payResponseDto = payService.getPayByOrderCode(orderCode);
+        Map<Long, Boolean> reviewed = reviewService.isReviewed(
+            detailResponseDtoList.stream().map(OrderDetailReadResponseDto::getOrderDetailId)
+                .collect(Collectors.toList()));
+
         return BookOrderDetailResponseDto.builder()
             .orderInfo(responseDto)
             .payInfo(payResponseDto)
             .orderDetailInfoList(detailResponseDtoList)
+            .isReviewed(reviewed)
             .build();
     }
 

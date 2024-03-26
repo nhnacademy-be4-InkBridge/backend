@@ -13,4 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
 
     Long countByMember_MemberId(Long memberId);
+
+    Boolean existsByBookOrderDetail_OrderDetailId(Long orderDetailId);
 }
