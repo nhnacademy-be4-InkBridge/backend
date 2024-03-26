@@ -72,4 +72,33 @@ class AdminWrappingControllerTest {
             .andDo(document("admin/wrappings/update", preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint())));
     }
+
+    @Test
+    void testCreateWrapping_fail() throws Exception {
+        WrappingCreateRequestDto wrappingCreateRequestDto = new WrappingCreateRequestDto("일반 포장지",
+            -1000L, true);
+        doNothing().when(wrappingService).createWrapping(any());
+
+        mockMvc.perform(post("/api/admin/wrappings").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(wrappingCreateRequestDto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andDo(document("admin/wrappings/create_fail", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    void testUpdateWrapping_fail() throws Exception {
+        WrappingCreateRequestDto wrappingCreateRequestDto = new WrappingCreateRequestDto("일반 포장지",
+            -1000L, true);
+        int wrappingsId = 1;
+        doNothing().when(wrappingService).updateWrapping(anyLong(), any());
+
+        mockMvc.perform(
+                put("/api/admin/wrappings/{wrappingId}", wrappingsId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(wrappingCreateRequestDto)))
+            .andExpect(status().isUnprocessableEntity())
+            .andDo(document("admin/wrappings/update_fail", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
+    }
 }
