@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.dto.deliverypolicy;
 
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

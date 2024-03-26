@@ -34,7 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin/coupons")
 public class AdminCouponController {
 
-    private final String ERROR = "ERROR";
+    private static final String ERROR = "ERROR";
+    private static final String ERROR_LOG = "{}: {}";
     private final CouponService couponService;
 
     public AdminCouponController(CouponService couponService) {
@@ -71,7 +72,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBookCoupon(bookCouponCreateRequestDto);
@@ -93,7 +94,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
@@ -115,7 +116,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
@@ -137,7 +138,7 @@ public class AdminCouponController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
