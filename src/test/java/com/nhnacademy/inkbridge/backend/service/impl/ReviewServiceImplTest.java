@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -136,6 +137,16 @@ class ReviewServiceImplTest {
         assertNotNull(reviewsByBookId);
         verify(reviewRepository, times(1)).findByBookId(pageable, 1L);
         verify(fileRepository, times(1)).getAllFileByReviewId(anyList());
+    }
+
+    @Test
+    @DisplayName("리뷰 작성 여부 조회")
+    void isReviewed() {
+        when(reviewRepository.existsByBookOrderDetail_OrderDetailId(anyLong())).thenReturn(true);
+
+        Map<Long, Boolean> reviewed = reviewService.isReviewed(List.of(1L));
+
+        assertEquals(1, reviewed.size());
     }
 
     @Test

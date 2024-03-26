@@ -12,6 +12,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,7 +42,9 @@ import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -858,8 +861,12 @@ class OrderControllerTest {
             "couponName", 15000L, 5L);
         List<OrderDetailReadResponseDto> detailResponseList = List.of(orderDetailReadResponseDto);
 
+        Map<Long, Boolean> reviewed = new HashMap<>();
+        reviewed.put(1L, true);
+
         given(orderFacade.getOrderDetailByOrderCode("orderCode")).willReturn(
-            new BookOrderDetailResponseDto(orderResponse, payResponse, detailResponseList));
+            BookOrderDetailResponseDto.builder().payInfo(payResponse).isReviewed(reviewed)
+                .orderDetailInfoList(detailResponseList).orderInfo(orderResponse).build());
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{orderCode}", "orderCode")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -924,7 +931,8 @@ class OrderControllerTest {
                 jsonPath("$.orderDetailInfoList[0].maxDiscountPrice").value(
                     orderDetailReadResponseDto.getMaxDiscountPrice()),
                 jsonPath("$.orderDetailInfoList[0].discountPrice").value(
-                    orderDetailReadResponseDto.getDiscountPrice())
+                    orderDetailReadResponseDto.getDiscountPrice()),
+                jsonPath("$.isReviewed.['1']", equalTo(true))
             )
             .andDo(document("order/order-get/order-code/200",
                 preprocessRequest(prettyPrint()),
@@ -971,7 +979,8 @@ class OrderControllerTest {
                     fieldWithPath("orderDetailInfoList[].couponName").description("쿠폰 이름"),
                     fieldWithPath("orderDetailInfoList[].maxDiscountPrice").description(
                         "쿠폰 최대 할인 금액"),
-                    fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가")
+                    fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가"),
+                    subsectionWithPath("isReviewed").description("리뷰 작성 여부")
                 )));
     }
 

@@ -11,6 +11,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -91,7 +92,9 @@ class MemberOrderControllerTest {
         List<OrderDetailReadResponseDto> detailResponseList = List.of(orderDetailReadResponseDto);
 
         given(orderFacade.getOrderDetailByOrderCode("orderCode")).willReturn(
-            new BookOrderDetailResponseDto(orderResponse, payResponse, detailResponseList));
+            BookOrderDetailResponseDto.builder().orderInfo(orderResponse).payInfo(payResponse)
+                .orderDetailInfoList(detailResponseList)
+                .build());
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/auth/members/{memberId}/orders/{orderCode}", 1L, "orderCode")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -205,7 +208,8 @@ class MemberOrderControllerTest {
                     fieldWithPath("orderDetailInfoList[].couponName").description("쿠폰 이름"),
                     fieldWithPath("orderDetailInfoList[].maxDiscountPrice").description(
                         "쿠폰 최대 할인 금액"),
-                    fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가")
+                    fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가"),
+                    subsectionWithPath("isReviewed").description("리뷰 등록 여부")
                 )));
     }
 
