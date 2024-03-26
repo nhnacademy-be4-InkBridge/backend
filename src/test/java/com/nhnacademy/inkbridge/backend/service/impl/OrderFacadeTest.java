@@ -35,8 +35,10 @@ import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.MemberPointService;
 import com.nhnacademy.inkbridge.backend.service.PayService;
+import com.nhnacademy.inkbridge.backend.service.ReviewService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,6 +78,8 @@ class OrderFacadeTest {
 
     @Mock
     MemberPointService memberPointService;
+    @Mock
+    ReviewService reviewService;
 
     @Test
     @DisplayName("주문 생성 - 성공")
@@ -313,6 +317,7 @@ class OrderFacadeTest {
         given(bookOrderDetailService.getOrderDetailByOrderCode("orderCode")).willReturn(
             detailResponseList);
         given(payService.getPayByOrderCode("orderCode")).willReturn(payResponse);
+        given(reviewService.isReviewed(anyList())).willReturn(new HashMap<>());
 
         BookOrderDetailResponseDto result = orderFacade.getOrderDetailByOrderCode("orderCode");
 
@@ -325,6 +330,7 @@ class OrderFacadeTest {
         verify(bookOrderService, times(1)).getOrderByOrderCode("orderCode");
         verify(bookOrderDetailService, times(1)).getOrderDetailByOrderCode("orderCode");
         verify(payService, times(1)).getPayByOrderCode("orderCode");
+        verify(reviewService, times(1)).isReviewed(anyList());
     }
 
     @Test

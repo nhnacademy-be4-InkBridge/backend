@@ -26,8 +26,8 @@ include::pointpolicy/point-policy-admin.adoc[]
 
 == 도서
 
-include::book/book-admin.adoc[]
 include::book/book.adoc[]
+include::book/book-admin.adoc[]
 
 == 작가
 
@@ -40,3 +40,16 @@ include::review/review.adoc[]
 == 장바구니
 
 include::cart/cart.adoc[]
+
+== 쿠폰
+
+include::coupon/coupon.adoc[]
+include::coupon/coupon-admin.adoc[]
+
+== 회원
+
+include::member/member.adoc[]
+
+== 결제
+
+include::pay/pay.adoc[]

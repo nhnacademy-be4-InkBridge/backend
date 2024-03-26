@@ -12,6 +12,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,6 +63,7 @@ class CartControllerTest {
             .andExpect(jsonPath("$.[0].bookId", equalTo(1)))
             .andDo(document("cart/cart-get",
                 preprocessResponse(prettyPrint()),
+                pathParameters(parameterWithName("memberId").description("회원 번호")),
                 responseFields(
                     fieldWithPath("[].amount").description("수량"),
                     fieldWithPath("[].bookId").description("도서 번호"))
