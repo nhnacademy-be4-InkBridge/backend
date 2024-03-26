@@ -102,6 +102,17 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
+     *
+     * @param orderDetailIdList
+     * @return
+     */
+    @Override
+    public Map<Long, Boolean> isReviewed(List<Long> orderDetailIdList) {
+        return orderDetailIdList.stream().collect(Collectors.toMap(id -> id,
+            reviewRepository::existsByBookOrderDetail_OrderDetailId));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Transactional

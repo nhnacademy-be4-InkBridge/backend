@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.File;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -32,6 +33,8 @@ public interface ReviewService {
      * @return ReviewBookReadResponseDto
      */
     ReviewBookReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId);
+
+    Map<Long, Boolean> isReviewed(List<Long> orderDetailIdList);
 
     /**
      * 리뷰를 등록하는 메서드입니다.
