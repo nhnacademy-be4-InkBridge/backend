@@ -63,7 +63,7 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
-            .andDo(document("category-create",
+            .andDo(document("category/category-create",
                 requestFields(
                     fieldWithPath("categoryName").description("카테고리 이름"),
                     fieldWithPath("parentId").description("카테고리의 부모 아이디")
@@ -82,7 +82,7 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("category-create-validation",
+            .andDo(document("category/category-create-validation",
                 requestFields(
                     fieldWithPath("categoryName").description("카테고리 이름"),
                     fieldWithPath("parentId").description("카테고리의 부모 아이디")
@@ -103,7 +103,7 @@ class CategoryControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.categoryId").value(response.getCategoryId()))
             .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()))
-            .andDo(document("category-read",
+            .andDo(document("category/category-read",
                 pathParameters(
                     parameterWithName("categoryId").description("카테고리 아이디")
                 ),
@@ -200,7 +200,7 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity())
-            .andDo(document("category/update",
+            .andDo(document("category/update-validation",
                 pathParameters(
                     parameterWithName("categoryId").description(
                         "카테고리 아이디")
