@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.controller.header.HeaderConstants;
 import com.nhnacademy.inkbridge.backend.dto.member.PointHistoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.PointHistoryService;
 import java.util.List;
@@ -33,7 +34,7 @@ public class PointHistoryController {
      */
     @GetMapping
     public ResponseEntity<List<PointHistoryReadResponseDto>> getPointHistory(
-        @RequestHeader("Authorization-Id") Long userId) {
+        @RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(pointHistoryService.getPointHistory(userId));
     }
