@@ -94,6 +94,12 @@ public class PayRepositoryImpl extends QuerydslRepositorySupport implements PayR
             .fetchOne();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @return 결제 정보
+     */
     @Override
     public Optional<Pay> findByOrderCode(String orderCode) {
         QPay pay = QPay.pay;

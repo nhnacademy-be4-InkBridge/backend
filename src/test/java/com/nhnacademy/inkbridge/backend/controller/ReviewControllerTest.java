@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.when;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -16,6 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -32,10 +32,8 @@ import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailByMemberReadRespo
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewDetailOnBookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewMemberReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.review.ReviewUpdateRequestDto;
-import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
-import com.nhnacademy.inkbridge.backend.service.FileService;
-import com.nhnacademy.inkbridge.backend.service.ReviewService;
+import com.nhnacademy.inkbridge.backend.facade.ReviewFacade;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,10 +71,7 @@ class ReviewControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    ReviewService reviewService;
-
-    @MockBean
-    FileService fileService;
+    ReviewFacade reviewFacade;
 
     Map<Long, List<String>> reviewFiles;
 
@@ -95,7 +90,7 @@ class ReviewControllerTest {
             .thumbnail("thumbnail").build();
         Page<ReviewDetailByMemberReadResponseDto> reviewDto = new PageImpl<>(List.of(dto));
 
-        when(reviewService.getReviewsByMember(any(), anyLong())).thenReturn(
+        when(reviewFacade.getReviewsByMember(any(), anyLong())).thenReturn(
             ReviewMemberReadResponseDto.builder().reviewDetailReadResponseDtos(reviewDto).count(1L)
                 .reviewFiles(reviewFiles).build());
 
@@ -137,7 +132,7 @@ class ReviewControllerTest {
                         "도서 제목"),
                     fieldWithPath("reviewDetailReadResponseDtos.content[].thumbnail").description(
                         "도서 썸네일"),
-                    fieldWithPath("reviewFiles").description("리뷰 사진"),
+                    subsectionWithPath("reviewFiles").description("리뷰 사진"),
                     fieldWithPath("count").description("리뷰 총 개수"),
                     fieldWithPath("reviewDetailReadResponseDtos.totalPages").description("총 페이지"),
                     fieldWithPath("reviewDetailReadResponseDtos.totalElements").description("총 개수"),
@@ -157,7 +152,7 @@ class ReviewControllerTest {
         PageImpl<ReviewDetailOnBookReadResponseDto> page = new PageImpl<>(
             List.of(dto));
 
-        when(reviewService.getReviewsByBookId(any(), anyLong())).thenReturn(
+        when(reviewFacade.getReviewsByBookId(any(), anyLong())).thenReturn(
             ReviewBookReadResponseDto.builder().reviewDetailReadResponseDtos(page)
                 .reviewFiles(reviewFiles).build());
 
@@ -190,7 +185,7 @@ class ReviewControllerTest {
                         "리뷰 작성일"),
                     fieldWithPath("reviewDetailReadResponseDtos.content[].score").description(
                         "리뷰 평점"),
-                    fieldWithPath("reviewFiles").description("리뷰 사진"),
+                    subsectionWithPath("reviewFiles").description("리뷰 사진"),
                     fieldWithPath("reviewDetailReadResponseDtos.totalPages").description("총 페이지"),
                     fieldWithPath("reviewDetailReadResponseDtos.totalElements").description("총 개수"),
                     fieldWithPath("reviewDetailReadResponseDtos.size").description("화면에 출력할 개수"),
@@ -213,9 +208,8 @@ class ReviewControllerTest {
         MockMultipartFile mockReview = new MockMultipartFile("review", "review", "application/json",
             asString.getBytes());
 
-        when(fileService.saveThumbnail(any())).thenReturn(mock(File.class));
-        doNothing().when(reviewService)
-            .createReview(anyLong(), any(ReviewCreateRequestDto.class), anyList());
+        doNothing().when(reviewFacade)
+            .createReviewAndUpdatePoint(anyLong(), any(ReviewCreateRequestDto.class), anyList());
 
         mockMvc.perform(multipart("/api/auth/reviews")
                 .file(mockMultipartFile)
@@ -255,9 +249,8 @@ class ReviewControllerTest {
         MockMultipartFile mockReview = new MockMultipartFile("review", "review", "application/json",
             asString.getBytes());
 
-        when(fileService.saveThumbnail(any())).thenReturn(mock(File.class));
-        doNothing().when(reviewService)
-            .createReview(anyLong(), any(ReviewCreateRequestDto.class), anyList());
+        doNothing().when(reviewFacade)
+            .createReviewAndUpdatePoint(anyLong(), any(ReviewCreateRequestDto.class), anyList());
 
         mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/auth/reviews")
                 .file(mockMultipartFile)
@@ -310,8 +303,7 @@ class ReviewControllerTest {
         MockMultipartFile mockReview = new MockMultipartFile("review", "review", "application/json",
             asString.getBytes());
 
-        when(fileService.saveThumbnail(any())).thenReturn(mock(File.class));
-        doNothing().when(reviewService).updateReview(anyLong(), anyLong(), any(), any());
+        doNothing().when(reviewFacade).updateReview(anyLong(), anyLong(), any(), any());
 
         mockMvc.perform(builders.file(mockMultipartFile).file(mockReview).param("memberId", "1")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -350,8 +342,7 @@ class ReviewControllerTest {
         MockMultipartFile mockReview = new MockMultipartFile("review", "review", "application/json",
             asString.getBytes());
 
-        when(fileService.saveThumbnail(any())).thenReturn(mock(File.class));
-        doNothing().when(reviewService).updateReview(anyLong(), anyLong(), any(), any());
+        doNothing().when(reviewFacade).updateReview(anyLong(), anyLong(), any(), any());
 
         mockMvc.perform(builders.file(mockMultipartFile).file(mockReview).param("memberId", "1")
                 .contentType(MediaType.MULTIPART_FORM_DATA)

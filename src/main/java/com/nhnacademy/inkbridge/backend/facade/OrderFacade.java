@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * class: OrderServiceImpl.
+ * class: OrderFacade.
  *
  * @author jangjaehun
  * @version 2024/03/11
@@ -158,6 +158,12 @@ public class OrderFacade {
         }
     }
 
+    /**
+     * 주문 코드에 맞는 도서 번호를 조회합니다.
+     *
+     * @param orderCode 주문 코드
+     * @return 도서 번호
+     */
     public List<OrderBooksIdResponseDto> getOrderBookIdList(String orderCode) {
         return bookOrderDetailService.getOrderBooksIdByOrderId(orderCode);
     }
