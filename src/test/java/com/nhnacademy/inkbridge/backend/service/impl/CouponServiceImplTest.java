@@ -366,11 +366,12 @@ class CouponServiceImplTest {
 
         when(issueCouponDto.getCoupon()).thenReturn(coupon);
         when(issueCouponDto.getMember()).thenReturn(member);
-
+        Long memberId = issueCouponDto.getMember().getMemberId();
+        String couponId = issueCouponDto.getCoupon().getCouponId();
         when(couponRepository.findById("asd")).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> {
-            couponService.issueCoupon(issueCouponDto.getMember().getMemberId(),
-                issueCouponDto.getCoupon().getCouponId());
+            couponService.issueCoupon(memberId, couponId
+            );
         });
         verify(couponRepository, times(1)).findById("asd");
         verify(memberRepository, times(0)).findById(1L);
@@ -390,12 +391,12 @@ class CouponServiceImplTest {
 
         when(issueCouponDto.getCoupon()).thenReturn(coupon);
         when(issueCouponDto.getMember()).thenReturn(member);
-
+        Long memberId = issueCouponDto.getMember().getMemberId();
+        String couponId = issueCouponDto.getCoupon().getCouponId();
         when(couponRepository.findById("asd")).thenReturn(Optional.of(coupon));
         when(memberRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> {
-            couponService.issueCoupon(issueCouponDto.getMember().getMemberId(),
-                issueCouponDto.getCoupon().getCouponId());
+            couponService.issueCoupon(memberId, couponId);
         });
         verify(couponRepository, times(1)).findById("asd");
         verify(memberRepository, times(1)).findById(1L);
@@ -423,10 +424,10 @@ class CouponServiceImplTest {
         when(couponRepository.findById("asd")).thenReturn(Optional.of(coupon));
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         when(memberCouponRepository.existsByCouponAndMember(coupon, member)).thenReturn(true);
-
+        Long memberId = issueCouponDto.getMember().getMemberId();
+        String couponId = issueCouponDto.getCoupon().getCouponId();
         assertThrows(AlreadyExistException.class, () -> {
-            couponService.issueCoupon(issueCouponDto.getMember().getMemberId(),
-                issueCouponDto.getCoupon().getCouponId());
+            couponService.issueCoupon(memberId, couponId);
         });
         verify(couponRepository, times(1)).findById("asd");
         verify(memberRepository, times(1)).findById(1L);
@@ -450,13 +451,13 @@ class CouponServiceImplTest {
         when(coupon.getBasicExpiredDate()).thenReturn(endDate);
         when(issueCouponDto.getCoupon()).thenReturn(coupon);
         when(issueCouponDto.getMember()).thenReturn(member);
-
+        Long memberId = issueCouponDto.getMember().getMemberId();
+        String couponId = issueCouponDto.getCoupon().getCouponId();
         when(couponRepository.findById("asd")).thenReturn(Optional.of(coupon));
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
         assertThrows(InvalidPeriodException.class, () -> {
-            couponService.issueCoupon(issueCouponDto.getMember().getMemberId(),
-                issueCouponDto.getCoupon().getCouponId());
+            couponService.issueCoupon(memberId, couponId);
         });
         verify(couponRepository, times(1)).findById("asd");
         verify(memberRepository, times(1)).findById(1L);
@@ -480,13 +481,13 @@ class CouponServiceImplTest {
         when(coupon.getBasicExpiredDate()).thenReturn(endDate);
         when(issueCouponDto.getCoupon()).thenReturn(coupon);
         when(issueCouponDto.getMember()).thenReturn(member);
-
+        Long memberId = issueCouponDto.getMember().getMemberId();
+        String couponId = issueCouponDto.getCoupon().getCouponId();
         when(couponRepository.findById("asd")).thenReturn(Optional.of(coupon));
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
         assertThrows(InvalidPeriodException.class, () -> {
-            couponService.issueCoupon(issueCouponDto.getMember().getMemberId(),
-                issueCouponDto.getCoupon().getCouponId());
+            couponService.issueCoupon(memberId, couponId);
         });
         verify(couponRepository, times(1)).findById("asd");
         verify(memberRepository, times(1)).findById(1L);

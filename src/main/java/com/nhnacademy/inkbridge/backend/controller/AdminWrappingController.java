@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin/wrappings")
 public class AdminWrappingController {
 
+    private final String ERROR = "ERROR";
+
     private final WrappingService wrappingService;
 
     public AdminWrappingController(WrappingService wrappingService) {
@@ -49,7 +51,7 @@ public class AdminWrappingController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
@@ -65,12 +67,12 @@ public class AdminWrappingController {
      */
     @PutMapping("/{wrappingId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity updateWrapping(@PathVariable("wrappingId") Long wrappingId,
+    public ResponseEntity<Void> updateWrapping(@PathVariable("wrappingId") Long wrappingId,
         @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.updateWrapping(wrappingId, wrappingCreateRequestDto);

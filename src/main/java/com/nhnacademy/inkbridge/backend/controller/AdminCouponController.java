@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin/coupons")
 public class AdminCouponController {
 
+    private final String ERROR = "ERROR";
     private final CouponService couponService;
 
     public AdminCouponController(CouponService couponService) {
@@ -65,12 +66,12 @@ public class AdminCouponController {
      */
     @PostMapping("/book-coupons")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createBookCoupon(
+    public ResponseEntity<Void> createBookCoupon(
         @Valid @RequestBody BookCouponCreateRequestDto bookCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBookCoupon(bookCouponCreateRequestDto);
@@ -87,12 +88,12 @@ public class AdminCouponController {
      */
     @PostMapping("/category-coupons")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity creatCategoryCoupon(
+    public ResponseEntity<Void> creatCategoryCoupon(
         @Valid @RequestBody CategoryCouponCreateRequestDto categoryCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
@@ -109,12 +110,12 @@ public class AdminCouponController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createCoupon(
+    public ResponseEntity<Void> createCoupon(
         @Valid @RequestBody CouponCreateRequestDto couponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
@@ -131,12 +132,12 @@ public class AdminCouponController {
      */
     @PostMapping("/birthday-coupons")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createBirthdayCoupon(
+    public ResponseEntity<Void> createBirthdayCoupon(
         @Valid @RequestBody BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("ERROR:" + firstError.getDefaultMessage());
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
