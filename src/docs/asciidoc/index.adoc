@@ -61,3 +61,10 @@ include::pay/pay.adoc[]
 
 include::wrapping/wrapping.adoc
 include::wrapping/wrapping-admin.adoc[]
+
+== 카테고리
+
+include::category/category.adoc[]
+
+== 출판사
+include::publisher/publisher.adoc[]
