@@ -1,13 +1,11 @@
 package com.nhnacademy.inkbridge.backend.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 /**
- * * 인증 토큰 요청을 위한 데이터 전송 객체(DTO)입니다.
- *  * 인증 시 필요한 사용자 인증 정보를 포함하여 인증 서버에 전달하는 데 사용됩니다.
- * class: TokenRequest.
+ * * 인증 토큰 요청을 위한 데이터 전송 객체(DTO)입니다. * 인증 시 필요한 사용자 인증 정보를 포함하여 인증 서버에 전달하는 데 사용됩니다. class:
+ * TokenRequest.
  *
  * @author jeongbyeonghun
  * @version 2/28/24
@@ -18,8 +16,7 @@ public class TokenRequest {
     private final Auth auth;
 
     /**
-     * 인증 정보를 포함하는 내부 정적 클래스입니다.
-     * 테넌트 ID와 패스워드 자격 증명 정보를 포함합니다.
+     * 인증 정보를 포함하는 내부 정적 클래스입니다. 테넌트 ID와 패스워드 자격 증명 정보를 포함합니다.
      */
     @Getter
     public static class Auth {
@@ -35,8 +32,7 @@ public class TokenRequest {
     }
 
     /**
-     * 사용자의 패스워드 자격 증명을 포함하는 내부 정적 클래스입니다.
-     * 사용자 이름과 패스워드를 포함합니다.
+     * 사용자의 패스워드 자격 증명을 포함하는 내부 정적 클래스입니다. 사용자 이름과 패스워드를 포함합니다.
      */
     @Getter
     public static class PasswordCredentials {

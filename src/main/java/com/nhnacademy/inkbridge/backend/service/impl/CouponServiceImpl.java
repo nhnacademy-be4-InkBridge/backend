@@ -188,7 +188,6 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
-
         Book book = bookRepository.findById(bookCouponCreateRequestDto.getBookId())
             .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND.getMessage()));
         saveBookCoupon(book, newCoupon);
@@ -262,7 +261,7 @@ public class CouponServiceImpl implements CouponService {
      */
     private void validateCouponPeriod(LocalDate startDate, LocalDate endDate) {
         LocalDate now = LocalDate.now();
-        if (startDate.isBefore(now)) {
+        if (now.isBefore(startDate)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_NOT_STARTED.getMessage());
         } else if (endDate.isBefore(now)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_EXPIRED.getMessage());
@@ -367,25 +366,27 @@ public class CouponServiceImpl implements CouponService {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
-        MemberCouponStatusEnum statusEnum) {
+    public Page<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum statusEnum, Pageable pageable) {
         LocalDate now = LocalDate.now();
-        List<MemberCoupon> coupons = null;
+        Page<MemberCoupon> coupons = null;
 
         if (statusEnum == MemberCouponStatusEnum.USED) {
-            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId);
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId,
+                pageable);
         } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
-            coupons = memberCouponRepository
-                .findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
-                    memberId, now, now);
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+                memberId, now, now, pageable);
         } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
             coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
-                memberId, now);
+                memberId, now, pageable);
         }
-        return coupons.stream()
-            .map(MemberCoupon::toResponseDto)
-            .collect(Collectors.toList());
+
+        if (coupons != null) {
+            return coupons.map(MemberCoupon::toResponseDto);
+        } else {
+            return Page.empty();
+        }
     }
 
     /**

@@ -15,6 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
@@ -980,5 +982,49 @@ class OrderControllerTest {
                     fieldWithPath("orderDetailInfoList[].discountPrice").description("쿠폰 할인가"),
                     subsectionWithPath("isReviewed").description("리뷰 작성 여부")
                 )));
+    }
+
+    @Test
+    @DisplayName("주문 도서 번호 조회 - 조회 성공")
+    void testGetOrderBooksIdList_success() throws Exception {
+        OrderBooksIdResponseDto response = new OrderBooksIdResponseDto(1L);
+        List<OrderBooksIdResponseDto> list = List.of(response);
+
+        given(orderFacade.getOrderBookIdList("orderCode")).willReturn(list);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{orderCode}/books", "orderCode")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isOk(),
+                jsonPath("$[0].bookId").value(1L)
+            )
+            .andDo(document("order/order-book/get-200",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("orderCode").description("주문 코드")
+                ),
+                responseFields(
+                    fieldWithPath("[].bookId").description("도서 번호")
+                )));
+    }
+
+    @Test
+    @DisplayName("주문 도서 번호 조회 - 주문 코드에 맞는 주문이 없는 경우")
+    void testGetOrderBooksIdList_order_not_found() throws Exception {
+
+        given(orderFacade.getOrderBookIdList("orderCode"))
+            .willThrow(new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage()));
+
+        mockMvc.perform(get("/api/orders/{orderCode}/books", "orderCode")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpectAll(
+                status().isNotFound(),
+                exception -> assertThat(exception.getResolvedException())
+                    .isInstanceOf(NotFoundException.class)
+            )
+            .andDo(document("order/order-book/get-200",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())));
     }
 }

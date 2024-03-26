@@ -4,9 +4,7 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberEmailResponseD
 import com.nhnacademy.inkbridge.backend.entity.Member;
 import com.nhnacademy.inkbridge.backend.repository.custom.MemberCustomRepository;
 import java.util.Optional;
-import javax.ws.rs.QueryParam;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  * class: MemberRepository.
@@ -33,7 +31,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
 
     Optional<Member> findByEmail(String email);
 
-    @Query("select new com.nhnacademy.inkbridge.backend.dto.member.response.MemberEmailResponseDto(m.email) " +
-            "from Member m where m.password = :password")
-    Optional<MemberEmailResponseDto> findByPassword(@QueryParam("password") String password);
+    Optional<MemberEmailResponseDto> findByPassword(String password);
 }

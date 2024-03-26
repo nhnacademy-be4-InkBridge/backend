@@ -29,12 +29,12 @@ public class MemberGradeController {
     private final MemberGradeService memberGradeService;
 
     @GetMapping
-    ResponseEntity<List<MemberGradeReadResponseDto>> getGradeList() {
+    public ResponseEntity<List<MemberGradeReadResponseDto>> getGradeList() {
         return ResponseEntity.ok(memberGradeService.getGradeList());
     }
 
     @PutMapping("/{gradeId}")
-    ResponseEntity<HttpStatus> updateGrade(@PathVariable(name = "gradeId") Integer gradeId,
+    public ResponseEntity<HttpStatus> updateGrade(@PathVariable(name = "gradeId") Integer gradeId,
         @RequestBody MemberGradeUpdateRequestDto memberGradeUpdateRequestDto) {
         memberGradeService.updateGrade(gradeId, memberGradeUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();

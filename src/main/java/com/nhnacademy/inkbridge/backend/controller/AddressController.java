@@ -43,7 +43,7 @@ public class AddressController {
      * @return 조회된 주소 정보 리스트와 HTTP 상태 코드 200
      */
     @GetMapping
-    ResponseEntity<List<MemberAddressReadResponseDto>> getAddresses(
+    public ResponseEntity<List<MemberAddressReadResponseDto>> getAddresses(
         @RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(memberAddressService.getAddressByUserId(userId));
     }
@@ -56,7 +56,7 @@ public class AddressController {
      * @return 조회된 주소 정보와 HTTP 상태 코드 200
      */
     @GetMapping("/{addressId}")
-    ResponseEntity<MemberAddressReadResponseDto> getAddress(
+    public ResponseEntity<MemberAddressReadResponseDto> getAddress(
         @RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId, @PathVariable("addressId") Long addressId) {
         return ResponseEntity.status(HttpStatus.OK).body(memberAddressService.getAddressByUserIdAndAddressId(userId, addressId));
     }
@@ -69,7 +69,7 @@ public class AddressController {
      * @return HTTP 상태 코드 200
      */
     @PostMapping
-    ResponseEntity<HttpStatus> createAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
+    public ResponseEntity<HttpStatus> createAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
         @Valid @RequestBody AddressCreateRequestDto addressCreateRequestDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             throw new ValidationException(AddressMessageEnum.ADDRESS_VALID_FAIL.getMessage());
@@ -87,7 +87,7 @@ public class AddressController {
      * @return HTTP 상태 코드 200
      */
     @PutMapping
-    ResponseEntity<HttpStatus> modifyAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
+    public ResponseEntity<HttpStatus> modifyAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
         @Valid @RequestBody AddressUpdateRequestDto addressUpdateRequestDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             throw new ValidationException(AddressMessageEnum.ADDRESS_VALID_FAIL.getMessage());
@@ -104,7 +104,7 @@ public class AddressController {
      * @return HTTP 상태 코드 200
      */
     @DeleteMapping("/{addressId}")
-    ResponseEntity<HttpStatus> deleteAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
+    public ResponseEntity<HttpStatus> deleteAddress(@RequestHeader(HeaderConstants.MEMBER_ID_HEADER) Long userId,
         @PathVariable("addressId") Long addressId) {
         memberAddressService.deleteAddress(userId, addressId);
         return ResponseEntity.status(HttpStatus.OK).build();

@@ -4,9 +4,11 @@ import com.nhnacademy.inkbridge.backend.dto.order.WrappingCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.WrappingService;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,8 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
+@Slf4j
 @RequestMapping("/api/admin/wrappings")
 public class AdminWrappingController {
+
+    private final String ERROR = "ERROR";
 
     private final WrappingService wrappingService;
 
@@ -45,7 +50,9 @@ public class AdminWrappingController {
         @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
     }
@@ -60,11 +67,13 @@ public class AdminWrappingController {
      */
     @PutMapping("/{wrappingId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity updateWrapping(@PathVariable("wrappingId") Long wrappingId,
+    public ResponseEntity<Void> updateWrapping(@PathVariable("wrappingId") Long wrappingId,
         @RequestBody @Valid WrappingCreateRequestDto wrappingCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.updateWrapping(wrappingId, wrappingCreateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();

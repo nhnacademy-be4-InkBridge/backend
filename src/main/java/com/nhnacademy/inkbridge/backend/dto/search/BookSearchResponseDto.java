@@ -6,7 +6,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * class: BookSearchReadResponseDto.
@@ -40,10 +39,11 @@ public class BookSearchResponseDto {
 
     /**
      * search인덱스를 dto로 변환하는 메소드
+     *
      * @param search 인덱스
      * @return dto
      */
-    public static BookSearchResponseDto toBookSearchResponseDto(Search search){
+    public static BookSearchResponseDto toBookSearchResponseDto(Search search) {
         return BookSearchResponseDto.builder()
             .id(search.getId())
             .bookTitle(search.getBookTitle())

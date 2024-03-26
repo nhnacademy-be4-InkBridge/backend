@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
-import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.deliverypolicy.DeliveryPolicyReadResponseDto;
 import com.nhnacademy.inkbridge.backend.service.DeliveryPolicyService;
 import lombok.RequiredArgsConstructor;

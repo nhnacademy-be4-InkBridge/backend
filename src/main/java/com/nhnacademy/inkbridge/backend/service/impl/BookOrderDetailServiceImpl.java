@@ -131,6 +131,10 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
      */
     @Override
     public List<OrderBooksIdResponseDto> getOrderBooksIdByOrderId(String orderCode) {
+        if (!bookOrderRepository.existsByOrderCode(orderCode)) {
+            throw new NotFoundException(OrderMessageEnum.ORDER_NOT_FOUND.getMessage());
+        }
+
         return bookOrderDetailRepository.findBookIdByOrderCode(orderCode);
     }
 
@@ -185,6 +189,12 @@ public class BookOrderDetailServiceImpl implements BookOrderDetailService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param orderCode 주문 코드
+     * @param status  주문 상태
+     */
     @Override
     public void changeOrderStatusByOrderCode(String orderCode, OrderStatusEnum status) {
         List<BookOrderDetail> bookOrderDetailList = bookOrderDetailRepository.findOrderDetailByOrderCode(

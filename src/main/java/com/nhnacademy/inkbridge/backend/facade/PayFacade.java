@@ -6,7 +6,6 @@ import com.nhnacademy.inkbridge.backend.dto.pay.PayCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.entity.enums.PointHistoryReason;
 import com.nhnacademy.inkbridge.backend.enums.OrderStatusEnum;
 import com.nhnacademy.inkbridge.backend.exception.PaymentFailedException;
-import com.nhnacademy.inkbridge.backend.service.AccumulationRatePolicyService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderDetailService;
 import com.nhnacademy.inkbridge.backend.service.BookOrderService;
 import com.nhnacademy.inkbridge.backend.service.CouponService;

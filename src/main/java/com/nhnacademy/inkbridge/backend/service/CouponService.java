@@ -89,8 +89,8 @@ public interface CouponService {
      * @param used     사용여부
      * @return 사용자가 가진 쿠폰
      */
-    List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
-        MemberCouponStatusEnum used);
+    Page<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum used, Pageable pageable);
 
     /**
      * 발급가능한 쿠폰의 목록을 보여주는 메소드.

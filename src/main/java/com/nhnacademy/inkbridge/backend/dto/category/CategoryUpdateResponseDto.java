@@ -1,6 +1,5 @@
 package com.nhnacademy.inkbridge.backend.dto.category;
 
-import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

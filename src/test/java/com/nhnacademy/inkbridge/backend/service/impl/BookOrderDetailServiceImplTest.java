@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.order.OrderBooksIdResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderCreateRequestDto.BookOrderDetailCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -116,7 +117,9 @@ class BookOrderDetailServiceImplTest {
         given(bookOrderStatusRepository.findById(1L)).willReturn(Optional.of(status));
         given(wrappingRepository.findById(1L)).willReturn(Optional.of(wrapping));
 
-        bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto));
+        List<BookOrderDetailCreateRequestDto> request = List.of(requestDto);
+
+        bookOrderDetailService.createBookOrderDetail(1L, request);
 
         verify(bookOrderRepository, times(1)).findById(any());
         verify(bookRepository, times(1)).findById(1L);
@@ -131,8 +134,10 @@ class BookOrderDetailServiceImplTest {
     void testCreateBookOrderDetail_order_not_found() {
         given(bookOrderRepository.findById(1L)).willReturn(Optional.empty());
 
+        List<BookOrderDetailCreateRequestDto> request = List.of(requestDto);
+
         assertThrows(NotFoundException.class,
-            () -> bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto)));
+            () -> bookOrderDetailService.createBookOrderDetail(1L, request));
 
         verify(bookOrderRepository, times(1)).findById(1L);
     }
@@ -145,8 +150,10 @@ class BookOrderDetailServiceImplTest {
         given(bookOrderRepository.findById(1L)).willReturn(Optional.of(bookOrder));
         given(bookRepository.findById(1L)).willReturn(Optional.empty());
 
+        List<BookOrderDetailCreateRequestDto> request = List.of(requestDto);
+
         assertThrows(NotFoundException.class,
-            () -> bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto)));
+            () -> bookOrderDetailService.createBookOrderDetail(1L, request));
 
         verify(bookOrderRepository, times(1)).findById(1L);
         verify(bookRepository, times(1)).findById(1L);
@@ -163,8 +170,10 @@ class BookOrderDetailServiceImplTest {
         given(bookRepository.findById(1L)).willReturn(Optional.of(book));
         given(memberCouponRepository.findById(1L)).willReturn(Optional.empty());
 
+        List<BookOrderDetailCreateRequestDto> request = List.of(requestDto);
+
         assertThrows(NotFoundException.class,
-            () -> bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto)));
+            () -> bookOrderDetailService.createBookOrderDetail(1L, request));
 
         verify(bookOrderRepository, times(1)).findById(1L);
         verify(bookRepository, times(1)).findById(1L);
@@ -184,8 +193,10 @@ class BookOrderDetailServiceImplTest {
         given(memberCouponRepository.findById(1L)).willReturn(Optional.of(coupon));
         given(bookOrderStatusRepository.findById(1L)).willReturn(Optional.empty());
 
+        List<BookOrderDetailCreateRequestDto> request = List.of(requestDto);
+
         assertThrows(NotFoundException.class,
-            () -> bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto)));
+            () -> bookOrderDetailService.createBookOrderDetail(1L, request));
 
         verify(bookOrderRepository, times(1)).findById(1L);
         verify(bookRepository, times(1)).findById(1L);
@@ -209,8 +220,10 @@ class BookOrderDetailServiceImplTest {
         given(bookOrderStatusRepository.findById(1L)).willReturn(Optional.of(status));
         given(wrappingRepository.findById(1L)).willReturn(Optional.empty());
 
+        List<BookOrderDetailCreateRequestDto> response = List.of(requestDto);
+
         assertThrows(NotFoundException.class,
-            () -> bookOrderDetailService.createBookOrderDetail(1L, List.of(requestDto)));
+            () -> bookOrderDetailService.createBookOrderDetail(1L, response));
 
         verify(bookOrderRepository, times(1)).findById(1L);
         verify(bookRepository, times(1)).findById(1L);
@@ -344,6 +357,100 @@ class BookOrderDetailServiceImplTest {
         bookOrderDetailService.changeOrderStatus(1L, OrderStatusEnum.SHIPPING);
 
         verify(bookOrderDetailRepository, times(1)).findOrderDetailByOrderId(anyLong());
+        verify(bookOrderStatusRepository, times(1)).findById(any());
+    }
+
+    @Test
+    @DisplayName("주문한 도서 번호 조회 - 도서에 맞는 주문이 없는 경우")
+    void testGetOrderBooksIdByOrderId_order_not_found() {
+        given(bookOrderRepository.existsByOrderCode(anyString())).willReturn(false);
+
+        assertThrows(NotFoundException.class,
+            () -> bookOrderDetailService.getOrderBooksIdByOrderId("orderCode"));
+
+        verify(bookOrderRepository, times(1)).existsByOrderCode(anyString());
+    }
+
+    @Test
+    @DisplayName("주문한 도서 번호 조회 - 성공")
+    void testGetOrderBooksIdByOrderId_success() {
+        OrderBooksIdResponseDto response = new OrderBooksIdResponseDto(1L);
+        List<OrderBooksIdResponseDto> list = List.of(response);
+
+        given(bookOrderRepository.existsByOrderCode(anyString())).willReturn(true);
+        given(bookOrderDetailRepository.findBookIdByOrderCode(anyString())).willReturn(list);
+
+        List<OrderBooksIdResponseDto> result = bookOrderDetailService.getOrderBooksIdByOrderId(
+            "orderCode");
+
+        assertEquals(list, result);
+
+        verify(bookOrderRepository, times(1)).existsByOrderCode(anyString());
+        verify(bookOrderDetailRepository, times(1)).findBookIdByOrderCode(anyString());
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 주문 상태가 없는 경우")
+    void testChangeOrderStatusByOrderCode_order_not_found() {
+        List<BookOrderDetail> bookOrderDetailList = List.of(BookOrderDetail.builder().build());
+
+        given(bookOrderDetailRepository.findOrderDetailByOrderCode("orderCode")).willReturn(
+            bookOrderDetailList);
+
+        given(bookOrderStatusRepository.findById(any())).willReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+            () -> bookOrderDetailService.changeOrderStatusByOrderCode("orderCode",
+                OrderStatusEnum.SHIPPING));
+
+        verify(bookOrderDetailRepository, times(1)).findOrderDetailByOrderCode("orderCode");
+        verify(bookOrderStatusRepository, times(1)).findById(any());
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 변경된 상태로 다시 바꿀려는 경우")
+    void testChangeOrderStatusByOrderCode_already_process() {
+        BookOrderStatus bookOrderStatus = BookOrderStatus.builder().build();
+
+        List<BookOrderDetail> bookOrderDetailList = List.of(BookOrderDetail.builder()
+                .bookOrderStatus(bookOrderStatus)
+            .build());
+
+        given(bookOrderDetailRepository.findOrderDetailByOrderCode("orderCode")).willReturn(
+            bookOrderDetailList);
+
+        given(bookOrderStatusRepository.findById(any())).willReturn(Optional.of(bookOrderStatus));
+
+        assertThrows(AlreadyProcessedException.class,
+            () -> bookOrderDetailService.changeOrderStatusByOrderCode("orderCode",
+                OrderStatusEnum.SHIPPING));
+
+        verify(bookOrderDetailRepository, times(1)).findOrderDetailByOrderCode("orderCode");
+        verify(bookOrderStatusRepository, times(1)).findById(any());
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 변경된 상태로 다시 바꿀려는 경우")
+    void testChangeOrderStatusByOrderCode_success() {
+        BookOrderStatus bookOrderStatus = BookOrderStatus.builder().build();
+        BookOrderStatus current = BookOrderStatus.builder().build();
+
+        BookOrderDetail detail = BookOrderDetail.builder()
+            .bookOrderStatus(current)
+            .build();
+
+        List<BookOrderDetail> bookOrderDetailList = List.of(detail);
+
+        given(bookOrderDetailRepository.findOrderDetailByOrderCode("orderCode")).willReturn(
+            bookOrderDetailList);
+
+        given(bookOrderStatusRepository.findById(any())).willReturn(Optional.of(bookOrderStatus));
+
+        bookOrderDetailService.changeOrderStatusByOrderCode("orderCode", OrderStatusEnum.SHIPPING);
+
+        assertEquals(bookOrderStatus, detail.getBookOrderStatus());
+
+        verify(bookOrderDetailRepository, times(1)).findOrderDetailByOrderCode("orderCode");
         verify(bookOrderStatusRepository, times(1)).findById(any());
     }
 }
