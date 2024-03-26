@@ -5,12 +5,12 @@
 :toc-title: Content
 :toclevels: 4
 :seclinks:
-
-== 배송비 정책 관리자
-include::deliverypolicy/delivery-policy-admin.adoc[]
+:sectnums:
 
 == 배송비 정책
+
 include::deliverypolicy/delivery-policy.adoc[]
+include::deliverypolicy/delivery-policy-admin.adoc[]
 
 == 적립률 정책
 include::accumulationratepolicy/accumulation-rate-policy.adoc[]
