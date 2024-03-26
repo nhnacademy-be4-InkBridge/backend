@@ -22,7 +22,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implements
     MemberCouponCustomRepository {
 
-    private final int issuableCouponStatusId = 1;
+    private static final int ISSUABLE_COUPON_STATUS_ID = 1;
 
     public MemberCouponRepositoryImpl() {
         super(MemberCoupon.class);
@@ -40,7 +40,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
         QCategoryCoupon categoryCoupon = QCategoryCoupon.categoryCoupon;
         QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
 
-        Set<MemberCouponReadResponseDto> result = new HashSet<>(); // HashSet으로 변경
+        Set<MemberCouponReadResponseDto> result = new HashSet<>();
 
         result.addAll(from(memberCoupon)
             .leftJoin(coupon).on(memberCoupon.coupon.couponId.eq(coupon.couponId))
@@ -48,7 +48,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
             .leftJoin(categoryCoupon).on(coupon.couponId.eq(categoryCoupon.coupon.couponId))
             .where(memberCoupon.member.memberId.eq(memberId)
                 .and(memberCoupon.usedAt.isNull())
-                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(issuableCouponStatusId))
+                .and(memberCoupon.coupon.couponStatus.couponStatusId.eq(ISSUABLE_COUPON_STATUS_ID))
                 .and(bookCoupon.book.bookId.eq(bookCategoriesDto.getBookId())
                     .or(categoryCoupon.category.categoryId.in(bookCategoriesDto.getCategoryIds()))
                     .or(categoryCoupon.category.categoryId.isNull()

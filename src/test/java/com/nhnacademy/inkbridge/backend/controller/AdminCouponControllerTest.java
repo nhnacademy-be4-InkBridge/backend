@@ -3,6 +3,7 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -144,6 +145,7 @@ class AdminCouponControllerTest {
             .couponTypeId(1)
             .bookId(12345L)
             .build();
+        doNothing().when(couponService).createBookCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons/book-coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -171,6 +173,7 @@ class AdminCouponControllerTest {
             .couponTypeId(1)
             .bookId(12345L)
             .build();
+        doNothing().when(couponService).createBookCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons/book-coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -197,6 +200,7 @@ class AdminCouponControllerTest {
             .couponTypeId(1)
             .categoryId(12345L)
             .build();
+        doNothing().when(couponService).createCategoryCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons/category-coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -224,6 +228,7 @@ class AdminCouponControllerTest {
             .couponTypeId(1)
             .categoryId(12345L)
             .build();
+        doNothing().when(couponService).createCategoryCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons/category-coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -249,6 +254,7 @@ class AdminCouponControllerTest {
             .validity(30)
             .couponTypeId(1)
             .build();
+        doNothing().when(couponService).createCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -275,6 +281,7 @@ class AdminCouponControllerTest {
             .validity(30)
             .couponTypeId(1)
             .build();
+        doNothing().when(couponService).createCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -298,6 +305,7 @@ class AdminCouponControllerTest {
             .month(4)
             .build();
 
+        doNothing().when(couponService).createBirthdayCoupon(any());
         mockMvc.perform(post("/api/admin/coupons/birthday-coupons")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
@@ -320,6 +328,7 @@ class AdminCouponControllerTest {
             .discountPrice(2000L)
             .month(0)
             .build();
+        doNothing().when(couponService).createBirthdayCoupon(any());
 
         mockMvc.perform(post("/api/admin/coupons/birthday-coupons")
                 .contentType(MediaType.APPLICATION_JSON)

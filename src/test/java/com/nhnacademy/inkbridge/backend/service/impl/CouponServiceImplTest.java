@@ -20,7 +20,9 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.MemberCouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Book;
 import com.nhnacademy.inkbridge.backend.entity.BookCategory;
+import com.nhnacademy.inkbridge.backend.entity.BookCoupon;
 import com.nhnacademy.inkbridge.backend.entity.Category;
+import com.nhnacademy.inkbridge.backend.entity.CategoryCoupon;
 import com.nhnacademy.inkbridge.backend.entity.Coupon;
 import com.nhnacademy.inkbridge.backend.entity.CouponStatus;
 import com.nhnacademy.inkbridge.backend.entity.CouponType;
@@ -221,10 +223,11 @@ class CouponServiceImplTest {
         CouponType couponType = mock(CouponType.class);
         CouponStatus couponStatus = mock(CouponStatus.class);
         Category category = mock(Category.class);
+        CategoryCoupon categoryCoupon = mock(CategoryCoupon.class);
         when(couponTypeRepository.findById(any())).thenReturn(Optional.of(couponType));
         when(couponStatusRepository.findById(any())).thenReturn(Optional.of(couponStatus));
         when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
-
+        when(categoryCouponRepository.save(any())).thenReturn(categoryCoupon);
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
 
         verify(couponRepository, times(1)).save(any(Coupon.class));
@@ -282,10 +285,11 @@ class CouponServiceImplTest {
         CouponType couponType = mock(CouponType.class);
         CouponStatus couponStatus = mock(CouponStatus.class);
         Book book = mock(Book.class);
+        BookCoupon bookCoupon = mock(BookCoupon.class);
         when(couponTypeRepository.findById(any())).thenReturn(Optional.of(couponType));
         when(couponStatusRepository.findById(any())).thenReturn(Optional.of(couponStatus));
         when(bookRepository.findById(any())).thenReturn(Optional.of(book));
-
+        when(bookCouponRepository.save(any())).thenReturn(bookCoupon);
         couponService.createBookCoupon(bookCouponCreateRequestDto);
 
         verify(couponRepository, times(1)).saveAndFlush(any(Coupon.class));

@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin/wrappings")
 public class AdminWrappingController {
 
-    private final String ERROR = "ERROR";
-
+    private static final String ERROR = "ERROR";
+    private static final String ERROR_LOG = "{}: {}";
     private final WrappingService wrappingService;
 
     public AdminWrappingController(WrappingService wrappingService) {
@@ -51,7 +51,7 @@ public class AdminWrappingController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.createWrapping(wrappingCreateRequestDto);
@@ -72,7 +72,7 @@ public class AdminWrappingController {
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             FieldError firstError = bindingResult.getFieldErrors().get(0);
-            log.error("{}: {}", ERROR, firstError.getDefaultMessage());
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
             throw new ValidationException(firstError.getDefaultMessage());
         }
         wrappingService.updateWrapping(wrappingId, wrappingCreateRequestDto);

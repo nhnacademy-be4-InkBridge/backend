@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.inkbridge.backend.dto.book.BookIdNameReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.CategoryReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponDetailReadResponseDto;
@@ -56,9 +55,7 @@ class CouponControllerTest {
 
     @MockBean
     CouponService couponService;
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
+    
     @Test
     void getCoupons() throws Exception {
         CouponReadResponseDto coupon1 = new CouponReadResponseDto("1", "쿠폰1", 10000L, 5000L, 0L,
