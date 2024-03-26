@@ -1,0 +1,25 @@
+=== 카테고리
+
+==== 생성
+===== 요청 필드
+include::{snippets}/category/category-create/request-fields.adoc[]
+===== HTTP 요청
+include::{snippets}/category/category-create/http-request.adoc[]
+
+===== 유효성검사 필드
+include::{snippets}/category/category-create-validation/request-fields.adoc[]
+include::{snippets}/category/category-create-validation/http-response.adoc[]
+
+==== 조회
+==== 조회응답
+include::{snippets}/category/category-read/response-fields.adoc[]
+include::{snippets}/category/category-read/http-response.adoc[]
+
+==== 수정
+==== 요청 필드
+include::{snippets}/category/update/request-fields.adoc[]
+include::{snippets}/category/update/http-request.adoc[]
+
+==== 유효성 검사 필드
+include::{snippets}/category/update-validation/request-fields.adoc[]
+include::{snippets}/category/update-validation/http-response.adoc[]
