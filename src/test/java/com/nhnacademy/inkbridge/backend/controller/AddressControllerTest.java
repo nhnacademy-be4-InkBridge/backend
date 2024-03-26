@@ -17,7 +17,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -159,7 +158,8 @@ class AddressControllerTest {
     void testDeleteAddress() throws Exception {
         Long addressIdToDelete = 1L;
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/addresses/{addressId}", addressIdToDelete)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/mypage/addresses/{addressId}",
+                    addressIdToDelete)
                 .header(AUTH_HEADER, USER_ID))
             .andExpect(status().isOk())
             .andDo(document("delete-address",

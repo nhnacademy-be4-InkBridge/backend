@@ -107,12 +107,14 @@ class MemberGradeControllerTest {
         memberGradeUpdateRequestDto.setPointRate(BigDecimal.valueOf(2.0)); // 포인트 비율 업데이트
         memberGradeUpdateRequestDto.setStandardAmount(20000L); // 기준 금액 업데이트
 
-        doNothing().when(memberGradeService).updateGrade(eq(gradeId), any(MemberGradeUpdateRequestDto.class));
+        doNothing().when(memberGradeService)
+            .updateGrade(eq(gradeId), any(MemberGradeUpdateRequestDto.class));
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/admin/member/grade/{gradeId}", gradeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberGradeUpdateRequestDto)))
+        mvc.perform(
+                RestDocumentationRequestBuilders.put("/api/admin/member/grade/{gradeId}", gradeId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(memberGradeUpdateRequestDto)))
             .andExpect(status().isOk())
             .andDo(document("member-grade-update",
                 preprocessRequest(prettyPrint()), // 요청 예쁘게 출력

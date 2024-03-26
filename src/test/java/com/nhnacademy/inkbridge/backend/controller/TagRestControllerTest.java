@@ -74,14 +74,13 @@ class TagRestControllerTest {
     private static String testTagName1;
     private static String testTagName2;
     private static Long testTagId1;
-    private static Long testTagId2;
 
     @BeforeAll
     static void setTest() {
         testTagName1 = "testTag1";
         testTagName2 = "testTag2";
         testTagId1 = 1L;
-        testTagId2 = 2L;
+        Long testTagId2 = 2L;
         testTag1 = Tag.builder().tagId(testTagId1).tagName(testTagName1).build();
         testTag2 = Tag.builder().tagId(testTagId2).tagName(testTagName2).build();
     }
@@ -91,24 +90,27 @@ class TagRestControllerTest {
         TagCreateRequestDto tagCreateRequestDto = new TagCreateRequestDto();
         tagCreateRequestDto.setTagName("testTag");
         TagCreateResponseDto tagCreateResponseDto = new TagCreateResponseDto(
-            Tag.builder().tagName(tagCreateRequestDto.getTagName()).tagId(testTagId1).build());
-        given(tagService.createTag(any())).willReturn(tagCreateResponseDto);
+            Tag.builder().tagName("testTag").tagId(testTagId1).build());
+        given(tagService.createTag(any(TagCreateRequestDto.class))).willReturn(
+            tagCreateResponseDto);
+
         mvc.perform(post("/api/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagCreateRequestDto)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("tagName", equalTo("testTag")))
-            .andExpect(jsonPath("tagId").value(testTagId1))
+            .andExpect(jsonPath("$.tagName", equalTo("testTag")))
+            .andExpect(jsonPath("$.tagId", equalTo(testTagId1.intValue())))
             .andDo(document("tag-create",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestFields(
                     fieldWithPath("tagName").description("생성할 태그의 이름")
                 ),
-                responseFields(fieldWithPath("tagName").description("생성된 태그의 이름")),
-                responseFields(fieldWithPath("tagId").description("생성된 태그의 아이디"))
-            ));
+                responseFields(
+                    fieldWithPath("tagName").description("생성된 태그의 이름"),
+                    fieldWithPath("tagId").description("생성된 태그의 ID")
+                )));
     }
 
     @Test
@@ -161,7 +163,7 @@ class TagRestControllerTest {
                 responseFields(
                     fieldWithPath("[].tagName").description("태그의 이름"),
                     fieldWithPath("[].tagId").description("태그의 식별자")
-                )));;
+                )));
     }
 
     @Test
