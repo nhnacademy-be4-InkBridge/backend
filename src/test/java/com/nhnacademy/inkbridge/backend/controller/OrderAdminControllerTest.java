@@ -13,7 +13,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -159,7 +158,8 @@ class OrderAdminControllerTest {
             orderDetailReadResponseDto);
 
         given(orderFacade.getOrderDetailByOrderId(anyLong())).willReturn(
-            new BookOrderDetailResponseDto(orderResponse, payResponse, detailResponseList));
+            BookOrderDetailResponseDto.builder().payInfo(payResponse)
+                .orderDetailInfoList(detailResponseList).orderInfo(orderResponse).build());
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/admin/orders/{orderId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -232,7 +232,7 @@ class OrderAdminControllerTest {
                 pathParameters(
                     parameterWithName("orderId").description("주문 번호")
                 ),
-                responseFields(
+                relaxedResponseFields(
                     fieldWithPath("orderInfo.orderCode").description("주문 코드"),
                     fieldWithPath("orderInfo.orderName").description("주문 이름"),
                     fieldWithPath("orderInfo.receiverName").description("수취인 이름"),

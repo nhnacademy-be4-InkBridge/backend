@@ -102,9 +102,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
-     *
-     * @param orderDetailIdList
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public Map<Long, Boolean> isReviewed(List<Long> orderDetailIdList) {

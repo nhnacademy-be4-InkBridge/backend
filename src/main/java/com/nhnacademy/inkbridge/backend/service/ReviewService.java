@@ -34,6 +34,12 @@ public interface ReviewService {
      */
     ReviewBookReadResponseDto getReviewsByBookId(Pageable pageable, Long bookId);
 
+    /**
+     * 리뷰를 작성한 주문 상세가 존재하는지 체크하는 메서드입니다.
+     *
+     * @param orderDetailIdList orderDetailIdList
+     * @return orderDetailId: isReviewed
+     */
     Map<Long, Boolean> isReviewed(List<Long> orderDetailIdList);
 
     /**
