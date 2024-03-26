@@ -14,7 +14,6 @@ import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDt
 import com.nhnacademy.inkbridge.backend.dto.order.BookOrderDetailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.order.OrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.enums.MemberCouponStatusEnum;
-import com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.facade.MemberFacade;
 import com.nhnacademy.inkbridge.backend.facade.OrderFacade;
@@ -31,7 +30,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
