@@ -22,7 +22,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implements
     MemberCouponCustomRepository {
 
-    private final int ISSUABLE_COUPON_STATUS_ID = 1;
+    private static final int ISSUABLE_COUPON_STATUS_ID = 1;
 
     public MemberCouponRepositoryImpl() {
         super(MemberCoupon.class);
@@ -40,7 +40,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
         QCategoryCoupon categoryCoupon = QCategoryCoupon.categoryCoupon;
         QMemberCoupon memberCoupon = QMemberCoupon.memberCoupon;
 
-        Set<MemberCouponReadResponseDto> result = new HashSet<>(); // HashSet으로 변경
+        Set<MemberCouponReadResponseDto> result = new HashSet<>();
 
         result.addAll(from(memberCoupon)
             .leftJoin(coupon).on(memberCoupon.coupon.couponId.eq(coupon.couponId))

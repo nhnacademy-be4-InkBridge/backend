@@ -1,12 +1,11 @@
 package com.nhnacademy.inkbridge.backend.dto.coupon;
 
 import java.time.LocalDate;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +17,6 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookCouponCreateRequestDto {
 
     @NotNull(message = "쿠폰이름을 지정하지 않았습니다.")
@@ -41,5 +39,20 @@ public class BookCouponCreateRequestDto {
     @NotNull(message = "쿠폰이 어떤 타입인지 고르지 않았습니다.")
     private Integer couponTypeId;
     @NotNull(message = "책쿠폰에 책을 지정하지 않았습니다.")
-    private Set<Long> bookIds;
+    private Long bookId;
+
+    @Builder
+    public BookCouponCreateRequestDto(String couponName, Long minPrice, Long maxDiscountPrice,
+        Long discountPrice, LocalDate basicIssuedDate, LocalDate basicExpiredDate, Integer validity,
+        Integer couponTypeId, Long bookId) {
+        this.couponName = couponName;
+        this.minPrice = minPrice;
+        this.maxDiscountPrice = maxDiscountPrice;
+        this.discountPrice = discountPrice;
+        this.basicIssuedDate = basicIssuedDate;
+        this.basicExpiredDate = basicExpiredDate;
+        this.validity = validity;
+        this.couponTypeId = couponTypeId;
+        this.bookId = bookId;
+    }
 }

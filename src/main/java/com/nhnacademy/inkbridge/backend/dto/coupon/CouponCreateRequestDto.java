@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -15,7 +15,6 @@ import lombok.Getter;
  * @version 2024/02/15
  */
 @Getter
-@AllArgsConstructor
 public class CouponCreateRequestDto {
 
     @NotNull(message = "쿠폰이름을 지정하지 않았습니다.")
@@ -37,4 +36,18 @@ public class CouponCreateRequestDto {
     private Integer validity;
     @NotNull(message = "쿠폰이 어떤 타입인지 고르지 않았습니다.")
     private Integer couponTypeId;
+
+    @Builder
+    public CouponCreateRequestDto(String couponName, Long minPrice, Long maxDiscountPrice,
+        Long discountPrice, LocalDate basicIssuedDate, LocalDate basicExpiredDate, Integer validity,
+        Integer couponTypeId) {
+        this.couponName = couponName;
+        this.minPrice = minPrice;
+        this.maxDiscountPrice = maxDiscountPrice;
+        this.discountPrice = discountPrice;
+        this.basicIssuedDate = basicIssuedDate;
+        this.basicExpiredDate = basicExpiredDate;
+        this.validity = validity;
+        this.couponTypeId = couponTypeId;
+    }
 }

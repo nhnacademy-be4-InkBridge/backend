@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.controller;
 
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -7,11 +8,13 @@ import com.nhnacademy.inkbridge.backend.dto.coupon.CouponReadResponseDto;
 import com.nhnacademy.inkbridge.backend.exception.ValidationException;
 import com.nhnacademy.inkbridge.backend.service.CouponService;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 2024/02/22
  */
 @RestController
+@Slf4j
 @RequestMapping("/api/admin/coupons")
 public class AdminCouponController {
 
+    private static final String ERROR = "ERROR";
+    private static final String ERROR_LOG = "{}: {}";
     private final CouponService couponService;
 
     public AdminCouponController(CouponService couponService) {
@@ -61,11 +67,13 @@ public class AdminCouponController {
      */
     @PostMapping("/book-coupons")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createBookCoupon(
+    public ResponseEntity<Void> createBookCoupon(
         @Valid @RequestBody BookCouponCreateRequestDto bookCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createBookCoupon(bookCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -81,11 +89,13 @@ public class AdminCouponController {
      */
     @PostMapping("/category-coupons")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity creatCategoryCoupon(
+    public ResponseEntity<Void> creatCategoryCoupon(
         @Valid @RequestBody CategoryCouponCreateRequestDto categoryCouponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCategoryCoupon(categoryCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -101,13 +111,37 @@ public class AdminCouponController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity createCoupon(
+    public ResponseEntity<Void> createCoupon(
         @Valid @RequestBody CouponCreateRequestDto couponCreateRequestDto,
         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
         }
         couponService.createCoupon(couponCreateRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * admin이 쿠폰을 생성하는 메소드.
+     *
+     * @param birthDayCouponCreateRequestDto 생일쿠폰생성시 필요한 필드들
+     * @param bindingResult                  valid결과
+     * @return 생성되었습니다
+     * @throws ValidationException valid를 통과하지 못햇을 때 예외발생
+     */
+    @PostMapping("/birthday-coupons")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Void> createBirthdayCoupon(
+        @Valid @RequestBody BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto,
+        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            FieldError firstError = bindingResult.getFieldErrors().get(0);
+            log.error(ERROR_LOG, ERROR, firstError.getDefaultMessage());
+            throw new ValidationException(firstError.getDefaultMessage());
+        }
+        couponService.createBirthdayCoupon(birthDayCouponCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

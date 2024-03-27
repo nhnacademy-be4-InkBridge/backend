@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.dto.cart;
 
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -14,6 +15,7 @@ public class CartReadResponseDto {
     private final Integer amount;
     private final Long bookId;
 
+    @Builder
     public CartReadResponseDto(Integer amount, Long bookId) {
         this.amount = amount;
         this.bookId = bookId;

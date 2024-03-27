@@ -2,6 +2,8 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberAuthLoginRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberCreateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdatePasswordRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.member.reqeuest.MemberUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberAuthLoginResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberEmailResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.member.response.MemberInfoResponseDto;
@@ -101,11 +103,11 @@ public class MemberServiceImpl implements MemberService {
         MemberStatus close = memberStatusRepository.findById(CLOSE)
                 .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
 
-        member.updateLastLoginDate();
-
         if (member.getMemberStatus().getMemberStatusName().equals(close.getMemberStatusName())) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
+
+        member.updateLastLoginDate();
 
         return memberRepository.findByMemberAuth(memberAuthLoginRequestDto.getEmail());
     }
@@ -131,17 +133,65 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public String getOAuthMemberEmail(String id) {
-        log.info("email start ->");
         Optional<MemberEmailResponseDto> email = memberRepository.findByPassword(id);
-        log.info("email -> {}", email);
+
         if (email.isEmpty()) {
             throw new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage());
         }
         return email.get().getEmail();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean checkDuplicatedEmail(String email) {
         return memberRepository.existsByEmail(email);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateMember(MemberUpdateRequestDto memberUpdateRequestDto,Long memberId) {
+        Member member =
+                memberRepository.findById(memberId)
+                        .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+
+        member.updateMember(memberUpdateRequestDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean updatePassword(MemberUpdatePasswordRequestDto memberUpdatePasswordRequestDto,Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+
+        member.updatePassword(memberUpdatePasswordRequestDto.getNewPassword());
+        return Boolean.TRUE;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getPassword(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+        return member.getPassword();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_NOT_FOUND.getMessage()));
+        MemberStatus close = memberStatusRepository.findById(CLOSE)
+                .orElseThrow(() -> new NotFoundException(MemberMessageEnum.MEMBER_STATUS_NOT_FOUND.getMessage()));
+
+        member.updateStatus(close);
+        member.updateWithdrawAt();
     }
 }

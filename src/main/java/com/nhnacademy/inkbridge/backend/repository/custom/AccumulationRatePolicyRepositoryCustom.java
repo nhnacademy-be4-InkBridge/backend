@@ -32,4 +32,11 @@ public interface AccumulationRatePolicyRepositoryCustom {
      * @return AccumulationRatePolicyReadResponseDto
      */
     AccumulationRatePolicyReadResponseDto findCurrentAccumulationRatePolicy();
+
+    /**
+     * 적용중인 적립률을 조회하는 메소드입니다.
+     *
+     * @return 적립률
+     */
+    Integer findByCurrentAccumulationRate();
 }

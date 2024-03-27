@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
- * class: BookRepositoryImpl.
+ * class: CouponRepositoryImpl.
  *
  * @author JBum
  * @version 2024/03/08
@@ -36,7 +36,6 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport implements
         QBookCoupon bookCoupon = QBookCoupon.bookCoupon;
         QCategoryCoupon categoryCoupon = QCategoryCoupon.categoryCoupon;
 
-        // 카테고리와 책 정보 가져오기
         List<CategoryReadResponseDto> categories = from(categoryCoupon)
             .select(Projections.constructor(
                 CategoryReadResponseDto.class,
@@ -53,7 +52,6 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport implements
             .where(bookCoupon.coupon.couponId.eq(couponId))
             .fetch();
 
-        // 쿠폰 정보 가져오기
         CouponDetailReadResponseDto couponDetail = from(coupon)
             .where(coupon.couponId.eq(couponId))
             .select(Projections.constructor(
@@ -71,7 +69,6 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport implements
                 coupon.couponStatus.couponStatusName))
             .fetchFirst();
 
-        // 카테고리와 책 정보를 쿠폰 DTO에 설정
         if (couponDetail != null) {
             couponDetail.setRelation(categories, books);
         }

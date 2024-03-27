@@ -1,5 +1,6 @@
 package com.nhnacademy.inkbridge.backend.service;
 
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -88,8 +89,8 @@ public interface CouponService {
      * @param used     사용여부
      * @return 사용자가 가진 쿠폰
      */
-    List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
-        MemberCouponStatusEnum used);
+    Page<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum used, Pageable pageable);
 
     /**
      * 발급가능한 쿠폰의 목록을 보여주는 메소드.
@@ -107,5 +108,26 @@ public interface CouponService {
      */
     CouponDetailReadResponseDto getDetailCoupon(String couponId);
 
+    /**
+     * 쿠폰 사용처리 하는 메소드.
+     *
+     * @param memberId       사용한 멤버
+     * @param memberCouponId 사용할 쿠폰 목록들
+     */
     void useCoupons(Long memberId, List<Long> memberCouponId);
+
+    /**
+     * 쿠폰 사용을 취소하는 메소드.
+     *
+     * @param memberId        취소할 멤버id
+     * @param memberCouponIds 취소할 쿠폰 목록들
+     */
+    void cancelCouponUsage(Long memberId, List<Long> memberCouponIds);
+
+    /**
+     * 생일 쿠폰을 생성할때 사용하는 메소드.
+     *
+     * @param birthDayCouponCreateRequestDto 생일 쿠폰 정보
+     */
+    void createBirthdayCoupon(BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto);
 }

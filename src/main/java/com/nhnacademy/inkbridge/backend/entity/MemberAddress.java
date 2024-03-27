@@ -64,7 +64,8 @@ public class MemberAddress {
     }
 
 
-    public void update(GeneralAddress generalAddress, AddressUpdateRequestDto addressUpdateRequestDto) {
+    public void update(GeneralAddress generalAddress,
+        AddressUpdateRequestDto addressUpdateRequestDto) {
         this.generalAddress = generalAddress;
         this.alias = addressUpdateRequestDto.getAlias();
         this.addressDetail = addressUpdateRequestDto.getAddressDetail();

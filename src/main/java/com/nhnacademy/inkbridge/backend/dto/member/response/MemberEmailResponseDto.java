@@ -1,7 +1,7 @@
 package com.nhnacademy.inkbridge.backend.dto.member.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 /**
  * class: MemberEmailResponseDto.
@@ -10,7 +10,7 @@ import lombok.Getter;
  * @version 3/12/24
  */
 @Getter
-@AllArgsConstructor
+@Value
 public class MemberEmailResponseDto {
-    private String email;
+    private final String email;
 }

@@ -38,8 +38,8 @@ public interface WrappingService {
     /**
      * 기존 포장지 새로운 정보로 업데이트
      *
-     * @param WrappingId               기존 포장지 Id
+     * @param wrappingId               기존 포장지 Id
      * @param wrappingCreateRequestDto 새로운 포장지 정보
      */
-    void updateWrapping(Long WrappingId, WrappingCreateRequestDto wrappingCreateRequestDto);
+    void updateWrapping(Long wrappingId, WrappingCreateRequestDto wrappingCreateRequestDto);
 }

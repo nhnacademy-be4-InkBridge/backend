@@ -1,10 +1,11 @@
 package com.nhnacademy.inkbridge.backend.repository.custom;
 
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.wish.BookWishReadResponseDto;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,22 +31,13 @@ public interface BookRepositoryCustom {
     Page<BooksPaginationReadResponseDto> findAllBooks(Pageable pageable);
 
     /**
-     * 카테고리 아이디에 대한 도서 목록 조회 메서드입니다.
-     *
-     * @param pageable   Pageable
-     * @param categoryId Long
-     * @return BooksReadResponseDto Page
-     */
-    Page<BooksPaginationReadResponseDto> findAllBooksByCategory(Pageable pageable, Long categoryId);
-
-    /**
      * parameter(bookId)에 대한 상세 도서 조회 메서드입니다.
      *
      * @param bookId   Long
      * @param memberId Long
      * @return 도서 상세 조회 데이터
      */
-    Optional<BookReadResponseDto> findByBookId(Long bookId, Long memberId);
+    Optional<BookDetailReadResponseDto> findByBookId(Long bookId, Long memberId);
 
     /**
      * admin 도서 목록 페이지 조회 메서드입니다.
@@ -70,4 +62,6 @@ public interface BookRepositoryCustom {
      * @return CartReadResponseDto
      */
     List<BookOrderReadResponseDto> findByBookIdIn(Set<Long> bookIdList);
+
+    List<BookWishReadResponseDto> findByWishMemberId(Long memberId);
 }

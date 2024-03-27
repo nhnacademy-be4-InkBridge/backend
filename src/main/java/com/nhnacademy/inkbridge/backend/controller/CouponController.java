@@ -28,8 +28,9 @@ public class CouponController {
     }
 
 
-    /***
+    /**
      * 발급가능한 전체 쿠폰을 가져오는 메소드.
+     *
      * @param pageable page
      * @return 발급가능한 전체 쿠폰
      */
@@ -39,6 +40,12 @@ public class CouponController {
         return ResponseEntity.ok(coupons);
     }
 
+    /**
+     * 한가지 쿠폰의 디테일한 설명을 가져오는 메소드.
+     *
+     * @param couponId 조회할 쿠폰id
+     * @return 조회한 쿠폰id의 상세정보
+     */
     @GetMapping("/{couponId}")
     public ResponseEntity<CouponDetailReadResponseDto> getCoupon(
         @PathVariable("couponId") String couponId) {

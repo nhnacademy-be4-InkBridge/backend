@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,5 +56,31 @@ public class Review {
     @Column(name = "score")
     private Integer score;
 
+    @Builder
+    public Review(Member member, Book book, BookOrderDetail bookOrderDetail, String reviewTitle,
+        String reviewContent, LocalDateTime registeredAt, Integer score) {
+        this.member = member;
+        this.book = book;
+        this.bookOrderDetail = bookOrderDetail;
+        this.reviewTitle = reviewTitle;
+        this.reviewContent = reviewContent;
+        this.registeredAt = registeredAt;
+        this.score = score;
+    }
 
+    /**
+     * 리뷰를 수정합니다.
+     *
+     * @param reviewTitle review title
+     * @param reviewContent review content
+     * @param registeredAt review registeredAt
+     * @param score review score
+     */
+    public void updateReview(String reviewTitle, String reviewContent, LocalDateTime registeredAt,
+        Integer score) {
+        this.reviewTitle = reviewTitle;
+        this.reviewContent = reviewContent;
+        this.registeredAt = registeredAt;
+        this.score = score;
+    }
 }

@@ -2,6 +2,7 @@ package com.nhnacademy.inkbridge.backend.service.impl;
 
 import static com.nhnacademy.inkbridge.backend.enums.BookMessageEnum.BOOK_NOT_FOUND;
 import static com.nhnacademy.inkbridge.backend.enums.CategoryMessageEnum.CATEGORY_NOT_FOUND;
+import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_NOT_USED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ALREADY_USED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_DUPLICATED;
 import static com.nhnacademy.inkbridge.backend.enums.CouponMessageEnum.COUPON_ID;
@@ -15,6 +16,7 @@ import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_ID
 import static com.nhnacademy.inkbridge.backend.enums.MemberMessageEnum.MEMBER_NOT_FOUND;
 
 import com.nhnacademy.inkbridge.backend.dto.bookcategory.BookCategoriesDto;
+import com.nhnacademy.inkbridge.backend.dto.coupon.BirthDayCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.BookCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CategoryCouponCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.coupon.CouponCreateRequestDto;
@@ -54,7 +56,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -96,7 +97,7 @@ public class CouponServiceImpl implements CouponService {
      * @param bookRepository           책
      * @param bookCouponRepository     책전용 쿠폰
      * @param couponStatusRepository   쿠폰상태
-     * @param bookCategoryRepository
+     * @param bookCategoryRepository   책 카테고리 연관관계
      */
     public CouponServiceImpl(CouponRepository couponRepository,
         CouponTypeRepository couponTypeRepository, MemberRepository memberRepository,
@@ -161,12 +162,10 @@ public class CouponServiceImpl implements CouponService {
             .validity(categoryCouponCreateRequestDto.getValidity()).couponStatus(couponStatus)
             .build();
         couponRepository.save(newCoupon);
-        Set<Long> categoryIds = categoryCouponCreateRequestDto.getCategoryIds();
-        for (Long categoryId : categoryIds) {
-            Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND.getMessage()));
-            saveCategoryCoupon(category, newCoupon);
-        }
+        Category category = categoryRepository.findById(
+                categoryCouponCreateRequestDto.getCategoryId())
+            .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND.getMessage()));
+        saveCategoryCoupon(category, newCoupon);
     }
 
     /**
@@ -189,13 +188,9 @@ public class CouponServiceImpl implements CouponService {
             .minPrice(bookCouponCreateRequestDto.getMinPrice())
             .validity(bookCouponCreateRequestDto.getValidity()).couponStatus(couponStatus).build();
         couponRepository.saveAndFlush(newCoupon);
-
-        Set<Long> bookIds = bookCouponCreateRequestDto.getBookIds();
-        for (Long bookId : bookIds) {
-            Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND.getMessage()));
-            saveBookCoupon(book, newCoupon);
-        }
+        Book book = bookRepository.findById(bookCouponCreateRequestDto.getBookId())
+            .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND.getMessage()));
+        saveBookCoupon(book, newCoupon);
     }
 
     /**
@@ -206,7 +201,7 @@ public class CouponServiceImpl implements CouponService {
     public void issueCoupon(Long memberId, String couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow(
             () -> new NotFoundException(
-                String.format("%s%s%d", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
+                String.format("%s%s%s", COUPON_NOT_FOUND.getMessage(), COUPON_ID.getMessage(),
                     couponId)));
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new NotFoundException(
@@ -240,8 +235,20 @@ public class CouponServiceImpl implements CouponService {
      * @throws AlreadyUsedException 사용한 쿠폰이라면 예외 발생
      */
     private void validateCouponUsed(MemberCoupon memberCoupon) {
-        if (memberCoupon.getUsedAt() == null) {
+        if (memberCoupon.getUsedAt() != null) {
             throw new AlreadyUsedException(COUPON_ALREADY_USED.getMessage());
+        }
+    }
+
+    /**
+     * Member가 사용안했는 쿠폰인지 확인하는 메소드.
+     *
+     * @param memberCoupon 멤버의 쿠폰
+     * @throws AlreadyUsedException 사용안한 쿠폰이라면 예외 발생
+     */
+    private void validateCouponNotUsed(MemberCoupon memberCoupon) {
+        if (memberCoupon.getUsedAt() == null) {
+            throw new AlreadyUsedException(COUPON_ALREADY_NOT_USED.getMessage());
         }
     }
 
@@ -256,7 +263,7 @@ public class CouponServiceImpl implements CouponService {
         LocalDate now = LocalDate.now();
         if (now.isBefore(startDate)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_NOT_STARTED.getMessage());
-        } else if (now.isAfter(endDate)) {
+        } else if (endDate.isBefore(now)) {
             throw new InvalidPeriodException(COUPON_ISSUE_PERIOD_EXPIRED.getMessage());
         }
     }
@@ -314,7 +321,7 @@ public class CouponServiceImpl implements CouponService {
         } else {
             return couponStatusRepository.findById(
                     today.isEqual(basicIssuedDate) ? COUPON_NORMAL : COUPON_WAIT)
-                .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage()));
         }
     }
 
@@ -328,18 +335,6 @@ public class CouponServiceImpl implements CouponService {
     private CouponType findCouponType(int couponTypeId) {
         return couponTypeRepository.findById(couponTypeId)
             .orElseThrow(() -> new NotFoundException(COUPON_TYPE_NOT_FOUND.getMessage()));
-    }
-
-    /**
-     * 중복된 이름의 쿠폰이 존재하는지 확인하는 메소드.
-     *
-     * @param couponName 쿠폰이름
-     * @throws AlreadyUsedException 중복된 쿠폰이름이 존재한다면 예외 발생
-     */
-    private void validDuplicatedCouponName(String couponName) {
-        if (couponRepository.existsByCouponName(couponName)) {
-            throw new AlreadyUsedException(COUPON_DUPLICATED.getMessage());
-        }
     }
 
     /**
@@ -371,24 +366,27 @@ public class CouponServiceImpl implements CouponService {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public List<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
-        MemberCouponStatusEnum statusEnum) {
+    public Page<MemberCouponReadResponseDto> getMemberCouponList(Long memberId,
+        MemberCouponStatusEnum statusEnum, Pageable pageable) {
         LocalDate now = LocalDate.now();
-        List<MemberCoupon> coupons = null;
+        Page<MemberCoupon> coupons = null;
 
         if (statusEnum == MemberCouponStatusEnum.USED) {
-            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId);
+            coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNotNull(memberId,
+                pageable);
         } else if (statusEnum == MemberCouponStatusEnum.ACTIVE) {
             coupons = memberCouponRepository.findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
-                memberId, now, now);
+                memberId, now, now, pageable);
         } else if (statusEnum == MemberCouponStatusEnum.EXPIRED) {
             coupons = memberCouponRepository.findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(
-                memberId, now);
+                memberId, now, pageable);
         }
-        return coupons.stream()
-            .map(MemberCoupon::toResponseDto)
-            .collect(Collectors.toList());
+
+        if (coupons != null) {
+            return coupons.map(MemberCoupon::toResponseDto);
+        } else {
+            return Page.empty();
+        }
     }
 
     /**
@@ -401,10 +399,10 @@ public class CouponServiceImpl implements CouponService {
     }
 
     /**
-     * 책이 존재하는지 확인하는 메소드
+     * 책이 존재하는지 확인하는 메소드.
      *
      * @param bookIds 확인할 책 번호
-     * @throw생 NotFoundException 책이 존재하지 않으면 발
+     * @throw NotFoundException 책이 존재하지 않으면 발생
      */
     private void bookCheck(Long[] bookIds) {
         Arrays.stream(bookIds)
@@ -425,11 +423,15 @@ public class CouponServiceImpl implements CouponService {
             COUPON_NOT_FOUND.getMessage()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void useCoupons(Long memberId, List<Long> memberCouponIds) {
-        List<MemberCoupon> useCoupons = memberCouponRepository.findAllByMemberCouponIdInAndMember_MemberId(
-            memberCouponIds, memberId);
+        List<MemberCoupon> useCoupons = memberCouponRepository
+            .findAllByMemberCouponIdInAndMember_MemberId(
+                memberCouponIds, memberId);
         if (useCoupons.size() != memberCouponIds.size()) {
             throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
         }
@@ -437,5 +439,56 @@ public class CouponServiceImpl implements CouponService {
             validateCouponUsed(coupon);
             coupon.use();
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void cancelCouponUsage(Long memberId, List<Long> memberCouponIds) {
+        List<MemberCoupon> useCoupons = memberCouponRepository
+            .findAllByMemberCouponIdInAndMember_MemberId(
+                memberCouponIds, memberId);
+        if (useCoupons.size() != memberCouponIds.size()) {
+            throw new NotFoundException(COUPON_STATUS_NOT_FOUND.getMessage());
+        }
+        useCoupons.forEach(coupon -> {
+            validateCouponNotUsed(coupon);
+            coupon.cancel();
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void createBirthdayCoupon(
+        BirthDayCouponCreateRequestDto birthDayCouponCreateRequestDto) {
+        LocalDate basicIssuedDate = LocalDate.of(LocalDate.now().getYear(),
+            birthDayCouponCreateRequestDto.getMonth(), 1);
+        if (couponRepository.existsByBasicIssuedDateAndIsBirthTrue(basicIssuedDate)) {
+            throw new AlreadyExistException(COUPON_DUPLICATED.getMessage());
+        }
+        Integer dayCount = LocalDate.now().withMonth(birthDayCouponCreateRequestDto.getMonth())
+            .lengthOfMonth();
+        LocalDate basicExpiredDate = LocalDate.of(LocalDate.now().getYear(),
+            birthDayCouponCreateRequestDto.getMonth(),
+            dayCount);
+        CouponStatus couponStatus = findCouponStatusByIssuedDate(
+            basicIssuedDate);
+        CouponType couponType = findCouponType(2);
+
+        Coupon newCoupon = Coupon.builder().couponId(UUID.randomUUID().toString())
+            .couponType(couponType).couponName(birthDayCouponCreateRequestDto.getCouponName())
+            .basicExpiredDate(basicExpiredDate)
+            .basicIssuedDate(basicIssuedDate)
+            .discountPrice(birthDayCouponCreateRequestDto.getDiscountPrice())
+            .isBirth(true)
+            .maxDiscountPrice(birthDayCouponCreateRequestDto.getMaxDiscountPrice())
+            .minPrice(birthDayCouponCreateRequestDto.getMinPrice())
+            .validity(dayCount).couponStatus(couponStatus).build();
+        couponRepository.save(newCoupon);
     }
 }

@@ -1,14 +1,16 @@
 package com.nhnacademy.inkbridge.backend.service.impl;
 
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorPaginationReadResponseDto;
-import com.nhnacademy.inkbridge.backend.dto.book.AuthorReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorPaginationReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.author.AuthorReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminCreateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminSelectedReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookAdminUpdateRequestDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookDetailReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookOrderReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BookReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.book.BookStockUpdateRequestDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminPaginationReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksAdminReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.BooksPaginationReadResponseDto;
@@ -16,6 +18,7 @@ import com.nhnacademy.inkbridge.backend.dto.book.BooksReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.book.PublisherReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.bookstatus.BookStatusReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.category.ParentCategoryReadResponseDto;
+import com.nhnacademy.inkbridge.backend.dto.review.ReviewAverageReadResponseDto;
 import com.nhnacademy.inkbridge.backend.dto.tag.TagReadResponseDto;
 import com.nhnacademy.inkbridge.backend.entity.Author;
 import com.nhnacademy.inkbridge.backend.entity.Book;
@@ -30,7 +33,9 @@ import com.nhnacademy.inkbridge.backend.entity.File;
 import com.nhnacademy.inkbridge.backend.entity.Publisher;
 import com.nhnacademy.inkbridge.backend.entity.Tag;
 import com.nhnacademy.inkbridge.backend.enums.BookMessageEnum;
+import com.nhnacademy.inkbridge.backend.enums.BookStatusEnum;
 import com.nhnacademy.inkbridge.backend.enums.FileMessageEnum;
+import com.nhnacademy.inkbridge.backend.exception.ConflictException;
 import com.nhnacademy.inkbridge.backend.exception.NotFoundException;
 import com.nhnacademy.inkbridge.backend.repository.AuthorRepository;
 import com.nhnacademy.inkbridge.backend.repository.BookAuthorRepository;
@@ -42,19 +47,20 @@ import com.nhnacademy.inkbridge.backend.repository.BookTagRepository;
 import com.nhnacademy.inkbridge.backend.repository.CategoryRepository;
 import com.nhnacademy.inkbridge.backend.repository.FileRepository;
 import com.nhnacademy.inkbridge.backend.repository.PublisherRepository;
+import com.nhnacademy.inkbridge.backend.repository.ReviewRepository;
 import com.nhnacademy.inkbridge.backend.repository.TagRepository;
 import com.nhnacademy.inkbridge.backend.service.BookService;
-import com.nhnacademy.inkbridge.backend.service.FileService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * class: BookServiceImpl.
@@ -62,6 +68,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author minm063
  * @version 2024/02/14
  */
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -76,8 +83,7 @@ public class BookServiceImpl implements BookService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookFileRepository bookFileRepository;
-    private final FileService fileService;
-
+    private final ReviewRepository reviewRepository;
 
     public BookServiceImpl(BookRepository bookRepository, BookStatusRepository bookStatusRepository,
         FileRepository fileRepository, PublisherRepository publisherRepository,
@@ -85,7 +91,7 @@ public class BookServiceImpl implements BookService {
         AuthorRepository authorRepository, BookTagRepository bookTagRepository,
         BookCategoryRepository bookCategoryRepository,
         BookAuthorRepository bookAuthorRepository, BookFileRepository bookFileRepository,
-        FileService fileService) {
+        ReviewRepository reviewRepository) {
         this.bookRepository = bookRepository;
         this.bookStatusRepository = bookStatusRepository;
         this.fileRepository = fileRepository;
@@ -97,7 +103,7 @@ public class BookServiceImpl implements BookService {
         this.bookCategoryRepository = bookCategoryRepository;
         this.bookAuthorRepository = bookAuthorRepository;
         this.bookFileRepository = bookFileRepository;
-        this.fileService = fileService;
+        this.reviewRepository = reviewRepository;
     }
 
 
@@ -108,7 +114,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BooksReadResponseDto readBooks(Pageable pageable) {
         Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooks(pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.stream().map(BooksPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
         return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
@@ -129,29 +135,15 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional(readOnly = true)
     @Override
-    public BooksReadResponseDto readBooksByCategory(Long categoryId,
-        Pageable pageable) {
-        Page<BooksPaginationReadResponseDto> books = bookRepository.findAllBooksByCategory(
-            pageable, categoryId);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
-            books.getContent().stream().map(BooksPaginationReadResponseDto::getBookId)
-                .collect(Collectors.toList()));
-        return BooksReadResponseDto.builder().booksPaginationReadResponseDtos(books)
-            .authorPaginationReadResponseDto(authors).build();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public BookReadResponseDto readBook(Long bookId, Long memberId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
-        }
-
-        return bookRepository.findByBookId(bookId, memberId)
+    public BookReadResponseDto readBook(Pageable pageable, Long bookId, Long memberId) {
+        BookDetailReadResponseDto bookDetail = bookRepository.findByBookId(bookId,
+                memberId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
+        ReviewAverageReadResponseDto avgReview = reviewRepository.avgReview(
+            bookId);
+
+        return BookReadResponseDto.builder().bookDetailReadResponseDto(bookDetail)
+            .reviewAverageReadResponseDto(avgReview).build();
     }
 
     /**
@@ -162,7 +154,7 @@ public class BookServiceImpl implements BookService {
     public BooksAdminReadResponseDto readBooksByAdmin(Pageable pageable) {
         Page<BooksAdminPaginationReadResponseDto> books = bookRepository.findAllBooksByAdmin(
             pageable);
-        List<AuthorPaginationReadResponseDto> authors = bookAuthorRepository.findAuthorNameByBookId(
+        List<AuthorPaginationReadResponseDto> authors = authorRepository.findAuthorNameByBookId(
             books.getContent().stream().map(BooksAdminPaginationReadResponseDto::getBookId).collect(
                 Collectors.toList()));
         return BooksAdminReadResponseDto.builder().booksAdminPaginationReadResponseDtos(books)
@@ -175,10 +167,6 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public BookAdminDetailReadResponseDto readBookByAdmin(Long bookId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage());
-        }
-
         BookAdminSelectedReadResponseDto bookAdminSelectedReadResponseDto =
             bookRepository.findBookByAdminByBookId(bookId)
                 .orElseThrow(
@@ -225,14 +213,12 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional
     @Override
-    public void createBook(MultipartFile thumbnail,
+    public void createBook(File savedThumbnail,
         BookAdminCreateRequestDto bookAdminCreateRequestDto) {
         Publisher publisher = publisherRepository.findById(
                 bookAdminCreateRequestDto.getPublisherId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_PUBLISHER_NOT_FOUND.getMessage()));
-
-        File savedThumbnail = fileService.saveThumbnail(thumbnail);
 
         Book book = Book.builder()
             .bookTitle(bookAdminCreateRequestDto.getBookTitle())
@@ -264,7 +250,7 @@ public class BookServiceImpl implements BookService {
      */
     @Transactional
     @Override
-    public void updateBookByAdmin(Long bookId, MultipartFile thumbnail,
+    public void updateBookByAdmin(Long bookId, File file,
         BookAdminUpdateRequestDto bookAdminUpdateRequestDto) {
         Book book = bookRepository.findById(bookId)
             .orElseThrow(() -> new NotFoundException(BookMessageEnum.BOOK_NOT_FOUND.getMessage()));
@@ -276,8 +262,9 @@ public class BookServiceImpl implements BookService {
                 bookAdminUpdateRequestDto.getStatusId())
             .orElseThrow(
                 () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
+
         File savedThumbnail =
-            (thumbnail != null) ? fileService.saveThumbnail(thumbnail) : book.getThumbnailFile();
+            Objects.nonNull(file) ? file : book.getThumbnailFile();
 
         book.updateBook(bookAdminUpdateRequestDto.getBookTitle(),
             bookAdminUpdateRequestDto.getBookIndex(), bookAdminUpdateRequestDto.getDescription(),
@@ -290,6 +277,62 @@ public class BookServiceImpl implements BookService {
         updateBookCategory(bookAdminUpdateRequestDto.getCategories(), book);
         updateBookTag(bookAdminUpdateRequestDto.getTags(), book);
         updateBookFile(bookAdminUpdateRequestDto.getFileIdList(), book);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean validateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
+        List<Book> books = bookRepository.findBookByBookIdIn(
+            bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
+                Collectors.toList()));
+
+        List<String> subtractionFail = new ArrayList<>();
+
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getStock() < bookStockUpdateRequestDtos.get(i).getAmount()) {
+                subtractionFail.add(books.get(i).getBookTitle());
+            }
+        }
+        if (!subtractionFail.isEmpty()) {
+            throw new ConflictException(String.join(", ", subtractionFail));
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void updateStock(List<BookStockUpdateRequestDto> bookStockUpdateRequestDtos) {
+        List<Book> books = bookRepository.findBookByBookIdIn(
+            bookStockUpdateRequestDtos.stream().map(BookStockUpdateRequestDto::getBookId).collect(
+                Collectors.toList()));
+        BookStatus bookStatus = bookStatusRepository.findById(BookStatusEnum.SOLD_OUT.getStatusId())
+            .orElseThrow(
+                () -> new NotFoundException(BookMessageEnum.BOOK_STATUS_NOT_FOUND.getMessage()));
+
+        List<String> subtractionFail = new ArrayList<>();
+
+        for (int i = 0; i < books.size(); i++) {
+            Integer amount = bookStockUpdateRequestDtos.get(i).getAmount();
+            int subtraction = books.get(i).getStock() - amount;
+            if (subtraction < 0) {
+                subtractionFail.add(books.get(i).getBookTitle());
+                continue;
+            }
+            books.get(i).updateBookStock(subtraction);
+            if (subtraction == 0) {
+                books.get(i).updateStatus(bookStatus);
+            }
+        }
+
+        if (!subtractionFail.isEmpty()) {
+            throw new ConflictException(String.join(", ", subtractionFail));
+        }
     }
 
     /**

@@ -7,6 +7,15 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +37,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -79,19 +89,43 @@ class MemberGradeControllerTest {
             .andExpect(jsonPath("$[0].gradeId", equalTo(gradeId)))
             .andExpect(jsonPath("$[0].grade", equalTo(grade)))
             .andExpect(jsonPath("$[0].standardAmount", equalTo(standardAmount.intValue())))
-            .andExpect(jsonPath("$[0].pointRate", closeTo(pointRate.doubleValue(), 0.001)));
+            .andExpect(jsonPath("$[0].pointRate", closeTo(pointRate.doubleValue(), 0.001)))
+            .andDo(document("grade-list",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("[].gradeId").description("등급 ID"),
+                    fieldWithPath("[].grade").description("등급 명칭"),
+                    fieldWithPath("[].standardAmount").description("기준 금액"),
+                    fieldWithPath("[].pointRate").description("포인트 비율")
+                )));
     }
 
     @Test
     void updateGrade() throws Exception {
         MemberGradeUpdateRequestDto memberGradeUpdateRequestDto = new MemberGradeUpdateRequestDto();
+        memberGradeUpdateRequestDto.setPointRate(BigDecimal.valueOf(2.0)); // 포인트 비율 업데이트
+        memberGradeUpdateRequestDto.setStandardAmount(20000L); // 기준 금액 업데이트
+
         doNothing().when(memberGradeService)
             .updateGrade(eq(gradeId), any(MemberGradeUpdateRequestDto.class));
-        mvc.perform(put("/api/admin/member/grade/{gradeId}", gradeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberGradeUpdateRequestDto)))
-            .andExpect(status().isOk());
+
+        mvc.perform(
+                RestDocumentationRequestBuilders.put("/api/admin/member/grade/{gradeId}", gradeId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(memberGradeUpdateRequestDto)))
+            .andExpect(status().isOk())
+            .andDo(document("member-grade-update",
+                preprocessRequest(prettyPrint()), // 요청 예쁘게 출력
+                preprocessResponse(prettyPrint()), // 응답 예쁘게 출력
+                pathParameters(
+                    parameterWithName("gradeId").description("업데이트할 회원 등급의 ID") // 경로 변수 문서화
+                ),
+                requestFields(
+                    fieldWithPath("pointRate").description("업데이트할 포인트 비율"),
+                    fieldWithPath("standardAmount").description("업데이트할 기준 금액") // 요청 본문 필드 문서화
+                )));
     }
 
     @Test

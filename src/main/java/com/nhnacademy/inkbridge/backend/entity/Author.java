@@ -48,4 +48,17 @@ public class Author {
         this.authorIntroduce = authorIntroduce;
         this.file = file;
     }
+
+    /**
+     * 작가 정보를 수정하는 메서드입니다.
+     *
+     * @param authorName      String
+     * @param authorIntroduce String
+     * @param file            File
+     */
+    public void updateAuthor(String authorName, String authorIntroduce, File file) {
+        this.authorName = authorName;
+        this.authorIntroduce = authorIntroduce;
+        this.file = file;
+    }
 }

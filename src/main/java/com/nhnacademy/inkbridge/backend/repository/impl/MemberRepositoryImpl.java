@@ -27,6 +27,10 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
 
     QMember member = QMember.member;
     QMemberAuth memberAuth = QMemberAuth.memberAuth;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberAuthLoginResponseDto findByMemberAuth(String email) {
         Optional<MemberAuthLoginInfoDto> memberResult = Optional.ofNullable(
@@ -47,6 +51,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
                         .getPassword(), List.of(memberResult.get().getMemberAuthName()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<MemberInfoResponseDto> findByMemberInfo(Long memberId) {
         Optional<Member> memberResult = Optional.ofNullable(

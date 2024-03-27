@@ -6,6 +6,8 @@ import com.nhnacademy.inkbridge.backend.entity.MemberCoupon;
 import com.nhnacademy.inkbridge.backend.repository.custom.MemberCouponCustomRepository;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -26,23 +28,14 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
      */
     boolean existsByCouponAndMember(Coupon coupon, Member member);
 
-//    /**
-//     * 주문시 적용할 수 있는 쿠폰들 모음.
-//     *
-//     * @param memberId 조회할 회원 Id
-//     * @return 현재 사용가능한 쿠폰들
-//     */
-//    List<OrderCouponReadResponseDto> findByMember_MemberIdAndUsedAtIsNull(
-//        Long memberId);
-
     /**
      * 사용자가 가진 쿠폰들중 사용이 가능한것들만 보여준다.
      *
      * @param memberId 조회할 회원 Id
      * @return 현재 사용자가 가진 사용가능한 쿠폰
      */
-    List<MemberCoupon> findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
-        Long memberId, LocalDate now, LocalDate now2);
+    Page<MemberCoupon> findByMember_MemberIdAndUsedAtIsNullAndExpiredAtAfterOrExpiredAt(
+        Long memberId, LocalDate now, LocalDate now2, Pageable pageable);
 
     /**
      * 사용자가 가진 쿠폰들중 사용이 불가능한것들만 보여준다.
@@ -50,8 +43,8 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
      * @param memberId 조회할 회원 Id
      * @return 현재 사용자가 가진 사용불가능한 쿠폰
      */
-    List<MemberCoupon> findByMember_MemberIdAndUsedAtIsNotNull(
-        Long memberId);
+    Page<MemberCoupon> findByMember_MemberIdAndUsedAtIsNotNull(
+        Long memberId, Pageable pageable);
 
     /**
      * 사용자가 가진 쿠폰들중 사용한것들만 보여준다.
@@ -59,8 +52,8 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
      * @param memberId 조회할 회원 Id
      * @return 현재 사용자가 가진 사용한 쿠폰
      */
-    List<MemberCoupon> findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(Long memberId,
-        LocalDate now);
+    Page<MemberCoupon> findByMember_MemberIdAndExpiredAtBeforeAndUsedAtIsNull(Long memberId,
+        LocalDate now, Pageable pageable);
 
     /**
      * 사용 처리할 쿠폰을 찾습니다. 찾을 때는 해당 쿠폰id와  맴버id로 찾습니다.
