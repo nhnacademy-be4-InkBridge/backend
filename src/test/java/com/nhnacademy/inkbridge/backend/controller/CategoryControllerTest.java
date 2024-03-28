@@ -3,6 +3,12 @@ package com.nhnacademy.inkbridge.backend.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -21,9 +27,12 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author choijaehun
  * @version 2/18/24
  */
-
+@AutoConfigureRestDocs
 @WebMvcTest(CategoryController.class)
 class CategoryControllerTest {
 
@@ -53,7 +62,12 @@ class CategoryControllerTest {
         mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andDo(document("category/category-create",
+                requestFields(
+                    fieldWithPath("categoryName").description("카테고리 이름"),
+                    fieldWithPath("parentId").description("카테고리의 부모 아이디")
+                )));
 
         verify(categoryService, times(1)).createCategory(request);
     }
@@ -67,7 +81,12 @@ class CategoryControllerTest {
         mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnprocessableEntity());
+            .andExpect(status().isUnprocessableEntity())
+            .andDo(document("category/category-create-validation",
+                requestFields(
+                    fieldWithPath("categoryName").description("카테고리 이름"),
+                    fieldWithPath("parentId").description("카테고리의 부모 아이디")
+                )));
 
         verify(categoryService, times(0)).createCategory(request);
     }
@@ -80,10 +99,18 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(response, "categoryName", "한국도서");
         when(categoryService.readCategory(response.getCategoryId())).thenReturn(response);
 
-        mockMvc.perform(get("/api/categories/1"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/categories/{categoryId}", 1))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.categoryId").value(response.getCategoryId()))
-            .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()));
+            .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()))
+            .andDo(document("category/category-read",
+                pathParameters(
+                    parameterWithName("categoryId").description("카테고리 아이디")
+                ),
+                responseFields(
+                    fieldWithPath("categoryId").description("카테고리 아이디").type(JsonFieldType.NUMBER),
+                    fieldWithPath("categoryName").description("카테고리 이름").type(JsonFieldType.STRING))
+            ));
     }
 
     @Test
@@ -111,8 +138,21 @@ class CategoryControllerTest {
             .andExpect(jsonPath("$.*.parentCategories[0].categoryId").value(2))
             .andExpect(jsonPath("$.*.parentCategories[0].categoryName").value("자바"))
             .andExpect(jsonPath("$.*.parentCategories[1].categoryId").value(3))
-            .andExpect(jsonPath("$.*.parentCategories[1].categoryName").value("자바스크립트"));
-
+            .andExpect(jsonPath("$.*.parentCategories[1].categoryName").value("자바스크립트"))
+            .andDo(document("category/read-all",
+                responseFields(
+                    fieldWithPath("[].categoryId").description("카테고리 아이디")
+                        .type(JsonFieldType.NUMBER),
+                    fieldWithPath("[].categoryName").description("카테고리 이름")
+                        .type(JsonFieldType.STRING),
+                    fieldWithPath("[].parentCategories").description("부모카테고리 객체")
+                        .type(JsonFieldType.ARRAY).optional(),
+                    fieldWithPath("[].parentCategories[].parentCategories[]").description("부모카테고리"),
+                    fieldWithPath("[].parentCategories[].categoryId").description("부모카테고리 객체의 아이디")
+                        .type(JsonFieldType.NUMBER).optional(),
+                    fieldWithPath("[].parentCategories[].categoryName").description("부모카테고리 객체의 이름")
+                        .type(JsonFieldType.STRING).optional()
+                )));
     }
 
     @Test
@@ -129,12 +169,20 @@ class CategoryControllerTest {
 
         when(categoryService.updateCategory(categoryId, request)).thenReturn(response);
 
-        mockMvc.perform(put("/api/categories/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{categoryId}",1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()));
+            .andExpect(jsonPath("$.categoryName").value(response.getCategoryName()))
+            .andDo(document("category/update",
+                pathParameters(
+                    parameterWithName("categoryId").description(
+                        "카테고리 아이디")
+                ),
+                requestFields(
+                    fieldWithPath("categoryName").description("카테고리 이름")
+                        .type(JsonFieldType.STRING))));
 
         verify(categoryService, times(1)).updateCategory(categoryId, request);
     }
@@ -148,24 +196,20 @@ class CategoryControllerTest {
         CategoryUpdateRequestDto request = new CategoryUpdateRequestDto();
         ReflectionTestUtils.setField(request, "categoryName", categoryName);
 
-        mockMvc.perform(put("/api/categories/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/categories/{categoryId}",1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnprocessableEntity());
+            .andExpect(status().isUnprocessableEntity())
+            .andDo(document("category/update-validation",
+                pathParameters(
+                    parameterWithName("categoryId").description(
+                        "카테고리 아이디")
+                ),
+                requestFields(
+                    fieldWithPath("categoryName").description("카테고리 이름")
+                        .type(JsonFieldType.STRING))));
 
         verify(categoryService, times(0)).updateCategory(categoryId, request);
     }
 
-//    @Test
-//    @WithMockUser
-//    @DisplayName("category 삭제 테스트 - 성공")
-//    void When_DeleteCategory_Expect_Success() throws Exception {
-//        Long categoryId = 1L;
-//
-//        mockMvc.perform(delete("/api/category/1")
-//                .with(csrf()))
-//            .andExpect(status().isOk());
-//
-//        verify(categoryService, times(1)).deleteCategory(categoryId);
-//    }
 }

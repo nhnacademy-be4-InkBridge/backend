@@ -6,6 +6,7 @@ import com.nhnacademy.inkbridge.backend.service.BookSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +51,7 @@ public class SearchController {
      * @return 페이징 처리된 bookDto
      */
     @GetMapping("/books/filter")
-    public ResponseEntity<Page<BookSearchResponseDto>> searchByAll(Pageable pageable) {
+    public ResponseEntity<Page<BookSearchResponseDto>> searchByAll(@PageableDefault(size = 10) Pageable pageable) {
         Page<Search> searchPage = bookSearchService.searchByAll(pageable);
         Page<BookSearchResponseDto> books = searchPage.map(
             BookSearchResponseDto::toBookSearchResponseDto);

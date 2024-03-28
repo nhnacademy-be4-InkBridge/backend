@@ -1,0 +1,26 @@
+=== 출판사
+
+==== 생성
+===== 요청 필드
+include::{snippets}/publisher/create/request-fields.adoc[]
+===== HTTP 요청
+include::{snippets}/publisher/create/http-request.adoc[]
+
+===== 유효성검사 필드
+include::{snippets}/publisher/create-validation/request-fields.adoc[]
+include::{snippets}/publisher/create-validation/http-response.adoc[]
+
+
+==== 조회
+==== 조회응답
+include::{snippets}/publisher/read/response-fields.adoc[]
+include::{snippets}/publisher/read/http-response.adoc[]
+
+==== 수정
+==== 요청 필드
+include::{snippets}/publisher/update/request-fields.adoc[]
+include::{snippets}/publisher/update/http-request.adoc[]
+
+==== 유효성 검사 필드
+include::{snippets}/publisher/update-validation/request-fields.adoc[]
+include::{snippets}/publisher/update-validation/http-response.adoc[]

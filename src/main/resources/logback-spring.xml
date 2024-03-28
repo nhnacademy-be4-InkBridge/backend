@@ -24,14 +24,16 @@
     </appender>
 
 
+
     <!-- 환경별 설정 -->
-    <springProfile name="prod">
+    <springProfile name="prod1">
         <root level="${PROD_LOG_LEVEL:-INFO}">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
 
     </springProfile>
+
     <springProfile name="dev">
         <root level="${DEV_LOG_LEVEL:-DEBUG}">
             <appender-ref ref="CONSOLE"/>
